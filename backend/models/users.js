@@ -12,7 +12,7 @@ const usersSchema= new mongoose.Schema({
     role:{type:string,trim:true,enum:['Admin','student']},
     status:{type:string,trim:true,enum:['blocked','active']},
     is_member:{type:Boolean, required:true},
-    expirDate:{type:Date}
+    expirDate:{type:Date,required:true }
     
 
 },{ timestamps: true })
