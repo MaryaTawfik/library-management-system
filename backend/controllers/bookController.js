@@ -5,9 +5,9 @@ const getAll = async(req,res)=>{
     try{
         const books = await bookService.getAllBooks()
         
-        res.json(books)
+        res.json({status:'success' , data:books || [] })
     }catch(err){
-        res.status(500).json({message:err.message})
+        res.status(500).json({status:'error' , message:err.message})
     }  
 };
 const getOne = async(req,res)=>{
@@ -27,9 +27,9 @@ const create = async(req,res)=>{
     try{
         const {title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description} = req.body;
         const newBook = await bookService.createBook(title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description)
-        res.status(201).json(newBook);
+        res.status(201).json({status:'success' ,message:'Created sucessfully' , data:newBook });
     }catch(err){
-        res.status(400).json({message:err})
+        res.status(400).json({status:'error',message:err})
     }
 }
 
