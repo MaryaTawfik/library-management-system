@@ -35,7 +35,7 @@ export default function BookCatalogPage() {
   }, [search, selectedCategory, books]);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
+    <div className="min-h-screen px-8 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
       {/* Heading */}
       <h1 className="text-3xl font-bold text-gray-800 mb-1">Book Catalog</h1>
       <p className="text-gray-800 text-sm mb-6">
@@ -65,7 +65,7 @@ export default function BookCatalogPage() {
       </div>
 
       {/* Book Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredBooks.map((book) => (
           <BookCard key={book.bookId} book={book} />
         ))}

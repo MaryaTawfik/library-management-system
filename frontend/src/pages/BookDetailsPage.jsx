@@ -45,15 +45,15 @@ export default function BookDetailPage() {
 
       {/* Layout wrapper with border between left or right */}
       <div className="flex flex-col md:flex-row bg-gray-100 rounded-lg p-6 border border-gray-200">
-        {/* Left panel */}
+        {/* Left side */}
         <div className="flex flex-col md:w-1/3 bg-white rounded-lg p-6 shadow-md border-r border-gray-300 relative">
           {/* Book image */}
-          <div className="w-full min-h-screen bg-gray-100 flex items-center justify-center rounded-md overflow-hidden mb-4">
+          <div className="w-full bg-gray-100 flex items-center justify-center rounded-md overflow-hidden mb-4">
             {book.image ? (
               <img
                 src={book.image}
                 alt={book.title}
-                className="object-contain max-h-full"
+                className="w-full min-h-full"
               />
             ) : (
               <span className="text-6xl text-gray-400">📚</span>
@@ -61,12 +61,12 @@ export default function BookDetailPage() {
           </div>
 
           {/* Availability label */}
-          <p className="text-green-700 font-semibold text-sm mb-1">
+          <p className="text-green-700 font-semibold text-sm mb-4 mt-22">
             Availability
           </p>
 
           {/* Availability row */}
-          <div className="w-full flex justify-between items-center text-sm text-gray-800 mb-4">
+          <div className="w-full flex justify-between items-center text-sm text-gray-800 ">
             <span>
               {book.availableCopies} of {book.totalCopies} copies
             </span>
@@ -74,7 +74,7 @@ export default function BookDetailPage() {
               className={
                 book.availableCopies > 0
                   ? "text-green-700 font-medium"
-                  : "text-amber-800 font-medium"
+                  : "text-white font-medium bg-amber-600"
               }
             >
               {book.availableCopies > 0 ? "Available" : "Unavailable"}
@@ -98,7 +98,7 @@ export default function BookDetailPage() {
           </div>
         </div>
 
-        {/* Right panel */}
+        {/* Right side */}
         <div className="md:w-2/3 space-y-8 pl-0 md:pl-8 mt-8 md:mt-0">
           {/* Title & Description */}
           <div className="relative bg-white p-6 rounded-lg">
@@ -166,7 +166,7 @@ export default function BookDetailPage() {
 
           {/* Related Books */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-green-700 font-semibold text-lg mb-3">
+            <h2 className="text-black font-semibold text-lg mb-3">
               Related Books
             </h2>
             <p className="text-sm text-gray-700">
