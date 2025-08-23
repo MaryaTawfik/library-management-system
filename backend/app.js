@@ -5,13 +5,14 @@ const dotenv = require("dotenv");
 const connectDB = require('./config/database.js');
 const bookRoutes = require('./routes/bookRoutes')
 const auth_route = require('./routes/auth_routes')
+const seedAdmin = require('./utils/seeAdmin')
 dotenv.config()
 
 const app=express();
 
 app.use(cors());
 app.use(express.json());
-
+seedAdmin();
 connectDB();
 app.use('/books' , bookRoutes);
 app.use('/auth', auth_route);
