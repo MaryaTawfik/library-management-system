@@ -1,70 +1,75 @@
 import { useEffect, useState } from "react";
 import { getAllBooks } from "../services/booksService";
 import BookCard from "../components/BookCard";
-import BookTableRow from "../components/BookTableRow";
+import SearchBar from "../components/SearchBar";
+import { FaFilter } from "react-icons/fa";
 
 export default function BookCatalogPage() {
   const [books, setBooks] = useState([]);
-  const [view, setView] = useState("grid"); // grid or table
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
   useEffect(() => {
-    getAllBooks().then(setBooks);
+    getAllBooks().then((data) => {
+      setBooks(data);
+      setFilteredBooks(data);
+    });
   }, []);
 
-  const filteredBooks = books.filter((book) =>
-    [book.bookName, book.author, book.category]
-      .join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    const results = books.filter((book) => {
+      const matchesSearch =
+        book.title.toLowerCase().includes(search.toLowerCase()) ||
+        book.author.toLowerCase().includes(search.toLowerCase()) ||
+        book.category.toLowerCase().includes(search.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === "All Categories" ||
+        book.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+
+    setFilteredBooks(results);
+  }, [search, selectedCategory, books]);
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-4 items-centerm border-20 border-blue-50">
-        <h1 className="text-2xl font-bold bg-gray-50">Book Catalog</h1>
+    <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
+      {/* Heading */}
+      <h1 className="text-3xl font-bold text-gray-800 mb-1">Book Catalog</h1>
+      <p className="text-gray-800 text-sm mb-6">
+        Browse and search our library collection
+      </p>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Search by title, author, category"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border px-3 py-1 rounded-lg"
-          />
-          <button
-            onClick={() => setView(view === "grid" ? "table" : "grid")}
-            className="bg-orange-400 px-3 py-1 rounded-lg"
-          >
-            Switch to {view === "grid" ? "Table" : "Grid"} View
-          </button>
-        </div>
+      {/* Search bar with category filter */}
+      <SearchBar
+        search={search}
+        setSearch={setSearch}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
+
+      {/* Below search */}
+      <div className="flex justify-between items-center  mb-4">
+        {/* Left side: Showing count */}
+        <p className="text-sm text-gray-600 ">
+          Showing {filteredBooks.length} of {books.length} books
+        </p>
+
+        {/* Right side Advanced Filters button */}
+        <button className="flex items-center gap-2 text-sm text-gray-700 border-1 border-gray-300 hover:text-green-700 transition whitespace-nowrap">
+          <FaFilter className="text-orange-600" />
+          <span>Advanced Filters</span>
+        </button>
       </div>
 
-      {view === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredBooks.map((book) => (
-            <BookCard key={book.bookId} book={book} />
-          ))}
-        </div>
-      ) : (
-        <table className="w-full borderm border-20 border-blue-50">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 text-left">Title</th>
-              <th className="p-2 text-left">Author</th>
-              <th className="p-2 text-left">Category</th>
-              <th className="p-2 text-left">Availability</th>
-              <th className="p-2 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredBooks.map((book) => (
-              <BookTableRow key={book.bookId} book={book} />
-            ))}
-          </tbody>
-        </table>
-      )}
+      {/* Book Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredBooks.map((book) => (
+          <BookCard key={book.bookId} book={book} />
+        ))}
+      </div>
     </div>
   );
 }
