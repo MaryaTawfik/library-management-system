@@ -9,6 +9,13 @@ import Contribute from "./pages/Contribute";
 import AdminDashboard from "./pages/AdminDashboard";
 import PaymentPage from "./pages/PaymentPage";
 import BorrowHistory from "./pages/BorrowHistory";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Guest from "./pages/Guest";
+import ForgotPassword from "./pages/ForgotPassword";
+import Welcome from "./pages/Welcome";
+import BookCatalogPage from "./pages/BookCatalogPage";
+import BookDetailsPage from "./pages/BookDetailsPage";
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
@@ -54,6 +61,7 @@ const App = () => {
             )}
             {userRole === "admin" && (
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
             )}
           </Routes>
         </main>
@@ -68,3 +76,4 @@ const App = () => {
 };
 
 export default App;
+
