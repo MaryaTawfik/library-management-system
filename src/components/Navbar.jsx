@@ -1,17 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
 import { MdArrowDropDown } from "react-icons/md";
 import { FaBars } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { HiMiniBars3CenterLeft } from "react-icons/hi2";
+
 
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   return (
-    <header className="w-full bg-white shadow-sm">
-      <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+    <header className="fixed w-full bg-white shadow-sm z-20">
+      <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         
         {/* Left: Brand & Sidebar Toggle */}
-        <div className="flex items-center gap-3">
-          <FaBars
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
             className="cursor-pointer text-xl"
           />
@@ -19,30 +21,31 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
         </div>
 
         {/* Search bar */}
-        <div className="flex flex-1 items-center gap-2 min-w-[200px] max-w-md">
-          <p className="flex items-center bg-[#F7F7FA] px-2 py-1 rounded-md text-sm">
-            All <MdArrowDropDown className="ml-1" />
-          </p>
-          <div className="flex items-center border rounded-md overflow-hidden w-full">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full px-3 py-2 outline-none text-sm"
-            />
-            <button className="px-3 text-gray-600 hover:text-black">
-              <CiSearch className="text-xl" />
-            </button>
+        <div className="flex-1 min-w-0 mx-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+          <div className="flex items-center gap-2 w-full">
+            <p className="flex items-center bg-[#F7F7FA] px-2 py-1 rounded-md text-sm shrink-0">
+              All <MdArrowDropDown className="ml-1" />
+            </p>
+            <div className="flex items-center border rounded-md overflow-hidden flex-1">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full px-3 py-2 outline-none text-sm sm:text-sm md:text-base"
+              />
+              <button className="px-3 text-gray-600 hover:text-black">
+                <CiSearch className="text-xl" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Nav Items */}
-        <div className="flex flex-wrap items-center gap-6">
-      
-          <Link to="/history" className="text-sm font-medium hover:text-blue-600">
-            History
-          </Link>
+        {/* Right: Nav Items */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          {/* Additional icons can be added here safely */}
         </div>
+        
       </nav>
+
     </header>
   );
 };
