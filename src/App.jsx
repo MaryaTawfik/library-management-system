@@ -27,7 +27,7 @@ const App = () => {
       {SidebarToggle && (
         <div
           onClick={() => setSidebarToggle(false)}
-          className="fixed inset-0  opacity-50 z-40 lg:hidden"
+          className="fixed inset-0  opacity-50 z-40 "
        
         />
       )}
@@ -38,7 +38,7 @@ const App = () => {
         <Navbar SidebarToggle={SidebarToggle} setSidebarToggle={setSidebarToggle} />
 
         {/* Page content */}
-        <main className="flex-grow p-6">
+        <main className="flex-grow p-6 mt-16">
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
