@@ -2,10 +2,15 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "app.js",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
-    "start": "node app.js",
-    "build": "node app.js",
-    "dev": "nodemon app.js"
+  "start": "node app.js",
+  "build": "npm install --no-audit --no-fund && node app.js",
+  "dev": "nodemon app.js",
+  "postinstall": "npm rebuild --production"
   },
   "keywords": [],
   "author": "",
