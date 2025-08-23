@@ -2,10 +2,10 @@ const authService = require('../services/auth_service');
 
 const register = async (req, res) => {
   try {
-    const { userID, firstName, lastName, email, password, phoneNumber, role } = req.body;
+    const { userID, firstName, lastName, email, password, phoneNumber } = req.body;
 
-    // Block new Admin registrations
-    if (role === 'Admin') {
+    // Prevent clients from creating Admin accounts by insisting any requested role of 'Admin' is rejected
+    if (req.body && req.body.role === 'Admin') {
       return res.status(403).json({ message: 'Cannot register as Admin. Admin account is fixed.' });
     }
 
@@ -16,7 +16,7 @@ const register = async (req, res) => {
       email,
       password,
       phoneNumber,
-      role: 'student', // Always student
+      role: 'student', // assign default role server-side
       is_member: true,
       expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     };

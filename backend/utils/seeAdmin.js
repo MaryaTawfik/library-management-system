@@ -4,7 +4,7 @@ const seedAdmin = async () => {
   try {
     const existingAdmin = await User.findOne({ role: 'Admin' });
     if (existingAdmin) {
-      console.log('✅ Admin already exists.');
+      console.log(' Admin already exists.');
       return;
     }
 
@@ -22,9 +22,9 @@ const seedAdmin = async () => {
     });
 
     await adminUser.save();
-    console.log('✅ Admin user seeded successfully.');
+    console.log('Admin user seeded successfully.');
   } catch (error) {
-    console.error('❌ Failed to seed admin:', error.message);
+    console.error('Failed to seed admin:', error.message);
   }
 };
 
