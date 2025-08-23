@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, NavLink } from "react-router-dom";
 import { getBookById } from "../services/booksService";
+import { useNavigate} from "react-router-dom";
 import {
   FaBarcode,
   FaCalendarAlt,
@@ -13,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 function InfoItem({ icon, label, value }) {
+
   return (
     <div className="flex items-start gap-3">
       <div className="text-black-600 text-lg mt-1">{icon}</div>
@@ -25,8 +27,12 @@ function InfoItem({ icon, label, value }) {
 }
 
 export default function BookDetailPage() {
+      const navigate = useNavigate();
+
   const { id } = useParams();
   const [book, setBook] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     getBookById(id).then((data) => setBook(data));
@@ -34,6 +40,11 @@ export default function BookDetailPage() {
 
   if (!book) return <p>Loading...</p>;
 
+  const handleSubmit = (e) => {
+  navigate('/welcome')
+  };
+
+ 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link
@@ -84,7 +95,7 @@ export default function BookDetailPage() {
           {/* Borrow button */}
           <div className="w-full mt-auto">
             {book.availableCopies > 0 ? (
-              <button className="w-full bg-orange-700 hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition">
+              <button onSubmit={handleSubmit} className="w-full bg-orange-700 hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition">
                 Borrow Book
               </button>
             ) : (

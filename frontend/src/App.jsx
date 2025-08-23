@@ -35,7 +35,7 @@ const App = () => {
         <div
           onClick={() => setSidebarToggle(false)}
           className="fixed inset-0  opacity-50 z-40 "
-       
+
         />
       )}
 
@@ -47,7 +47,6 @@ const App = () => {
         {/* Page content */}
         <main className="flex-grow p-6 mt-16">
           <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/my-shelf" element={<My_shelf />} />
@@ -63,6 +62,15 @@ const App = () => {
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
             )}
+            <Route path="/" element={<Navigate to="/books" />} />
+            <Route path="/books" element={<BookCatalogPage />} />
+            <Route path="/books/:id" element={<BookDetailsPage />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/guest" element={<Guest />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+        
           </Routes>
         </main>
 
