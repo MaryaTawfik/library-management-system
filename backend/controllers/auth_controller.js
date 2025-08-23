@@ -2,18 +2,21 @@ const authService = require('../services/auth_service');
 
 const register = async (req, res) => {
   try {
-    const { userID, firstName, lastName, email, password, phoneNumber } = req.body;
-    const data = { userID, firstName, lastName, email, password, phoneNumber };
+    const { userID, firstName, lastName, email, password, phoneNumber, role } = req.body;
+const data = { userID, firstName, lastName, email, password, phoneNumber, role };
+
 
     if (!data.userID || !data.firstName || !data.lastName || !data.email || !data.password || !data.phoneNumber) {
       return res.status(400).json({ message: 'Missing required user data' });
     }
 
     const user = await authService.registeruser({
-      ...data,
-      is_member: true,
-      expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
-    });
+  ...data,
+  role: role || 'student',
+  is_member: true,
+  expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+});
+
     res.status(201).json({ message: 'User registered successfully', user });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

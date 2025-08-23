@@ -16,10 +16,11 @@ const loginuser = async (email, password) => {
   if (!isMatch) throw new Error('Invalid password');
 
   const token = jwt.sign(
-    { id: user.userID, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: '3m' }
-  );
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: '30d' }
+);
+
 
   return { token, user };
 };
