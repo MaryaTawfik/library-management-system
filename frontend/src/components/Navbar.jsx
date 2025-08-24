@@ -5,19 +5,19 @@ import { FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 
-
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   return (
     <header className="fixed w-full bg-white shadow-sm z-20">
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        
         {/* Left: Brand & Sidebar Toggle */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
             className="cursor-pointer text-xl"
           />
-          <p className="text-base lg:text-lg font-bold font-[Roboto]">E-library</p>
+          <p className="text-base lg:text-lg font-bold font-[Roboto]">
+            E-library
+          </p>
         </div>
 
         {/* Search bar */}
@@ -43,9 +43,7 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
         <div className="flex items-center gap-4 flex-shrink-0">
           {/* Additional icons can be added here safely */}
         </div>
-        
       </nav>
-
     </header>
   );
 };

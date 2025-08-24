@@ -60,7 +60,7 @@ export default function SearchBar({
           </div>
         </div>
 
-        {/* Right side: All Books button */}
+        {/* Right side All Books button */}
         <button
           onClick={handleResetFilters}
           className="text-sm px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-md border border-gray-300 shadow-sm"
