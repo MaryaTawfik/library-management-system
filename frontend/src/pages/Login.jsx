@@ -140,6 +140,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
+import { useAtom } from "jotai";
+import { userAtom, tokenAtom } from "../atoms/authAtom"; // <-- add this
 import LogoTitle from "../components/LogoTitle";
 import bgImage from "../assets/librarypic.jpg";
 
@@ -149,24 +151,35 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // jotai atoms
+  const [, setUser] = useAtom(userAtom);
+  const [, setToken] = useAtom(tokenAtom);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // reset error
+    setError(""); 
     try {
       const res = await axios.post("http://localhost:5000/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
-      // Save token to localStorage
+      // ✅ Save token & user
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Redirect user to dashboard/homepage
-      navigate("/");
+      setToken(res.data.token);
+      setUser(res.data.user); // { id, name, role, ... }
+      
+      if(res.data.user.role === "admin"){
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.error || "Login failed. Try again.");
