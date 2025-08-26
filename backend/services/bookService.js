@@ -6,10 +6,34 @@ const getAllBooks=async()=>{
 const getBookById = async(id)=>{
     return await book.findById(id)
 };
-const createBook = async(title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description)=>{
-    newBook = await book.create({title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description});
-    return newBook;
-}
+const createBook = async (
+  title,
+  author,
+  publishedYear,
+  catagory,
+  totalcopies,
+  avaliablecopies,
+  isbn,
+  pages,
+  description,
+  imageUrl
+) => {
+  const newBook = await book.create({
+    title,
+    author,
+    publishedYear,
+    catagory,
+    totalcopies,
+    avaliablecopies,
+    isbn,
+    pages,
+    description,
+    imageUrl
+  });
+
+  return newBook;
+};
+
 const deleteBook = async(id)=>{
     return await book.findByIdAndDelete(id)
 }

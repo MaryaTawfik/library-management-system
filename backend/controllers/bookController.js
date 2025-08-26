@@ -23,15 +23,45 @@ const getOne = async(req,res)=>{
     }
     
 };
-const create = async(req,res)=>{
-    try{
-        const {title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description} = req.body;
-        const newBook = await bookService.createBook(title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description)
-        res.status(201).json({status:'success' ,message:'Created sucessfully' , data:newBook });
-    }catch(err){
-        res.status(400).json({status:'error',message:err})
-    }
-}
+const create = async (req, res) => {
+  try {
+    const {
+      title,
+      author,
+      publishedYear,
+      catagory,
+      totalcopies,
+      avaliablecopies,
+      isbn,
+      pages,
+      description
+    } = req.body;
+
+    const imageUrl = req.file ? req.file.path : undefined; // From Cloudinary
+
+    const newBook = await bookService.createBook(
+      title,
+      author,
+      publishedYear,
+      catagory,
+      totalcopies,
+      avaliablecopies,
+      isbn,
+      pages,
+      description,
+      imageUrl
+    );
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Created successfully',
+      data: newBook
+    });
+  } catch (err) {
+    res.status(400).json({ status: 'error', message: err.message });
+  }
+};
+
 
     
 

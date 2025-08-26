@@ -15,6 +15,8 @@ const usersSchema = new mongoose.Schema({
   status: { type: String, trim: true, enum: ['blocked', 'active'], default: 'active' },
   is_member: { type: Boolean, required: true },
   expiryDate: { type: Date, required: true }
+  ,
+  profileImage: { type: String, trim: true, default: 'https://via.placeholder.com/150' }
 }, { timestamps: true });
 
 usersSchema.pre('save', async function (next) {

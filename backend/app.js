@@ -6,6 +6,8 @@ const connectDB = require('./config/database.js');
 const bookRoutes = require('./routes/bookRoutes')
 const auth_route = require('./routes/auth_routes')
 const seedAdmin = require('./utils/seeAdmin')
+const paymentRoutes = require('./routes/paymentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 dotenv.config()
 
 const app = express();
@@ -13,19 +15,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to DB first, then run seed and mount routes.
+
 connectDB()
     .then(() => {
-        // only seed after DB is connected
+        
         try {
             seedAdmin();
         } catch (e) {
             console.error('seedAdmin failed:', e && e.message ? e.message : e);
         }
 
-        // mount routes after DB connected (optional)
+       
         app.use('/books', bookRoutes);
         app.use('/auth', auth_route);
+        app.use('/payments', paymentRoutes);
+        app.use('/admin', adminRoutes);
     })
     .catch((err) => {
         console.error('Could not connect to DB, routes not mounted:', err && err.message ? err.message : err);
