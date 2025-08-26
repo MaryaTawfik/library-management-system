@@ -8,7 +8,7 @@ export default function BookCatalogPage() {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCatagory, setSelectedCatagory] = useState("All Catagories");
 
   useEffect(() => {
     getAllBooks().then((data) => {
@@ -26,15 +26,15 @@ export default function BookCatalogPage() {
         book.author?.toLowerCase().includes(search.toLowerCase()) ||
         book.catagory?.toLowerCase().includes(search.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "All Categories" ||
-        book.catagory === selectedCategory;
+      const matchesCatagory =
+        selectedCatagory === "All Catagories" ||
+        book.catagory === selectedCatagory;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCatagory;
     });
 
     setFilteredBooks(results);
-  }, [search, selectedCategory, books]);
+  }, [search, selectedCatagory, books]);
 
   return (
     <div className="min-h-screen px-8 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
@@ -46,8 +46,12 @@ export default function BookCatalogPage() {
       <SearchBar
         search={search}
         setSearch={setSearch}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
+        selectedCatagory={selectedCatagory}
+        setSelectedCatagory={setSelectedCatagory}
+        catagories={[
+          "All Catagories",
+          ...new Set(books.map((b) => b.catagory)),
+        ]}
       />
 
       <div className="flex justify-between items-center mb-4">
