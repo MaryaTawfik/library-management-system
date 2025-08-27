@@ -5,7 +5,19 @@ const getAllUsers = async () => {
 };
 
 const updateUser = async (id, data) => {
-  const user = await User.findByIdAndUpdate(id, data, { new: true });
+  const user = await User.findByIdAndUpdate(id, data, { new: true }).select('-password');
+  if (!user) throw new Error('User not found');
+  return user;
+};
+
+const blockUser = async (id) => {
+  const user = await User.findByIdAndUpdate(id, { status: 'blocked' }, { new: true });
+  if (!user) throw new Error('User not found');
+  return user;
+};
+
+const unblockUser = async (id) => {
+  const user = await User.findByIdAndUpdate(id, { status: 'active' }, { new: true });
   if (!user) throw new Error('User not found');
   return user;
 };
@@ -19,5 +31,7 @@ const deleteUser = async (id) => {
 module.exports = {
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  blockUser,
+  unblockUser
 };

@@ -4,8 +4,7 @@ const register = async (req, res) => {
   try {
     const { userID, firstName, lastName, email, password, phoneNumber } = req.body;
 
-    // Prevent clients from creating Admin accounts by insisting any requested role of 'Admin' is rejected
-    if (req.body && req.body.role === 'Admin') {
+    if (req.body.role === 'Admin') {
       return res.status(403).json({ message: 'Cannot register as Admin. Admin account is fixed.' });
     }
 
@@ -16,7 +15,7 @@ const register = async (req, res) => {
       email,
       password,
       phoneNumber,
-      role: 'student', // assign default role server-side
+      role: 'student',
       is_member: true,
       expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     };
@@ -29,9 +28,15 @@ const register = async (req, res) => {
     res.status(201).json({ message: 'User registered successfully', user });
 
   } catch (err) {
+    // 👇 Check for MongoDB duplicate key error
+    if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+      return res.status(409).json({ message: 'User already registered with this email' });
+    }
+
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
 
 
 
@@ -41,10 +46,27 @@ const login = async (req, res) => {
     const { token, user } = await authService.loginuser(email, password);
     res.json({ token, user });
   } catch (err) {
-    console.log('error')
-    res.status(401).json({ error: err.message });
+  console.error('Login error:', err && (err.stack || err));
+  res.status(401).json({ error: err.message });
     
   }
 };
 
-module.exports = { register, login };
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; // Get the authenticated user's ID
+    const updatedData = req.body;
+
+    // If a new profile image is uploaded, include it in the update
+    if (req.file) {
+      updatedData.profileImage = req.file.path; // Assuming multer is set up
+    }
+
+    const updatedUser = await authService.updateUserProfile(userId, updatedData);
+    res.json({ message: 'Profile updated successfully', user: updatedUser });
+  } catch (err) {
+  console.error('Update profile error:', err && (err.stack || err));
+  res.status(500).json({ message: 'Update failed', error: err.message });
+  }
+};
+module.exports = { register, login , updateProfile};

@@ -12,7 +12,7 @@ router.post(
   '/',
   authMiddleware.isAuthenticated,
   Role.isAdmin,
-  parser.single('image'), 
+  parser.single('imageUrl'), 
   bookController.create
 );
 

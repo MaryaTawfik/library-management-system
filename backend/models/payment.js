@@ -6,16 +6,21 @@ const paymentSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  amount: {
-    type: Number,
-    required: true
-    
-  },
+ 
+ amount: {
+  type: Number,
+  required: true,
+  enum: {
+    values: [300, 500, 1000],
+    message: 'Amount must be one of 300, 500, or 1000'
+  }
+},
+
    paymentProof: {
   type: String,
   required: true,
   trim: true,
-  default: 'https://via.placeholder.com/150',
+  
 },
 
   status: {

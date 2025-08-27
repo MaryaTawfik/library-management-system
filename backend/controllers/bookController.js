@@ -1,4 +1,5 @@
 const bookService=require('../services/bookService')
+const cloudinary = require('../utils/cloudinary')
 
 const getAll = async(req,res)=>{
     
@@ -37,7 +38,27 @@ const create = async (req, res) => {
       description
     } = req.body;
 
-    const imageUrl = req.file ? req.file.path : undefined; // From Cloudinary
+        // Prefer Cloudinary's secure_url when available, otherwise try to upload the file explicitly
+        let imageUrl;
+        if (req.file && req.file.imageUrl) {
+            imageUrl = req.file.imageUrl;
+        } else if (req.file && req.file.path) {
+            // multer-storage-cloudinary usually sets `path` to the uploaded URL as well, but prefer imageUrl
+            imageUrl = req.file.path;
+        } else if (req.file && req.file.buffer) {
+            // If using memory storage or Postman sent raw buffer, upload explicitly
+            try {
+                const uploadResult = await cloudinary.uploadImage(req.file.buffer, { folder: 'library' });
+                imageUrl = uploadResult.imageUrl || uploadResult.url;
+            } catch (uploadErr) {
+                console.error('Cloudinary upload failed:', uploadErr);
+                return res.status(500).json({ status: 'error', message: 'Image upload failed', details: uploadErr.message });
+            }
+        } else if (req.body && req.body.imageUrl) {
+            imageUrl = req.body.imageUrl;
+        } else {
+            imageUrl = undefined;
+        }
 
     const newBook = await bookService.createBook(
       title,

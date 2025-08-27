@@ -1,13 +1,28 @@
 const paymentService =require('../services/payment_service')
-const createpayment = async (req,res)=>{
-     try {
+const createpayment = async (req, res) => {
+    try {
         const { userId, amount } = req.body;
-        const paymentProof = req.file.path; // Get the URL of the uploaded file
+        const paymentProof = req.file.path;
 
         const newPayment = await paymentService.createPayment(userId, amount, paymentProof);
         res.status(201).json({ status: 'success', message: 'Payment created successfully', data: newPayment });
     } catch (err) {
-        res.status(400).json({ status: 'error', message: err.message });
+        console.error(err); 
+
+        
+        let userFriendlyMessage;
+
+        if (err.name === 'ValidationError') {
+            userFriendlyMessage = 'Please ensure all required fields are filled out correctly.';
+        } else if (err.code === 'LIMIT_FILE_SIZE') {
+            userFriendlyMessage = 'The uploaded file is too large. Please upload a file smaller than 2MB.';
+        } else if (err.message.includes('not found')) {
+            userFriendlyMessage = 'The specified user does not exist. Please check the user ID.';
+        } else {
+            userFriendlyMessage = 'An unexpected error occurred. Please try again later.';
+        }
+
+        res.status(400).json({ status: 'error', message: userFriendlyMessage });
     }
 };
 const getuserpayment =async (req,res)=>{
@@ -19,15 +34,21 @@ const getuserpayment =async (req,res)=>{
         res.status(500).json({message: 'can not get user payments',error:error.message});
 
     }
-}
-const getAllpayments=async(req,res)=>{
-    try{
-    const payment = await paymentService.getAllPayments();
-    res.json({ data:payment})}
-    catch(error){
-        res.status(500).json({message:'error can not get all payments', error: error.message})
+}//what should the response be
+const getAllpayments = async (req, res) => {
+    try {
+        const payments = await paymentService.getAllPayments();
+        res.json({ data: payments });
+    } catch (error) {
+        console.error(error); // Log the error for server-side debugging
+
+        // Generate a user-friendly error message
+        res.status(500).json({
+            message: 'Unable to retrieve payments at this time. Please try again later.',
+            error: error.message 
+        });
     }
-}
+};
 
 const updatepaymentstatus = async (req, res) => {
   const id = req.params.id;

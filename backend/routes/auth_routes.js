@@ -9,9 +9,11 @@
 // module.exports = router;
 const express = require('express');
 const { body } = require('express-validator');
-const User = require('../models/users'); // required for custom DB checks
+const User = require('../models/users'); 
 const authController = require('../controllers/auth_controller');
-
+const { isAuthenticated } = require('../middlewares/authenticate')
+const parser = require('../middlewares/multer')
+const {  isStudent } = require('../middlewares/role');
 const router = express.Router();
 
 const registerValidation = [
@@ -73,5 +75,5 @@ const loginValidation = [
 
 router.post('/register', registerValidation, authController.register);
 router.post('/login', loginValidation, authController.login);
-
+router.put('/profile', isAuthenticated, isStudent, parser.single('profileImage'), authController.updateProfile);
 module.exports = router;
