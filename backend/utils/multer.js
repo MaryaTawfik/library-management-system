@@ -1,15 +1,11 @@
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const multer = require("multer");
-const cloudinary = require("../config/cloudinary");
+const multer = require('multer');
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "books",       
-    allowed_formats: ["jpg", "jpeg", "png"]
-  }
+// Use memory storage to accept file buffers, then upload explicitly via utils/cloudinary
+const storage = multer.memoryStorage();
+
+const parser = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 } // 2MB max
 });
-
-const parser = multer({ storage });
 
 module.exports = parser;

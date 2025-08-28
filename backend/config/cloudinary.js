@@ -1,9 +1,3 @@
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-module.exports = cloudinary;
+// Re-export the canonical Cloudinary helper implemented in utils/cloudinary.js
+// This prevents duplicate configuration and keeps a single source of truth
+module.exports = require('../utils/cloudinary');
