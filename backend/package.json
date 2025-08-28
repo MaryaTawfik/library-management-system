@@ -8,7 +8,10 @@
   },
   "scripts": {
     "start": "node app.js",
+
     "build": "npm install --no-audit --no-fund && node app.js",
+    "build": "npm install --no-audit --no-fund",
+
     "dev": "nodemon app.js"
   },
   "keywords": [],
