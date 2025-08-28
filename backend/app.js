@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectDB = require('./config/database.js');
 const bookRoutes = require('./routes/bookRoutes')
 const auth_route = require('./routes/auth_routes')
+const borrowRoute = require('./routes/borrowRoute')
 const seedAdmin = require('./utils/seeAdmin')
 dotenv.config()
 
@@ -16,6 +17,7 @@ seedAdmin();
 connectDB();
 app.use('/books' , bookRoutes);
 app.use('/auth', auth_route);
+app.use('/api' , borrowRoute)
 
 app.get('/' , (req,res)=>{
     res.send(`${process.env.APP_NAME} is running`);
