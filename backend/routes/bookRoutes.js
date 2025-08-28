@@ -1,8 +1,9 @@
-const parser = require('../utils/multer');
+const express = require('express');
+const router = express.Router();
 const bookController = require('../controllers/bookController');
-const authMiddleware = require('../middlewares/authMiddleware');
-const Role = require('../middlewares/roleMiddleware');
-const router = require('express').Router();
+const authMiddleware = require('../middlewares/authenticate');
+const Role = require('../middlewares/role');
+const parser = require('../middlewares/multer');
 
 router.get('/', bookController.getAll);
 router.get('/:id', bookController.getOne);
