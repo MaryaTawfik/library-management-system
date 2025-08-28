@@ -14,6 +14,7 @@ const authController = require('../controllers/auth_controller');
 const { isAuthenticated } = require('../middlewares/authenticate')
 const parser = require('../middlewares/multer')
 const {  isStudent } = require('../middlewares/role');
+
 const router = express.Router();
 
 const registerValidation = [
@@ -73,7 +74,13 @@ const loginValidation = [
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
-router.post('/register', registerValidation, authController.register);
+router.post(
+  '/register',
+  parser.single('profileImage'), // ✅ Add this to handle file upload
+  registerValidation,
+  authController.register
+);
+
 router.post('/login', loginValidation, authController.login);
 router.put('/profile', isAuthenticated, isStudent, parser.single('profileImage'), authController.updateProfile);
 module.exports = router;
