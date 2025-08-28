@@ -35,6 +35,12 @@ const bookSchema=new mongoose.Schema({
         trim:true,
         maxlength:2000
     },
+    imageUrl: {
+    type: String 
+  },
+  imageId: {
+    type: String 
+  }
 
 
 }, {timestamps:true})

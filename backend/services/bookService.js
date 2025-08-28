@@ -1,20 +1,20 @@
-const book = require('../models/book')
+const Book = require('../models/book')
 
 const getAllBooks=async()=>{
-    return await book.find()
+    return await Book.find()
 };
 const getBookById = async(id)=>{
-    return await book.findById(id)
+    return await Book.findById(id)
 };
-const createBook = async(title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description)=>{
-    newBook = await book.create({title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description});
+const createBook = async(title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description , imageUrl,imageId)=>{
+    const newBook = await Book.create({title , author , publishedYear ,catagory , totalcopies , avaliablecopies , isbn , pages , description ,  imageUrl,imageId});
     return newBook;
 }
 const deleteBook = async(id)=>{
-    return await book.findByIdAndDelete(id)
+    return await Book.findByIdAndDelete(id)
 }
 const updateBook = async(id ,updatedData)=>{
-    const updatedBooks =  await book.findByIdAndUpdate(id ,updatedData  , {new:true} )
+    const updatedBooks =  await Book.findByIdAndUpdate(id ,updatedData  , {new:true} )
     return updatedBooks
 }
 
