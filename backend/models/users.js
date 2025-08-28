@@ -9,12 +9,14 @@ const usersSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 6 },
   department: { type: String, trim: true },
   phoneNumber: { type: Number, required: true },
-  acadamicYear: { type: String, trim: true, enum: ['1st', '2nd', '3rd', '4th', '5th'] },
+  acadamicYear: { type: Date, trim: true, enum: ['1st', '2nd', '3rd', '4th', '5th'] },
   gender: { type: String, trim: true, enum: ['male', 'female'] },
   role: { type: String, trim: true, enum: ['Admin', 'student'], default: 'student', required: true },
   status: { type: String, trim: true, enum: ['blocked', 'active'], default: 'active' },
   is_member: { type: Boolean, required: true },
   expiryDate: { type: Date, required: true }
+  ,
+  profileImage: { type: String, trim: true, default: 'https://via.placeholder.com/150' }
 }, { timestamps: true });
 
 usersSchema.pre('save', async function (next) {
