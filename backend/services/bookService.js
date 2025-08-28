@@ -1,11 +1,13 @@
-const book = require('../models/book')
+const Book = require('../models/book');
 
-const getAllBooks=async()=>{
-    return await book.find()
+const getAllBooks = async () => {
+  return await Book.find();
 };
-const getBookById = async(id)=>{
-    return await book.findById(id)
+
+const getBookById = async (id) => {
+  return await Book.findById(id);
 };
+
 const createBook = async (
   title,
   author,
@@ -18,7 +20,7 @@ const createBook = async (
   description,
   imageUrl
 ) => {
-  const newBook = await book.create({
+  const newBook = await Book.create({
     title,
     author,
     publishedYear,
@@ -34,18 +36,9 @@ const createBook = async (
   return newBook;
 };
 
-const deleteBook = async(id)=>{
-    return await book.findByIdAndDelete(id)
-}
-const updateBook = async(id ,updatedData)=>{
-    const updatedBooks =  await book.findByIdAndUpdate(id ,updatedData  , {new:true} )
-    return updatedBooks
-}
+const deleteBook = async (id) => {
+  return await Book.findByIdAndDelete(id);
+};
 
-module.exports = {
-    getAllBooks, 
-    getBookById,
-    createBook,
-    deleteBook,
-    updateBook
-}
+const updateBook = async (id, updatedData) => {
+  const updatedBooks = await Book.findByIdAndUpdate(id, update
