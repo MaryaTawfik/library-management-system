@@ -1,14 +1,17 @@
-const express = require('express')
-const router = express.Router()
-const bookController = require('../controllers/bookController')
-const Role = require('../middlewares/role');
-const authMiddleware = require('../middlewares/authenticate');
-const parser = require('../utils/multer')
+const parser = require('../utils/multer');
+const bookController = require('../controllers/bookController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const Role = require('../middlewares/roleMiddleware');
+const router = require('express').Router();
 
 router.get('/', bookController.getAll);
 router.get('/:id', bookController.getOne);
-router.post('/', parser.single('image'), authMiddleware.isAuthenticated, Role.isAdmin, bookController.create);
-router.patch('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.update);
-router.delete('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.remove);
+router.post(
+  '/',
+  authMiddleware.isAuthenticated,
+  Role.isAdmin,
+  parser.single('imageUrl'),  // keep the field name your controller expects
+  bookController.create
+);
 
 module.exports = router;

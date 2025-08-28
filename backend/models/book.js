@@ -36,11 +36,19 @@ const bookSchema=new mongoose.Schema({
         maxlength:2000
     },
     imageUrl: {
+
+    type: String,
+    trim: true,
+    default: 'https://via.placeholder.com/150' 
+  },
+
+=======
     type: String 
   },
   imageId: {
     type: String 
   }
+
 
 
 }, {timestamps:true})

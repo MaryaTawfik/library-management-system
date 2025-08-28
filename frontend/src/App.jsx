@@ -16,10 +16,17 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Welcome from "./pages/Welcome";
 import BookCatalogPage from "./pages/BookCatalogPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
-  const userRole = "admin"; // change to "admin" to test
+
+  const userRole = "admin"; // change as needed
+
+  // get user from localStorage (after login, you should save it there)
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userRole = user?.role || null;
+
 
   return (
     <div className="flex min-h-screen">
@@ -34,17 +41,22 @@ const App = () => {
       {SidebarToggle && (
         <div
           onClick={() => setSidebarToggle(false)}
-          className="fixed inset-0  opacity-50 z-40 "
-
+          className="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
         />
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div
+        className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
+          SidebarToggle ? "ml-40 lg:ml-40" : "ml-0"
+        }`}
+      >
         {/* Navbar */}
-        <Navbar SidebarToggle={SidebarToggle} setSidebarToggle={setSidebarToggle} />
+        <Navbar
+          SidebarToggle={SidebarToggle}
+          setSidebarToggle={setSidebarToggle}
+        />
 
-        {/* Page content */}
         <main className="flex-grow p-6 mt-16">
           <Routes>
             <Route path="/home" element={<Home />} />
@@ -60,8 +72,34 @@ const App = () => {
             )}
             {userRole === "admin" && (
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
             )}
+            {/* Student routes */}
+            <Route
+              path="/borrow-history"
+              element={
+                <ProtectedRoute role="student">
+                  <BorrowHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute role="student">
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin routes */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+
             <Route path="/" element={<Navigate to="/books" />} />
             <Route path="/books" element={<BookCatalogPage />} />
             <Route path="/books/:id" element={<BookDetailsPage />} />
@@ -70,18 +108,14 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/guest" element={<Guest />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-        
           </Routes>
         </main>
 
         {/* Footer */}
-        <footer className="bg-white text-center py-3">
-          footer
-        </footer>
+        <footer className="bg-white text-center py-3">footer</footer>
       </div>
     </div>
   );
 };
 
 export default App;
-
