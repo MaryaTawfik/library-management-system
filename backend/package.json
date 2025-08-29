@@ -8,16 +8,7 @@
   },
   "scripts": {
     "start": "node app.js",
-
-
     "build": "npm install --no-audit --no-fund",
-
-    "build": "npm install --no-audit --no-fund && node app.js",
-
-    "build": "npm install --no-audit --no-fund && node app.js",
-    "build": "npm install --no-audit --no-fund",
-
-
     "dev": "nodemon app.js"
   },
   "keywords": [],
@@ -26,9 +17,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
-
-    "cloudinary": "^2.7.0",
-
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
