@@ -42,9 +42,9 @@ const bookSchema=new mongoose.Schema({
     default: 'https://via.placeholder.com/150' 
   },
 
-=======
-    type: String 
-  },
+
+    
+  
   imageId: {
     type: String 
   }
