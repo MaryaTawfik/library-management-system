@@ -38,51 +38,36 @@ const create = async (req, res) => {
       description
     } = req.body;
 
+    // Validate required fields
     if (!title || !author || !isbn) {
-      return res.status(400).json({ 
-        status: 'error', 
-        message: 'title, author and isbn are required' 
-      });
-    // Handle image upload from different cases
-    let imageUrl;
-    if (req.file && req.file.imageUrl) {
-      // Some middlewares like multer-storage-cloudinary provide imageUrl
-      imageUrl = req.file.imageUrl;
-    } else if (req.file && req.file.path) {
-      // Multer storage often provides `path` = Cloudinary URL
-      imageUrl = req.file.path;
-    } else if (req.file && req.file.buffer) {
-      // If buffer, upload manually with helper
-      try {
-        const uploadResult = await cloudinary.uploadImage(req.file.buffer, {
-          folder: 'library'
-        });
-        imageUrl = uploadResult.imageUrl || uploadResult.url;
-      } catch (uploadErr) {
-        console.error('Cloudinary upload failed:', uploadErr);
-        return res.status(500).json({
-          status: 'error',
-          message: 'Image upload failed',
-          details: uploadErr.message
-        });
-      }
-    } else if (req.body && req.body.imageUrl) {
-      // If client already provides an imageUrl
-      imageUrl = req.body.imageUrl;
-    } else {
-      imageUrl = undefined;
+      return res.status(400).json({ status: 'error', message: 'title, author and isbn are required' });
     }
 
-    // With multer-storage-cloudinary
-    let imageUrl = null;
-    if (req.file) {
-      imageUrl = req.file.path; // ✅ direct Cloudinary URL
-      console.log("📷 Uploaded file from multer-storage-cloudinary:", req.file);
-    } else if (req.body.imageUrl) {
-      // Fallback if client provides an existing URL
-      imageUrl = req.body.imageUrl;
+    // Determine image URL from multiple possible sources
+    let imageUrl;
+    try {
+      if (req.file) {
+        console.log('Received file metadata:', req.file);
+        // multer-storage-cloudinary typically sets `path` to the uploaded URL
+        if (req.file.path) {
+          imageUrl = req.file.path;
+        } else if (req.file.secure_url) {
+          imageUrl = req.file.secure_url;
+        } else if (req.file.buffer) {
+          // If using memory storage or client sent buffer, upload to Cloudinary
+          const uploaded = await cloudinary.uploadBuffer(req.file.buffer, req.file.mimetype, { folder: 'library' });
+          imageUrl = cloudinary.extractUrl(uploaded);
+        }
+      } else if (req.body && req.body.imageUrl) {
+        imageUrl = req.body.imageUrl; // client provided direct URL
+      }
+    } catch (uploadErr) {
+      console.error('Cloudinary upload failed:', uploadErr);
+      return res.status(500).json({ status: 'error', message: 'Image upload failed', details: uploadErr.message || String(uploadErr) });
     }
-    console.log("📷 Final imageUrl to be saved:", imageUrl);
+
+    console.log('Final imageUrl to save:', imageUrl);
+
     const newBook = await bookService.createBook(
       title,
       author,
@@ -96,18 +81,10 @@ const create = async (req, res) => {
       imageUrl
     );
 
-    return res.status(201).json({
-      status: 'success',
-      message: 'Created successfully',
-      data: newBook
-    });
-
+    return res.status(201).json({ status: 'success', message: 'Created successfully', data: newBook });
   } catch (err) {
-    console.error("❌ Create book error:", err);
-    return res.status(500).json({
-      status: 'error',
-      message: err.message || JSON.stringify(err)
-    });
+    console.error('Create book error:', err);
+    return res.status(500).json({ status: 'error', message: err.message || String(err) });
   }
 };
 
