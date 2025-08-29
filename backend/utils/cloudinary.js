@@ -27,9 +27,7 @@ cloudinary.uploadBuffer = async (buffer, mime = 'image/jpeg', options = {}) => {
   return cloudinary.uploadImage(dataUri, options);
 };
 
-/**
- * Extract a usable URL (preferring secure_url) from a Cloudinary upload result.
- */
+
 cloudinary.extractUrl = (result) => result?.secure_url || result?.url || result?.path;
 
 module.exports = cloudinary;
