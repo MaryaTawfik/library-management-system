@@ -8,10 +8,16 @@ const bookBorrow = async(bookId , userId )=>{
     const member=await User.findById(userId);
     // if(!member || !member.memberActive){
     //     throw new Error("User must be an acitve member")
+     if (!member) {
+    throw new Error("User not found");
+  }
+  if (member.status === "blocked") {
+    throw new Error("Blocked users cannot borrow books");
+  }
 
-    if (!member || !member.is_member || (member.expiryDate && member.expiryDate < Date.now())) {
-  throw new Error("User must be an active member with valid subscription");
-    }
+     if (!member.is_member || (member.expiryDate && member.expiryDate < Date.now())) {
+    throw new Error("User must be an active member with valid subscription");
+  }
     const book=await Book.findById(bookId)
     if(!book || !book.copiesAvailable<=0){
         throw new Error("No copies available")
@@ -31,7 +37,7 @@ const bookBorrow = async(bookId , userId )=>{
     })
 
 
-  book.copiesAvavliable-=1;
+  book.avaliablecopies -= 1;
   await book.save();
 
   member.borrowedBooks = member.borrowedBooks || [];

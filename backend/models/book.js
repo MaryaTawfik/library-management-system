@@ -42,16 +42,18 @@ const bookSchema=new mongoose.Schema({
     default: 'https://via.placeholder.com/150' 
   },
 
+// borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'book' }],
 
+}, { timestamps: true });
     
   
-  imageId: {
-    type: String 
-  }
+//   imageId: {
+//     type: String 
+//   }
 
 
 
-}, {timestamps:true})
+
 
 
 module.exports = mongoose.model('book' , bookSchema)

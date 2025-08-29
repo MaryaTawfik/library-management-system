@@ -5,7 +5,7 @@ const { isAuthenticated } = require('../middlewares/authenticate');
 const { isAdmin } = require('../middlewares/role');
 
 router.get('/users', isAuthenticated, isAdmin, adminController.getAllUsers);
-router.put('/users/:id', isAuthenticated, isAdmin, adminController.updateUser);
+// router.put('/users/:id', isAuthenticated, isAdmin, adminController.updateUser);
 router.delete('/users/:id', isAuthenticated, isAdmin, adminController.deleteUser);
 
 

@@ -81,6 +81,13 @@ const isAuthenticated = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
+if (user.expiryDate && user.expiryDate < new Date()) {
+      if (user.is_member) {
+        user.is_member = false;
+        await user.save();
+        console.log(`Membership expired for user: ${user.email}`);
+      }
+    }
 
     if (user.status === 'blocked') {
       return res.status(403).json({ message: 'Account is blocked. Contact admin.' });

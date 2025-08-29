@@ -22,8 +22,8 @@ const register = async (req, res) => {
       password,
       phoneNumber,
       role: 'student',
-      is_member: true,
-      expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      // is_member: true,
+      // expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       profileImage // ✅ Add image to user data
     };
 

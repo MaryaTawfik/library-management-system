@@ -11,11 +11,11 @@ const updateUser = async (id, data) => {
   return user;
 };
 
-const blockUser = async (id) => {
-  const user = await User.findByIdAndUpdate(id, { status: 'blocked' }, { new: true });
-  if (!user) throw new Error('User not found');
-  return user;
-};
+// const blockUser = async (id) => {
+//   const user = await User.findByIdAndUpdate(id, { status: 'blocked' }, { new: true });
+//   if (!user) throw new Error('User not found');
+//   return user;
+// };
 
 const unblockUser = async (id) => {
   const user = await User.findByIdAndUpdate(id, { status: 'active' }, { new: true });
@@ -37,7 +37,7 @@ module.exports = {
   getAllUsers,
   updateUser,
   deleteUser,
-  blockUser,
+  // blockUser,
   unblockUser
   ,getBlockedUsers
 };
