@@ -71,9 +71,16 @@ const getUserPayment = async (userId) => {
   return await Payment.find({ userId });
 };
 
+const getBlockedUsers = async () => {
+  return await User.find({ status: 'blocked' }).select('-password');
+};
+
+
+
 module.exports = {
   createPayment,
   getAllPayments,
   updatePaymentAndMembership,
-  getUserPayment 
+  getUserPayment,
+  getBlockedUsers 
 };

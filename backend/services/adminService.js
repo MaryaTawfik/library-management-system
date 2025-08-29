@@ -1,8 +1,9 @@
 const User = require('../models/users');
 
 const getAllUsers = async () => {
-  return await User.find().select('-password');
+  return await User.find({ role: { $ne: 'Admin' } }).select('-password');
 };
+
 
 const updateUser = async (id, data) => {
   const user = await User.findByIdAndUpdate(id, data, { new: true }).select('-password');
@@ -28,10 +29,15 @@ const deleteUser = async (id) => {
   return user;
 };
 
+const getBlockedUsers = async () => {
+  return await User.find({ status: 'blocked' }).select('-password');
+};
+
 module.exports = {
   getAllUsers,
   updateUser,
   deleteUser,
   blockUser,
   unblockUser
+  ,getBlockedUsers
 };
