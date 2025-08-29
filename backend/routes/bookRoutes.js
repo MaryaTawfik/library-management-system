@@ -14,5 +14,7 @@ router.post(
   Role.isAdmin,
   bookController.create
 );
+router.patch('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.update);
+router.delete('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.remove);
 
 module.exports = router;
