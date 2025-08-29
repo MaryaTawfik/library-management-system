@@ -1,6 +1,7 @@
 const bookService = require('../services/bookService');
 const cloudinary = require('../utils/cloudinary');
 
+
 const getAll = async (req, res) => {
   try {
     const books = await bookService.getAllBooks();
@@ -37,6 +38,11 @@ const create = async (req, res) => {
       description
     } = req.body;
 
+    if (!title || !author || !isbn) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'title, author and isbn are required' 
+      });
     // Handle image upload from different cases
     let imageUrl;
     if (req.file && req.file.imageUrl) {
@@ -67,6 +73,16 @@ const create = async (req, res) => {
       imageUrl = undefined;
     }
 
+    // With multer-storage-cloudinary
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = req.file.path; // ✅ direct Cloudinary URL
+      console.log("📷 Uploaded file from multer-storage-cloudinary:", req.file);
+    } else if (req.body.imageUrl) {
+      // Fallback if client provides an existing URL
+      imageUrl = req.body.imageUrl;
+    }
+    console.log("📷 Final imageUrl to be saved:", imageUrl);
     const newBook = await bookService.createBook(
       title,
       author,
@@ -80,21 +96,29 @@ const create = async (req, res) => {
       imageUrl
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       status: 'success',
       message: 'Created successfully',
       data: newBook
     });
+
   } catch (err) {
-    res.status(400).json({ status: 'error', message: err.message });
+    console.error("❌ Create book error:", err);
+    return res.status(500).json({
+      status: 'error',
+      message: err.message || JSON.stringify(err)
+    });
   }
 };
 
+
+  
 const update = async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
   try {
     const updatedBook = await bookService.updateBook(id, updatedData);
+
     if (!updatedBook) {
       return res.status(400).json({ message: 'Book not found' });
     }

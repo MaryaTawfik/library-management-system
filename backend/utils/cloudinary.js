@@ -7,19 +7,27 @@ cloudinary.config({
 });
 
 /**
- * Upload a file (path, remote url, or base64) to Cloudinary.
+ * Upload a file (path, remote url, or base64/data URI) to Cloudinary.
  * Returns the full upload result from cloudinary.uploader.upload.
  */
-cloudinary.uploadImage = async (filePathOrBuffer, options = {}) => {
+cloudinary.uploadImage = async (filePathOrData, options = {}) => {
   if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
     throw new Error('Cloudinary credentials are not configured in environment variables');
   }
-
   const uploadOptions = Object.assign({ folder: 'library' }, options);
-
-  // cloudinary.uploader.upload accepts a path, remote url or data URI/base64
-  const result = await cloudinary.uploader.upload(filePathOrBuffer, uploadOptions);
-  return result;
+  return cloudinary.uploader.upload(filePathOrData, uploadOptions);
 };
+
+/**
+ * Upload a raw Buffer (e.g. from memory storage). We must convert it to a data URI.
+ */
+cloudinary.uploadBuffer = async (buffer, mime = 'image/jpeg', options = {}) => {
+  if (!buffer) throw new Error('No buffer provided');
+  const dataUri = `data:${mime};base64,${buffer.toString('base64')}`;
+  return cloudinary.uploadImage(dataUri, options);
+};
+
+
+cloudinary.extractUrl = (result) => result?.secure_url || result?.url || result?.path;
 
 module.exports = cloudinary;
