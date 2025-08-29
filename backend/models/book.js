@@ -35,15 +35,16 @@ const bookSchema=new mongoose.Schema({
         trim:true,
         maxlength:2000
     },
-    imageUrl: {
-    type: String,
-    trim: true,
-    default: 'https://via.placeholder.com/150' 
-  },
+        imageUrl: {
+            type: String,
+            trim: true,
+            default: 'https://via.placeholder.com/150'
+        },
+        imageId: {
+            type: String,
+            default: null
+        }
 
+}, { timestamps: true });
 
-
-}, {timestamps:true})
-
-
-module.exports = mongoose.model('book' , bookSchema)
+module.exports = mongoose.model('book', bookSchema);

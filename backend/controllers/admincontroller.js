@@ -49,11 +49,21 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Delete failed', error: err.message });
   }
 };
+const getBlockedUsers = async (req, res) => {
+  try {
+    const blockedUsers = await adminService.getBlockedUsers();
+    res.json({ message: 'Blocked users retrieved successfully', data: blockedUsers });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch blocked users', error: err.message });
+  }
+};
+
 
 module.exports = {
   getAllUsers,
   updateUser,
   deleteUser,
   blockUser,
-  unblockUser
+  unblockUser,
+  getBlockedUsers
 };
