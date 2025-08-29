@@ -14,7 +14,7 @@ const usersSchema = new mongoose.Schema({
   role: { type: String, trim: true, enum: ['Admin', 'student'], default: 'student', required: true },
   status: { type: String, trim: true, enum: ['blocked', 'active'], default: 'active' },
   is_member: { type: Boolean, required: true, default:false },
-  expiryDate: { type: Date, required: true }
+  expiryDate: { type: Date}
   ,
   profileImage: { type: String, trim: true, default: 'https://via.placeholder.com/150' }
 }, { timestamps: true });
