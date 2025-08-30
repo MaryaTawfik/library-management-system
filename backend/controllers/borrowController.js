@@ -100,4 +100,15 @@ const getAllBorrows = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-module.exports= {borrowBook, returnBook ,getBorrowHistory ,getAllBorrows , getActiveBorrows }
+const deleteBorrow = async (req, res) => {
+  try {
+    const { borrowId } = req.params;
+    const result = await borrowService.deleteBorrow(borrowId);
+
+    res.status(200).json({ status: "success", ...result });
+  } catch (err) {
+    res.status(400).json({ status: "error", message: err.message });
+  }
+};
+
+module.exports= {borrowBook, returnBook ,getBorrowHistory ,getAllBorrows , getActiveBorrows ,deleteBorrow  }

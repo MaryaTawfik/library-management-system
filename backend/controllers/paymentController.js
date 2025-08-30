@@ -20,8 +20,10 @@ const createpayment = async (req, res) => {
         } else if (err.message.includes('not found')) {
             userFriendlyMessage = 'The specified user does not exist. Please check the user ID.';
         }
-        else if (err.message === 'Invalid payment amount') {
-        userFriendlyMessage = 'Invalid payment amount. Please pay 300 for 3 month, 500 for 6 months, or 1000 for 1 year.';}
+        else if (err.message.includes('Invalid payment amount')) {
+  userFriendlyMessage = 'Invalid payment amount. Please pay 300 for 1 month, 500 for 3 months, or 1000 for 1 year.';
+}
+
          else {
             userFriendlyMessage = 'An unexpected error occurred. Please try again later.';
         }

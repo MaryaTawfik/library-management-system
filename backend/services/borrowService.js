@@ -99,5 +99,34 @@ const getAllBorrows = async () => {
     .sort({ createdAt: -1 });
 };
 
+const deleteBorrow = async (borrowId) => {
+  const borrow = await Borrow.findById(borrowId).populate("book user");
 
-module.exports = {bookBorrow , returnBook , getBorrowHistory, getAllBorrows , getActiveBorrowsForUser }
+  if (!borrow) {
+    throw new Error("Borrow record not found");
+  }
+
+  // Restore book copies if not already returned
+  const book = borrow.book;
+  if (borrow.status !== "returned" && book) {
+    book.copiesAvailable += 1;
+    await book.save();
+  }
+
+  // Remove borrow reference from user
+  const user = borrow.user;
+  if (user && Array.isArray(user.borrowedBooks)) {
+    user.borrowedBooks = user.borrowedBooks.filter(
+      (b) => b.toString() !== book._id.toString()
+    );
+    await user.save();
+  }
+
+  // Finally, delete the borrow record
+  await Borrow.findByIdAndDelete(borrowId);
+
+  return { message: "Borrow record deleted successfully" };
+};
+
+
+module.exports = {bookBorrow , returnBook , getBorrowHistory, getAllBorrows , getActiveBorrowsForUser,deleteBorrow }

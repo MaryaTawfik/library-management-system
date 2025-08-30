@@ -126,8 +126,9 @@ const updatePaymentAndMembership = async (id, status) => {
 
 
 const getUserPayment = async (userId) => {
-  return await Payment.find({ userId });
+  return await Payment.find({ userId: userId }).populate('userId', 'userID firstName lastName email');
 };
+
 
 const getBlockedUsers = async () => {
   return await User.find({ status: 'blocked' }).select('-password');
