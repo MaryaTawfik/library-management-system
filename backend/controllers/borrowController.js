@@ -36,8 +36,8 @@ const getBorrowHistory = async (req, res) => {
     const userResponsed = history.map(borrow => ({
       title: borrow.book?.title,
       author: borrow.book?.author,
-      category: borrow.book?.category,
-      //image: borrow.book?.image,
+      category: borrow.book?.catagory,
+      image: borrow.book?.imageUrl,
       borrowDate: borrow.borrowDate,
       supposedReturnDate: borrow.returnDate,   
       dueDate: borrow.duedate,                 

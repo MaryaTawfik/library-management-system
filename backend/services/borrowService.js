@@ -82,13 +82,13 @@ const returnBook = async (borrowId) => {
 
 const getBorrowHistory = async (userId) => {
   return await Borrow.find({ user: userId })
-    .populate("book", "title author category" )
+    .populate("book", "title author catagory" )
     .sort({ createdAt: -1 });
 };
 
 const getActiveBorrowsForUser = async (userId) => {
   return await Borrow.find({ user: userId, status: "borrowed" })
-    .populate("book", "title author catagory image") // include book details
+    .populate("book", "title author catagory imageUrl") // include book details
     .sort({ borrowDate: -1 });
 };
 
