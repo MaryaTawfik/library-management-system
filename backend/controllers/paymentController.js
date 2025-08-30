@@ -19,7 +19,10 @@ const createpayment = async (req, res) => {
             userFriendlyMessage = 'The uploaded file is too large. Please upload a file smaller than 2MB.';
         } else if (err.message.includes('not found')) {
             userFriendlyMessage = 'The specified user does not exist. Please check the user ID.';
-        } else {
+        }
+        else if (err.message === 'Invalid payment amount') {
+        userFriendlyMessage = 'Invalid payment amount. Please pay 300 for 3 month, 500 for 6 months, or 1000 for 1 year.';}
+         else {
             userFriendlyMessage = 'An unexpected error occurred. Please try again later.';
         }
 
