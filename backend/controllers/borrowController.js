@@ -93,8 +93,8 @@ const getAllBorrows = async (req, res) => {
       },
       borrowDate: b.borrowDate,
       returnDate: b.returnDate,
-      status: b.status,
-      bookId:b.borrowId
+      status: b.status
+      
     }));
     res.status(201).json({ status: "success", data: adminView });
   } catch (error) {
