@@ -16,7 +16,7 @@ const usersSchema = new mongoose.Schema({
   is_member: { type: Boolean, required: true, default:false },
   expiryDate: { type: Date}
   ,
-  profileImage: { type: String, trim: true, default: 'https://via.placeholder.com/150' }
+  profileImage: { type: String, trim: true, default: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-svg%2Fprofile-placeholder&psig=AOvVaw2ot0_itMU9_Jc37Npt7h82&ust=1756628651663000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJi-sqGNso8DFQAAAAAdAAAAABAE' }
 }, { timestamps: true });
 
 usersSchema.pre('save', async function (next) {

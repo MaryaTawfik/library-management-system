@@ -39,7 +39,7 @@ const bookSchema=new mongoose.Schema({
 
     type: String,
     trim: true,
-    default: 'https://via.placeholder.com/150' 
+    default: 'https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg' 
   },
 
 // borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'book' }],

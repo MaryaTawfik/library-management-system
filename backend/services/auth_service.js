@@ -43,9 +43,14 @@ const loginuser = async (email, password) => {
 };
 
 const updateUserProfile = async (id, data) => {
-  const user = await User.findByIdAndUpdate(id, data, { new: true });
+  
+  const forbiddenFields = ['status', 'is_member', 'expiryDate', 'role'];
+  forbiddenFields.forEach(field => delete data[field]);
+
+  const user = await User.findByIdAndUpdate(id, data, { new: true }).select("-password");
   if (!user) throw new Error('User not found');
   return user;
 };
+
 
 module.exports = { registeruser, loginuser, updateUserProfile };
