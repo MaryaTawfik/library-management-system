@@ -31,7 +31,7 @@ const bookBorrow = async(bookId , userId )=>{
     const borrow = await Borrow.create({
         user:userId ,
         book:book._id,
-        returnDate:new Date(Date.now()+14*24*60*60*1000),
+        duedate:new Date(Date.now()+14*24*60*60*1000),
         
         status:"borrowed"
     })

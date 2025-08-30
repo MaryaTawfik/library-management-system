@@ -53,11 +53,10 @@ const login = async (req, res) => {
     const { token, user } = await authService.loginuser(email, password);
     res.json({ token, user });
   } catch (err) {
-
-    console.log('error')
-    res.status(401).json({ error: err.message });
-
-    
+    console.log('Login error:', err.message);
+    res.status(401).json({ 
+      message: 'Login failed. ' + err.message // More user-friendly message
+    });
   }
 };
 

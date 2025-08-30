@@ -64,7 +64,7 @@ const getActiveBorrows = async (req, res) => {
         image: b.book?.image
       },
       borrowDate: b.borrowDate,
-      supposedReturnDate: b.returnDate,
+      returnDate: b.returnDate,
       dueDate: b.duedate,
       status: b.status
     }));
