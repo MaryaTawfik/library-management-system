@@ -436,6 +436,11 @@ export default function Register() {
         name,
         email,
         password,
+
+      const res = await fetch("https://library-management-system-1-mrua.onrender.com/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
       // Save token and user info
       localStorage.setItem("token", res.data.token);

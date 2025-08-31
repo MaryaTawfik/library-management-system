@@ -23,7 +23,11 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
           <div className="p-1">
             <h1 className="lg:text-3xl text-left mb-6 font-[Merriweather]-Bold">
               <span className="text-black">My </span>
+
               <span className="text-yellow-700">Book </span>
+
+              <span className="text-[#FA7C54] ">Book </span>
+
               <br />
               <span className="text-black ml-5">Shelf</span>
             </h1>
@@ -58,6 +62,7 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
               </Link>
             </div>
           )}
+
 
           {/* Student-only Links */}
           {role === "student" && (
@@ -124,6 +129,31 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
               </Link>
             </div>
           )}
+
+            {/* Role-based Links */}
+            {userRole === "student" && (
+              <>
+                <Link to="/borrow-history" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
+                  📚 Borrow History
+                </Link>
+                <Link to="/borrowed-books" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
+                  📚 Borrowed Books
+                </Link>
+                <Link to="/payment" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
+                  💳 Payment
+                </Link>
+              </>
+            )}
+
+            {userRole === "admin" && (
+              
+              <Link to="/admin-dashboard" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
+                🛠 Admin Dashboard
+              </Link>
+              
+            )}
+          </div>
+
         </div>
 
         {/* --- Bottom Section --- */}

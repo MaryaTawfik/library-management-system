@@ -36,9 +36,15 @@ export default function BookCatalogPage() {
   }, [search, selectedCatagory, books]);
 
   return (
+
     <div className="min-h-screen px-6 py-8 max-w-7xl mx-auto bg-stone-500 rounded-2xl">
       <h1 className="text-3xl font-bold text-white mb-2">Book Catalog</h1>
       <p className="text-gray-300 text-sm mb-6">
+
+    <div className="min-h-screen px-8 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold text-cyan-950 mb-1">Book Catalog</h1>
+      <p className="text-gray-800 text-sm mb-6">
+
         Browse and search our library collection
       </p>
 

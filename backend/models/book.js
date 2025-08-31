@@ -15,6 +15,12 @@ const bookSchema = new mongoose.Schema(
     publishedYear: {
       type: Number,
     },
+    imageUrl: {
+    type: String,
+    trim: true,
+    default: 'https://via.placeholder.com/150' 
+  },
+
 
     catagory: {
       type: String,
