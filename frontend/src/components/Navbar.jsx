@@ -7,7 +7,7 @@ import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   return (
-    <header className="fixed w-full bg-white shadow-sm z-20">
+    <header className="fixed w-full bg-zinc-100 shadow-sm z-20">
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         {/* Left: Brand & Sidebar Toggle */}
         <div className="flex items-center gap-3 flex-shrink-0">

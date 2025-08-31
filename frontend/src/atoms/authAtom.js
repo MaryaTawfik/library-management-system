@@ -1,5 +1,6 @@
+// src/atoms/authAtom.js
 import { atom } from "jotai";
 
-export const userAtom = atom(null);
+const storedUser = JSON.parse(localStorage.getItem("user"));
 
-export const tokenAtom = atom(null);
+export const userAtom = atom(storedUser || null);
