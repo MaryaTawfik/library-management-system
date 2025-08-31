@@ -1,3 +1,9 @@
+
+import { useSetAtom } from "jotai";
+import { userAtom } from "../atoms/authAtom";
+import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+
 // import { useState } from "react";
 // import { Link, useNavigate } from "react-router-dom";
 // import { Eye, EyeOff } from "lucide-react";
@@ -146,10 +152,36 @@ import LogoTitle from "../components/LogoTitle";
 import bgImage from "../assets/librarypic.jpg";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const setUser = useSetAtom(userAtom);
   const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const credentials = {
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
+
+    try {
+      const res = await login(credentials);
+
+      if (res.status === "success") {
+        const userData = res.user; // adjust depending on backend
+
+        // Save in localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        // Update Jotai atom
+        setUser(userData);
+
+        // Navigate to home or dashboard
+        if (userData.role === "admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/home");
+        }
+      } else {
+        alert(res.message || "Login failed");
 
   // Jotai atoms for global state
   const [, setUser] = useAtom(userAtom);
@@ -192,11 +224,17 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.error || "Login failed. Try again.");
+      alert("Something went wrong!");
     }
   };
 
   return (
+    <form onSubmit={handleSubmit}>
+      <input type="email" name="email" required placeholder="Email" />
+      <input type="password" name="password" required placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
+
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
       style={{ backgroundImage: `url(${bgImage})` }}
