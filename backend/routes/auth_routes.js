@@ -83,5 +83,5 @@ router.post(
 );
 
 router.post('/login', loginValidation, validate,   authController.login);
-router.put('/profile', isAuthenticated, isStudent, singleUpload('profileImage'), authController.updateProfile);
+router.put('/profile', isAuthenticated, singleUpload('profileImage'), authController.updateProfile);
 module.exports = router;
