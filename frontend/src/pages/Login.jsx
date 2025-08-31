@@ -141,7 +141,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useAtom } from "jotai";
-import { userAtom, tokenAtom } from "../atoms/authAtom"; // <-- add this
+import { userAtom, tokenAtom } from "../atoms/authAtom"; // Jotai atoms
 import LogoTitle from "../components/LogoTitle";
 import bgImage from "../assets/librarypic.jpg";
 
@@ -151,34 +151,44 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // jotai atoms
+  // Jotai atoms for global state
   const [, setUser] = useAtom(userAtom);
   const [, setToken] = useAtom(tokenAtom);
 
+  // Update form data dynamically
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle login
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError(""); // reset error
+
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const res = await axios.post(
+        "https://library-management-system-1-mrua.onrender.com/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
 
-      // ✅ Save token & user
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      const { token, user } = res.data;
 
-      setToken(res.data.token);
-      setUser(res.data.user); // { id, name, role, ... }
-      
-      if(res.data.user.role === "admin"){
+      // ✅ Save token & user in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // ✅ Update Jotai atoms
+      setToken(token);
+      setUser(user);
+
+      // ✅ Redirect based on role
+      if (user.role === "admin") {
         navigate("/admin-dashboard");
       } else {
-        navigate("/");
+        navigate("/"); // regular user homepage
       }
     } catch (err) {
       console.error(err);
@@ -192,8 +202,10 @@ export default function Login() {
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/60"></div>
+
       <div className="relative w-[480px] p-8 rounded-xl shadow-lg bg-white/5 border border-white/20 backdrop-blur-lg text-white">
         <LogoTitle />
+
         <p className="text-center text-gray-200 mt-2">Welcome Back!</p>
         <p className="text-center text-xs text-gray-300 mb-6">
           Sign in to continue to your Digital Library
@@ -202,6 +214,7 @@ export default function Login() {
         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
 
         <form onSubmit={handleLogin}>
+          {/* Email */}
           <label className="block text-sm text-gray-300 mb-1">Email</label>
           <input
             type="email"
@@ -213,6 +226,7 @@ export default function Login() {
             required
           />
 
+          {/* Password */}
           <label className="block text-sm text-gray-300 mb-1">Password</label>
           <div className="relative mb-4">
             <input
@@ -233,6 +247,7 @@ export default function Login() {
             </button>
           </div>
 
+          {/* Remember me & Forgot password */}
           <div className="flex justify-between items-center mb-6 text-sm text-gray-200">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="accent-[#FA7C54]" />
@@ -246,6 +261,7 @@ export default function Login() {
             </Link>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-[#FA7C54] text-white py-2 rounded-lg hover:bg-[#e66c45] transition"
@@ -254,6 +270,7 @@ export default function Login() {
           </button>
         </form>
 
+        {/* Bottom links */}
         <div className="flex justify-between items-center mt-6 text-sm">
           <p className="text-gray-200">
             New User?{" "}

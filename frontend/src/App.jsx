@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -17,16 +17,23 @@ import Welcome from "./pages/Welcome";
 import BookCatalogPage from "./pages/BookCatalogPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import BorrowedBooks from "./pages/BorrowedBooks";
+import Profile from "./pages/Profile";
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
+  const [user, setUser] = useState(null);   // 👈 state for user
+  const [userRole, setUserRole] = useState(null);
 
-  const userRole = "admin"; // change as needed
-
-  // get user from localStorage (after login, you should save it there)
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userRole = user?.role || null;
-
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setUserRole(parsedUser.role);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen">
@@ -37,7 +44,6 @@ const App = () => {
         userRole={userRole}
       />
 
-      {/* Overlay for mobile */}
       {SidebarToggle && (
         <div
           onClick={() => setSidebarToggle(false)}
@@ -51,11 +57,7 @@ const App = () => {
           SidebarToggle ? "ml-40 lg:ml-40" : "ml-0"
         }`}
       >
-        {/* Navbar */}
-        <Navbar
-          SidebarToggle={SidebarToggle}
-          setSidebarToggle={setSidebarToggle}
-        />
+        <Navbar SidebarToggle={SidebarToggle} setSidebarToggle={setSidebarToggle} />
 
         <main className="flex-grow p-6 mt-16">
           <Routes>
@@ -63,21 +65,13 @@ const App = () => {
             <Route path="/search" element={<Search />} />
             <Route path="/my-shelf" element={<My_shelf />} />
             <Route path="/contribute" element={<Contribute />} />
+            <Route path="/profile" element={<Profile />} />
 
-            {userRole === "student" && (
-              <>
-                <Route path="/borrow-history" element={<BorrowHistory />} />
-                <Route path="/payment" element={<PaymentPage />} />
-              </>
-            )}
-            {userRole === "admin" && (
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            )}
             {/* Student routes */}
             <Route
               path="/borrow-history"
               element={
-                <ProtectedRoute role="student">
+                <ProtectedRoute role="student" user={user}>
                   <BorrowHistory />
                 </ProtectedRoute>
               }
@@ -85,8 +79,16 @@ const App = () => {
             <Route
               path="/payment"
               element={
-                <ProtectedRoute role="student">
+                <ProtectedRoute role="student" user={user}>
                   <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/borrowed-books"
+              element={
+                <ProtectedRoute role="student" user={user}>
+                  <BorrowedBooks />
                 </ProtectedRoute>
               }
             />
@@ -95,23 +97,25 @@ const App = () => {
             <Route
               path="/admin-dashboard"
               element={
-                <ProtectedRoute role="admin">
+                <ProtectedRoute role="admin" user={user}>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
+            />
+          
 
+            {/* Public routes */}
             <Route path="/" element={<Navigate to="/books" />} />
             <Route path="/books" element={<BookCatalogPage />} />
             <Route path="/books/:id" element={<BookDetailsPage />} />
             <Route path="/welcome" element={<Welcome />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login setUser={setUser} setUserRole={setUserRole} />} />
             <Route path="/register" element={<Register />} />
             <Route path="/guest" element={<Guest />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </main>
 
-        {/* Footer */}
         <footer className="bg-white text-center py-3">footer</footer>
       </div>
     </div>
