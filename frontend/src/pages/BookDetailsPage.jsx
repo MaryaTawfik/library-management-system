@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { getBookById } from "../services/booksService";
-import { useNavigate } from "react-router-dom";
+import { borrowBook } from "../services/borrowService";
 import {
   FaBarcode,
   FaCalendarAlt,
@@ -29,17 +29,56 @@ export default function BookDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getBookById(id).then((data) => {
-      const normalized = data.data || data; // normalize backend vs mock
-      setBook(normalized);
-    });
+    getBookById(id)
+      .then((data) => {
+        const normalized = data.data || data;
+        setBook(normalized);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch book:", err);
+        alert("Failed to load book. Try again later.");
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (!book) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!book) return <p>Book not found.</p>;
 
-  const handleSubmit = () => navigate("/welcome");
+  const handleBorrow = async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    localStorage.setItem(
+      "pendingBorrow",
+      JSON.stringify({ bookId: book._id })
+    );
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const res = await borrowBook(book._id);
+    alert(res.message || "Book borrowed successfully!");
+
+    // ✅ Save borrowed book in localStorage (array)
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooks")) || [];
+    borrowedBooks.push(book); // add the current book
+    localStorage.setItem("borrowedBooks", JSON.stringify(borrowedBooks));
+
+    // ✅ Update available copies in UI
+    setBook((prev) => ({
+      ...prev,
+      avaliablecopies: prev.avaliablecopies - 1,
+    }));
+  } catch (err) {
+    console.error("Borrow failed:", err.response?.data || err.message);
+    alert(err.response?.data?.error || "Failed to borrow. Try again.");
+  }
+};
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -51,14 +90,14 @@ export default function BookDetailPage() {
       </Link>
 
       <div className="flex flex-col md:flex-row bg-gray-100 rounded-lg p-6 border border-gray-200">
-        {/* Left side*/}
+        {/* Left side */}
         <div className="flex flex-col md:w-1/3 bg-white rounded-lg p-6 shadow-md border-r border-gray-300 relative">
           <div className="flex flex-col h-full bg-gray-100 rounded-md overflow-hidden mb-4">
-            {/* Image / Placeholder */}
+            {/* Image */}
             <div className="flex-1 flex items-center justify-center w-full bg-gray-100">
-              {book.image ? (
+              {book.imageUrl ? (
                 <img
-                  src={book.image}
+                  src={book.imageUrl}
                   alt={book.title}
                   className="w-full object-contain"
                 />
@@ -67,7 +106,7 @@ export default function BookDetailPage() {
               )}
             </div>
 
-            {/* Availability always at bottom */}
+            {/* Availability */}
             <div className="mt-2 px-2 py-1">
               <p className="text-green-700 font-semibold text-sm mb-1">
                 Availability
@@ -92,7 +131,7 @@ export default function BookDetailPage() {
           <div className="w-full mt-auto">
             {book.avaliablecopies > 0 ? (
               <button
-                onClick={handleSubmit}
+                onClick={handleBorrow}
                 className="w-full bg-orange-700 hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition"
               >
                 Borrow Book
@@ -108,76 +147,40 @@ export default function BookDetailPage() {
           </div>
         </div>
 
-        {/* Right side*/}
-        <div className="md:w-2/3 space-y-8 pl-0 md:pl-8 mt-8 md:mt-0">
-          <div className="relative bg-white p-6 rounded-lg">
-            <span className="absolute top-4 right-4 px-3 py-1 border border-green-400 text-orange-700 bg-white rounded-full text-xs font-semibold shadow-sm">
-              {book.catagory}
-            </span>
+        {/* Right side */}
+        <div className="md:w-2/3 md:pl-6 mt-6 md:mt-0">
+          <h1 className="text-2xl font-bold mb-4">{book.title}</h1>
+          <p className="text-gray-700 mb-6">{book.description}</p>
 
-            <h1 className="text-2xl font-bold text-orange-800 mb-1">
-              {book.title}
-            </h1>
-            <p className="text-gray-700 font-medium mb-4">by {book.author}</p>
-            <p className="text-sm text-gray-700">{book.description}</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-orange-700 font-semibold text-lg mb-1">
-              Book Information
-            </h2>
-            <div className="w-full h-px bg-gray-100 my-3" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
-              <InfoItem
-                icon={<FaBarcode />}
-                label="ISBN"
-                value={book.isbn || "N/A"}
-              />
-              <InfoItem
-                icon={<FaCalendarAlt />}
-                label="Publication Year"
-                value={new Date(book.publishedYear).getFullYear()}
-              />
-              <InfoItem
-                icon={<FaLayerGroup />}
-                label="Category"
-                value={book.catagory}
-              />
-              <InfoItem
-                icon={<FaBookOpen />}
-                label="Edition"
-                value={book.edition || "N/A"}
-              />
-              <InfoItem
-                icon={<FaBuilding />}
-                label="Publisher"
-                value={book.publisher || "N/A"}
-              />
-              <InfoItem
-                icon={<FaFileAlt />}
-                label="Pages"
-                value={book.pages || "N/A"}
-              />
-              <InfoItem
-                icon={<FaGlobe />}
-                label="Language"
-                value={book.language || "English"}
-              />
-              <InfoItem
-                icon={<FaCopy />}
-                label="Total Copies"
-                value={book.totalcopies}
-              />
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-black font-semibold text-lg mb-3">
-              Related Books
-            </h2>
-            <p className="text-sm text-gray-700">
-              Other books in the <strong>{book.catagory}</strong> catagory.
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InfoItem icon={<FaBuilding />} label="Author" value={book.author} />
+            <InfoItem
+              icon={<FaCalendarAlt />}
+              label="Published Year"
+              value={book.publishedYear || "N/A"}
+            />
+            <InfoItem
+              icon={<FaLayerGroup />}
+              label="Category"
+              value={book.catagory || "N/A"}
+            />
+            <InfoItem icon={<FaCopy />} label="Pages" value={book.pages || "N/A"} />
+            <InfoItem icon={<FaBarcode />} label="ISBN" value={book.isbn} />
+            <InfoItem
+              icon={<FaBookOpen />}
+              label="Language"
+              value={book.language || "English"}
+            />
+            <InfoItem
+              icon={<FaFileAlt />}
+              label="Publisher"
+              value={book.publisher || "N/A"}
+            />
+            <InfoItem
+              icon={<FaGlobe />}
+              label="Location"
+              value={book.location || "Library Shelf"}
+            />
           </div>
         </div>
       </div>

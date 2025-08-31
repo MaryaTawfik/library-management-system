@@ -10,7 +10,7 @@ export const getAllBooks = async () => {
     return [
       {
         bookId: "B001",
-        image: "/book1.png",
+        image: "book1.png/",
         title: "Don’t Make Me Think",
         catagory: "Computer Science",
         description:
