@@ -80,25 +80,41 @@ const returnBook = async (borrowId) => {
   return borrow;
 }
 
+// const getBorrowHistory = async (userId) => {
+//   return await Borrow.find({ user: userId })
+//     .populate("book", "title author catagory" )
+//     .sort({ createdAt: -1 });
+// };
 const getBorrowHistory = async (userId) => {
   return await Borrow.find({ user: userId })
-    .populate("book", "title author catagory" )
-    .sort({ createdAt: -1 });
+    .populate("book", "title author catagory")
+    .sort({ createdAt: -1 })
+    .select('book status borrowDate returnDate duedate _id'); // Include _id for borrowId
 };
-
+// const getActiveBorrowsForUser = async (userId) => {
+//   return await Borrow.find({ user: userId, status: "borrowed" })
+//     .populate("book", "title author catagory imageUrl") // include book details
+//     .sort({ borrowDate: -1 });
+// };
 const getActiveBorrowsForUser = async (userId) => {
   return await Borrow.find({ user: userId, status: "borrowed" })
     .populate("book", "title author catagory imageUrl") // include book details
-    .sort({ borrowDate: -1 });
+    .sort({ borrowDate: -1 })
+    .select('_id book borrowDate returnDate duedate status'); // Include _id for borrowId
 };
-
+// const getAllBorrows = async () => {
+//   return await Borrow.find()
+//     .populate("book", "title author")
+//     .populate("user", "firstName lastName email")
+//     .sort({ createdAt: -1 });
+// };
 const getAllBorrows = async () => {
   return await Borrow.find()
     .populate("book", "title author")
     .populate("user", "firstName lastName email")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .select('_id book user borrowDate returnDate status'); // Include _id for borrowId
 };
-
 const deleteBorrow = async (borrowId) => {
   const borrow = await Borrow.findById(borrowId).populate("book user");
 

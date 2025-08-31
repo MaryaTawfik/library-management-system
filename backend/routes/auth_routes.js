@@ -14,7 +14,7 @@ const authController = require('../controllers/auth_controller');
 const { isAuthenticated } = require('../middlewares/authenticate')
 const { parser, singleUpload } = require('../middlewares/multer')
 const {  isStudent } = require('../middlewares/role');
-
+const validate = require("../middlewares/validate");
 const router = express.Router();
 
 const registerValidation = [
@@ -78,9 +78,10 @@ router.post(
   '/register',
   parser.single('profileImage'), // ✅ Add this to handle file upload
   registerValidation,
+   validate,  
   authController.register
 );
 
-router.post('/login', loginValidation, authController.login);
+router.post('/login', loginValidation, validate,   authController.login);
 router.put('/profile', isAuthenticated, isStudent, singleUpload('profileImage'), authController.updateProfile);
 module.exports = router;
