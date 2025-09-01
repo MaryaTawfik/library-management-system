@@ -69,6 +69,8 @@ const updatePaymentAndMembership = async (id, status) => {
       is_member: false,
       expiryDate: null
     });
+        console.warn(`Membership rejected for user: ${payment.userId}. Payment ID: ${payment._id}`);
+    throw new Error('Your membership payment has been rejected. Please check your payment details and try again.');
   }
 
   return payment;

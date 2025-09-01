@@ -70,6 +70,11 @@ const updatepaymentstatus = async (req, res) => {
     res.status(200).json({ message: 'Payment updated successfully', data: updatedPayment });
   } catch (err) {
     console.error(err);
+     if (err.message.includes('rejected')) {
+    return res.status(400).json({
+      message: 'Your membership payment has been rejected. Please check your payment details and try again. If the issue persists, contact support for assistance.'
+    });
+  }
     res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
