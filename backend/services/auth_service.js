@@ -9,16 +9,16 @@ const registeruser = async (data) => {
 };
 
 const loginuser = async (email, password) => {
-  const user = await User.findOne({ email }).select('+password'); // Include password for comparison
+  const user = await User.findOne({ email }).select('+password');
   if (!user) throw new Error('User not found');
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid password');
 
   const token = jwt.sign(
-    { 
-      id: user._id, 
-      userID:user.userID,
+    {
+      id: user._id,
+      userID: user.userID,
       role: user.role,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -30,27 +30,32 @@ const loginuser = async (email, password) => {
       acadamicYear: user.acadamicYear,
       status: user.status,
       profileImage: user.profileImage,
-      expiryDate: user.expiryDate
+      expiryDate: user.expiryDate,
     },
     process.env.JWT_SECRET,
     { expiresIn: '30d' }
   );
 
-  // Re-fetch user without password
   const sanitizedUser = await User.findById(user._id).select('-password');
-
   return { token, user: sanitizedUser };
 };
 
 const updateUserProfile = async (id, data) => {
-  
   const forbiddenFields = ['status', 'is_member', 'expiryDate', 'role'];
-  forbiddenFields.forEach(field => delete data[field]);
+  forbiddenFields.forEach((field) => delete data[field]);
 
-  const user = await User.findByIdAndUpdate(id, data, { new: true }).select("-password");
+  // ✅ hash password if provided
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+
+  const user = await User.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  }).select('-password');
+
   if (!user) throw new Error('User not found');
   return user;
 };
-
 
 module.exports = { registeruser, loginuser, updateUserProfile };
