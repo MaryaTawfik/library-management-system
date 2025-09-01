@@ -5,15 +5,38 @@ const Role = require('../middlewares/role');
 const authMiddleware = require('../middlewares/authenticate');
 
 router.post('/borrow/:bookId' , authMiddleware.isAuthenticated , borrowController.borrowBook)
-router.put('/return/:borrowId', authMiddleware.isAuthenticated, borrowController.returnBook);
+// router.put('/return/:borrowId', authMiddleware.isAuthenticated, borrowController.returnBook);
 router.get('/borrow/history/:userId',authMiddleware.isAuthenticated , borrowController.getBorrowHistory);
 router.get('/borrow/all', authMiddleware.isAuthenticated ,Role.isAdmin , borrowController.getAllBorrows);
-router.get("/borrow/active", authMiddleware.isAuthenticated, borrowController.getActiveBorrows);
+router.get("/borrow/active", authMiddleware.isAuthenticated,Role.isAdmin , borrowController.getActiveBorrows);
 router.delete(
   "/borrow/:borrowId",
   authMiddleware.isAuthenticated,
-  Role.isAdmin,          // only admins can delete
+  Role.isAdmin,          
   borrowController.deleteBorrow
 );
 
+router.put(
+  "/return/request/:borrowId",
+  authMiddleware.isAuthenticated,
+  borrowController.requestReturn
+);
+router.put(
+  "/return/approve/:borrowId",
+  authMiddleware.isAuthenticated,
+  Role.isAdmin,
+  borrowController.approveReturn
+);
+router.put(
+  "/return/reject/:borrowId",
+  authMiddleware.isAuthenticated,
+  Role.isAdmin,
+  borrowController.rejectReturn
+);
+router.get(
+  "/borrow/pending",
+  authMiddleware.isAuthenticated,
+  Role.isAdmin,
+  borrowController.getPendingReturns
+);
 module.exports = router;

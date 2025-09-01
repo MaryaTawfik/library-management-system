@@ -20,7 +20,9 @@ const bookSchema=new mongoose.Schema({
     totalcopies:{
         type:Number,
     },
-    avaliablecopies:Number,
+    avaliablecopies:{
+       type:Number,
+    },
     isbn:{
         type:String,
         required:true , 
