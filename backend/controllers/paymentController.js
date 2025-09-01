@@ -1,10 +1,10 @@
 const paymentService =require('../services/payment_service')
 const createpayment = async (req, res) => {
     try {
-        const {userId , amount } = req.body;
+        const {userId , amount, bankTransactionID } = req.body;
         const paymentProof = req.file.path;
 
-        const newPayment = await paymentService.createPayment(userId, Number(amount), paymentProof);
+        const newPayment = await paymentService.createPayment(userId, Number(amount), paymentProof, bankTransactionID);
 
         res.status(201).json({ status: 'success', message: 'Payment created successfully', data: newPayment });
     } catch (err) {

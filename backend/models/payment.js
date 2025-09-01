@@ -22,7 +22,13 @@ const paymentSchema = new mongoose.Schema({
   trim: true,
   
 },
+bankTransactionID:{
+  type: String,
+  
+  trim : true,
+  unique: true
 
+},
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],

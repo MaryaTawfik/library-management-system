@@ -27,27 +27,7 @@ const returnBook = async (req, res) => {
   }
 };
 
-// const getBorrowHistory = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
 
-//     const history = await borrowService.getBorrowHistory(userId);
-
-//     const userResponsed = history.map(borrow => ({
-//       title: borrow.book?.title,
-//       author: borrow.book?.author,
-//       category: borrow.book?.catagory,
-//       image: borrow.book?.imageUrl,
-//       borrowDate: borrow.borrowDate,
-//       supposedReturnDate: borrow.returnDate,   
-//       dueDate: borrow.duedate,                 
-//       status: borrow.status
-//     }));
-//     res.status(200).json({ status: "success", data: userResponsed});
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
 const getBorrowHistory = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -61,7 +41,7 @@ const getBorrowHistory = async (req, res) => {
       category: borrow.book?.catagory,
       image: borrow.book?.imageUrl,
       borrowDate: borrow.borrowDate,
-      supposedReturnDate: borrow.returnDate,
+      returnDate: borrow.returnDate,
       dueDate: borrow.duedate,
       status: borrow.status
     }));
@@ -72,30 +52,7 @@ const getBorrowHistory = async (req, res) => {
 };
 
 
-// const getActiveBorrows = async (req, res) => {
-//   try {
-//     const userId = req.user._id; // assuming authMiddleware sets req.user
 
-//     const activeBorrows = await borrowService.getActiveBorrowsForUser(userId);
-
-//     const formatted = activeBorrows.map(b => ({
-//       book: {
-//         title: b.book?.title,
-//         author: b.book?.author,
-//         category: b.book?.catagory,
-//         image: b.book?.image
-//       },
-//       borrowDate: b.borrowDate,
-//       returnDate: b.returnDate,
-//       dueDate: b.duedate,
-//       status: b.status
-//     }));
-
-//     res.status(200).json({ status: "success", data: formatted });
-//   } catch (error) {
-//     res.status(400).json({ status: "error", message: error.message });
-//   }
-// };
 
 const getActiveBorrows = async (req, res) => {
   try {
@@ -108,8 +65,8 @@ const getActiveBorrows = async (req, res) => {
       book: {
         title: b.book?.title,
         author: b.book?.author,
-        category: b.book?.catagory,
-        image: b.book?.image
+        catagory: b.book?.catagory,
+        imageUrl: b.book?.imageUrl
       },
       borrowDate: b.borrowDate,
       returnDate: b.returnDate,
@@ -122,31 +79,7 @@ const getActiveBorrows = async (req, res) => {
     res.status(400).json({ status: "error", message: error.message });
   }
 };
-// const getAllBorrows = async (req, res) => {
-//   try {
-//     const records = await borrowService.getAllBorrows();
 
-//    const adminView = records.map(b => ({
-//       book: {
-//         title: b.book?.title,
-//         author: b.book?.author,
-//         category: b.book?.catagory,
-//         image: b.book?.image
-//       },
-//       user: {
-//         name: b.user ? `${b.user.firstName} ${b.user.lastName}` : null,
-//         email: b.user?.email
-//       },
-//       borrowDate: b.borrowDate,
-//       returnDate: b.returnDate,
-//       status: b.status
-      
-//     }));
-//     res.status(201).json({ status: "success", data: adminView });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
 const getAllBorrows = async (req, res) => {
   try {
     const records = await borrowService.getAllBorrows();
@@ -156,8 +89,8 @@ const getAllBorrows = async (req, res) => {
       book: {
         title: b.book?.title,
         author: b.book?.author,
-        category: b.book?.catagory,
-        image: b.book?.image
+        catagory: b.book?.catagory,
+        imageUrl: b.book?.imageUrl
       },
       user: {
         name: b.user ? `${b.user.firstName} ${b.user.lastName}` : null,
