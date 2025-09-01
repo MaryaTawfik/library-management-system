@@ -44,7 +44,7 @@ const updateUserProfile = async (id, data) => {
   const forbiddenFields = ['status', 'is_member', 'expiryDate', 'role'];
   forbiddenFields.forEach((field) => delete data[field]);
 
-  // ✅ hash password if provided
+  
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 10);
   }

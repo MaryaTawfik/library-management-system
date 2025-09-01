@@ -10,11 +10,20 @@ router.get('/:id', bookController.getOne);
 router.post(
   '/',
   authMiddleware.isAuthenticated,
-  uploadBookImage,
   Role.isAdmin,
+  uploadBookImage,
+  
   bookController.create
 );
-router.patch('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.update);
+// router.patch('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.update);
+router.patch(
+  '/:id',
+  authMiddleware.isAuthenticated,
+  Role.isAdmin,
+  uploadBookImage, // <-- this enables image upload
+  bookController.update
+);
+
 router.delete('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.remove);
 
 module.exports = router;

@@ -90,23 +90,53 @@ const create = async (req, res) => {
 
 
   
+// const update = async (req, res) => {
+//   const id = req.params.id;
+//   const updatedData = req.body;
+//   try {
+//     const updatedBook = await bookService.updateBook(id, updatedData);
+
+//     if (!updatedBook) {
+//       return res.status(400).json({ message: 'Book not found' });
+//     }
+//     res.json(updatedBook);
+//   } catch (err) {
+//     console.log(err);
+//     res
+//       .status(500)
+//       .json({ message: 'Internal server error', error: err.message });
+//   }
+// };
+
+
 const update = async (req, res) => {
-  const id = req.params.id;
-  const updatedData = req.body;
   try {
+    const id = req.params.id;
+    const updatedData = req.body;
+
+    // Log incoming data
+    console.log('Updating book with ID:', id);
+    console.log('Updated data:', updatedData);
+
+    if (req.file) {
+      updatedData.imageUrl = req.file.path || req.file.secure_url; // Assuming multer is set up
+    }
+
     const updatedBook = await bookService.updateBook(id, updatedData);
 
     if (!updatedBook) {
-      return res.status(400).json({ message: 'Book not found' });
+      return res.status(404).json({ message: 'Book not found' });
     }
-    res.json(updatedBook);
+
+    res.json({ message: 'Book updated successfully', book: updatedBook });
   } catch (err) {
-    console.log(err);
-    res
-      .status(500)
-      .json({ message: 'Internal server error', error: err.message });
+    console.warn('Update failed:', err);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
+
+
+
 
 const remove = async (req, res) => {
   const id = req.params.id;
