@@ -2,43 +2,53 @@
 // import { Link, useNavigate } from "react-router-dom";
 // import { Eye, EyeOff } from "lucide-react";
 // import axios from "axios";
+// import { useAtom } from "jotai";
+// import { userAtom, tokenAtom } from "../atoms/authAtom";
 // import LogoTitle from "../components/LogoTitle";
 // import bgImage from "../assets/librarypic.jpg";
 
 // export default function Login() {
 //   const [showPassword, setShowPassword] = useState(false);
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     password: "",
-//   });
-
+//   const [formData, setFormData] = useState({ email: "", password: "" });
+//   const [error, setError] = useState("");
 //   const navigate = useNavigate();
 
-//   // Handle input change
+//   // jotai atoms
+//   const [, setUser] = useAtom(userAtom);
+//   const [, setToken] = useAtom(tokenAtom);
+
+//   // handle input change
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
 //   };
 
-//   // Handle login
+//   // handle login
 //   const handleLogin = async (e) => {
 //     e.preventDefault();
+//     setError("");
+
 //     try {
 //       const res = await axios.post("http://localhost:5000/auth/login", {
 //         email: formData.email,
 //         password: formData.password,
 //       });
 
-//       alert("✅ Login successful!");
-//       console.log(res.data);
-
-//       // Save token in localStorage
+//       // Save token & user to localStorage
 //       localStorage.setItem("token", res.data.token);
+//       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-//       // Redirect user (to dashboard/homepage)
-//       navigate("/");
+//       // Save to jotai
+//       setToken(res.data.token);
+//       setUser(res.data.user);
+
+//       // ✅ Role-based redirect (robust)
+//       const role = res.data.user?.role?.toLowerCase();
+//       if (role === "admin") navigate("/admin-dashboard");
+//       else if (role === "student") navigate("/payment");
+//       else navigate("/home");
 //     } catch (err) {
-//       alert("❌ " + (err.response?.data?.error || "Login failed"));
-//       console.error(err);
+//       console.error("Login error:", err);
+//       setError(err.response?.data?.error || "Login failed. Try again.");
 //     }
 //   };
 
@@ -47,21 +57,20 @@
 //       className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
 //       style={{ backgroundImage: `url(${bgImage})` }}
 //     >
-//       {/* Overlay */}
+//       {/* overlay */}
 //       <div className="absolute inset-0 bg-black/60"></div>
 
-//       {/* Card */}
 //       <div className="relative w-[480px] p-8 rounded-xl shadow-lg bg-white/5 border border-white/20 backdrop-blur-lg text-white">
-//         {/* Logo */}
 //         <LogoTitle />
-
 //         <p className="text-center text-gray-200 mt-2">Welcome Back!</p>
 //         <p className="text-center text-xs text-gray-300 mb-6">
 //           Sign in to continue to your Digital Library
 //         </p>
 
+//         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+
 //         <form onSubmit={handleLogin}>
-//           {/* Email */}
+//           {/* email */}
 //           <label className="block text-sm text-gray-300 mb-1">Email</label>
 //           <input
 //             type="email"
@@ -71,9 +80,10 @@
 //             placeholder="username@collegename.ac.in"
 //             className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 mb-3 text-white placeholder-gray-300"
 //             required
+//             autoComplete="email"
 //           />
 
-//           {/* Password */}
+//           {/* password */}
 //           <label className="block text-sm text-gray-300 mb-1">Password</label>
 //           <div className="relative mb-4">
 //             <input
@@ -84,6 +94,7 @@
 //               placeholder="Password"
 //               className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 pr-10 text-white placeholder-gray-300"
 //               required
+//               autoComplete="current-password"
 //             />
 //             <button
 //               type="button"
@@ -94,7 +105,7 @@
 //             </button>
 //           </div>
 
-//           {/* Remember & Forgot */}
+//           {/* remember + forgot */}
 //           <div className="flex justify-between items-center mb-6 text-sm text-gray-200">
 //             <label className="flex items-center gap-2">
 //               <input type="checkbox" className="accent-[#FA7C54]" />
@@ -108,7 +119,7 @@
 //             </Link>
 //           </div>
 
-//           {/* Login Button */}
+//           {/* login button */}
 //           <button
 //             type="submit"
 //             className="w-full bg-[#FA7C54] text-white py-2 rounded-lg hover:bg-[#e66c45] transition"
@@ -117,7 +128,7 @@
 //           </button>
 //         </form>
 
-//         {/* Footer Links */}
+//         {/* footer */}
 //         <div className="flex justify-between items-center mt-6 text-sm">
 //           <p className="text-gray-200">
 //             New User?{" "}
@@ -141,7 +152,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useAtom } from "jotai";
-import { userAtom, tokenAtom } from "../atoms/authAtom"; // <-- add this
+import { userAtom, tokenAtom } from "../atoms/authAtom";
 import LogoTitle from "../components/LogoTitle";
 import bgImage from "../assets/librarypic.jpg";
 
@@ -155,33 +166,41 @@ export default function Login() {
   const [, setUser] = useAtom(userAtom);
   const [, setToken] = useAtom(tokenAtom);
 
+  // handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // handle login
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
+
     try {
       const res = await axios.post("http://localhost:5000/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
-      // ✅ Save token & user
+      // Save token & user to localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
+      // Save to jotai
       setToken(res.data.token);
-      setUser(res.data.user); // { id, name, role, ... }
-      
-      if(res.data.user.role === "admin"){
+      setUser(res.data.user);
+
+      // ✅ Role-based redirect
+      const role = res.data.user?.role?.toLowerCase();
+      if (role === "admin") {
         navigate("/admin-dashboard");
+      } else if (role === "student") {
+        navigate("/payment-plans"); // student first goes to choose a plan
       } else {
-        navigate("/");
+        navigate("/home");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
       setError(err.response?.data?.error || "Login failed. Try again.");
     }
   };
@@ -191,7 +210,9 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      {/* overlay */}
       <div className="absolute inset-0 bg-black/60"></div>
+
       <div className="relative w-[480px] p-8 rounded-xl shadow-lg bg-white/5 border border-white/20 backdrop-blur-lg text-white">
         <LogoTitle />
         <p className="text-center text-gray-200 mt-2">Welcome Back!</p>
@@ -202,6 +223,7 @@ export default function Login() {
         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
 
         <form onSubmit={handleLogin}>
+          {/* email */}
           <label className="block text-sm text-gray-300 mb-1">Email</label>
           <input
             type="email"
@@ -211,8 +233,10 @@ export default function Login() {
             placeholder="username@collegename.ac.in"
             className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 mb-3 text-white placeholder-gray-300"
             required
+            autoComplete="email"
           />
 
+          {/* password */}
           <label className="block text-sm text-gray-300 mb-1">Password</label>
           <div className="relative mb-4">
             <input
@@ -223,6 +247,7 @@ export default function Login() {
               placeholder="Password"
               className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 pr-10 text-white placeholder-gray-300"
               required
+              autoComplete="current-password"
             />
             <button
               type="button"
@@ -233,6 +258,7 @@ export default function Login() {
             </button>
           </div>
 
+          {/* remember + forgot */}
           <div className="flex justify-between items-center mb-6 text-sm text-gray-200">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="accent-[#FA7C54]" />
@@ -246,6 +272,7 @@ export default function Login() {
             </Link>
           </div>
 
+          {/* login button */}
           <button
             type="submit"
             className="w-full bg-[#FA7C54] text-white py-2 rounded-lg hover:bg-[#e66c45] transition"
@@ -254,6 +281,7 @@ export default function Login() {
           </button>
         </form>
 
+        {/* footer */}
         <div className="flex justify-between items-center mt-6 text-sm">
           <p className="text-gray-200">
             New User?{" "}
