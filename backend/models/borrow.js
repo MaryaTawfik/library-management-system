@@ -33,15 +33,9 @@ const borrowSchema=new mongoose.Schema({
     duedate:{
         type:Date
     },
-//     borrowedBy: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'User', 
-//   },
-//     borrowedBooks: 
-//   {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Book",
-//   }
+    reminderSent: { type: Boolean, default: false }, 
+
+
 
 
 })

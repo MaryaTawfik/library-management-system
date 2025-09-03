@@ -50,7 +50,6 @@ const updatePaymentAndMembership = async (id, status) => {
 
     const newExpiry = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
 
-    // ✅ Extra safety: if already expired, deactivate immediately
     if (newExpiry < new Date()) {
       await User.findByIdAndUpdate(payment.userId, {
         is_member: false,

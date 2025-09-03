@@ -44,14 +44,12 @@ const bookSchema=new mongoose.Schema({
     default: 'https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg' 
   },
 
-// borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'book' }],
+
 
 }, { timestamps: true });
     
   
-//   imageId: {
-//     type: String 
-//   }
+
 
 
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
+const crypto = require("crypto");
 
 const registeruser = async (data) => {
   const newUser = new User(data);
@@ -58,4 +59,83 @@ const updateUserProfile = async (id, data) => {
   return user;
 };
 
-module.exports = { registeruser, loginuser, updateUserProfile };
+
+// ✅ Already exists: registeruser, loginuser, updateUserProfile
+
+// 🔹 Forgot Password (send reset email)
+const requestPasswordReset = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not found");
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+  user.resetPasswordToken = resetTokenHash;
+  user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+  await user.save();
+
+  const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password/${resetToken}`;
+  console.log("Reset URL (for testing):", resetUrl);
+
+  // Send email
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    await transporter.sendMail({
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`
+    });
+  }
+
+  return { message: "Password reset email sent", resetToken };
+};
+
+// 🔹 Reset Password (via token)
+const resetPassword = async (token, newPassword) => {
+  const resetTokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: resetTokenHash,
+    resetPasswordExpires: { $gt: Date.now() }
+  });
+
+  if (!user) throw new Error("Invalid or expired token");
+
+  user.password = newPassword; // will be hashed by pre-save hook
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+  return { message: "Password reset successful" };
+};
+
+// 🔹 Change Password (logged-in users)
+const changePassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId).select('+password');
+  if (!user) throw new Error("User not found");
+
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) throw new Error("Current password is incorrect");
+
+  user.password = newPassword; // Will be hashed by pre-save hook
+  await user.save();
+
+  return { message: "Password changed successfully" };
+};
+
+
+
+
+module.exports = {
+  registeruser,
+  loginuser,
+  updateUserProfile,
+  requestPasswordReset,
+  resetPassword,
+  changePassword,
+};

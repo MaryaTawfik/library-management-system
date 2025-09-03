@@ -5,7 +5,7 @@ const Role = require('../middlewares/role');
 const authMiddleware = require('../middlewares/authenticate');
 
 router.post('/borrow/:bookId' , authMiddleware.isAuthenticated , borrowController.borrowBook)
-// router.put('/return/:borrowId', authMiddleware.isAuthenticated, borrowController.returnBook);
+
 router.get('/borrow/history/:userId',authMiddleware.isAuthenticated , borrowController.getBorrowHistory);
 router.get('/borrow/all', authMiddleware.isAuthenticated ,Role.isAdmin , borrowController.getAllBorrows);
 router.get("/borrow/active", authMiddleware.isAuthenticated , borrowController.getActiveBorrows);
@@ -39,4 +39,8 @@ router.get(
   Role.isAdmin,
   borrowController.getPendingReturns
 );
+router.get("/overdue/users",authMiddleware.isAuthenticated,
+  Role.isAdmin, borrowController.getOverdueUsers);
+router.get("/returned/overdue",authMiddleware.isAuthenticated,
+  Role.isAdmin, borrowController.getReturnedOverdueUsers);
 module.exports = router;

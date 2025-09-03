@@ -38,28 +38,28 @@ const create = async (req, res) => {
       description
     } = req.body;
 
-    // Validate required fields
+   
     if (!title || !author || !isbn) {
       return res.status(400).json({ status: 'error', message: 'title, author and isbn are required' });
     }
 
-    // Determine image URL from multiple possible sources
+    
     let imageUrl;
     try {
       if (req.file) {
         console.log('Received file metadata:', req.file);
-        // multer-storage-cloudinary typically sets `path` to the uploaded URL
+        
         if (req.file.path) {
           imageUrl = req.file.path;
         } else if (req.file.secure_url) {
           imageUrl = req.file.secure_url;
         } else if (req.file.buffer) {
-          // If using memory storage or client sent buffer, upload to Cloudinary
+          
           const uploaded = await cloudinary.uploadBuffer(req.file.buffer, req.file.mimetype, { folder: 'library' });
           imageUrl = cloudinary.extractUrl(uploaded);
         }
       } else if (req.body && req.body.imageUrl) {
-        imageUrl = req.body.imageUrl; // client provided direct URL
+        imageUrl = req.body.imageUrl; 
       }
     } catch (uploadErr) {
       console.error('Cloudinary upload failed:', uploadErr);
@@ -90,23 +90,7 @@ const create = async (req, res) => {
 
 
   
-// const update = async (req, res) => {
-//   const id = req.params.id;
-//   const updatedData = req.body;
-//   try {
-//     const updatedBook = await bookService.updateBook(id, updatedData);
 
-//     if (!updatedBook) {
-//       return res.status(400).json({ message: 'Book not found' });
-//     }
-//     res.json(updatedBook);
-//   } catch (err) {
-//     console.log(err);
-//     res
-//       .status(500)
-//       .json({ message: 'Internal server error', error: err.message });
-//   }
-// };
 
 
 const update = async (req, res) => {
@@ -114,7 +98,7 @@ const update = async (req, res) => {
     const id = req.params.id;
     const updatedData = req.body;
 
-    // Log incoming data
+   
     console.log('Updating book with ID:', id);
     console.log('Updated data:', updatedData);
 

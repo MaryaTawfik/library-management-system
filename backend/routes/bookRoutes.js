@@ -15,12 +15,12 @@ router.post(
   
   bookController.create
 );
-// router.patch('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.update);
+
 router.patch(
   '/:id',
   authMiddleware.isAuthenticated,
   Role.isAdmin,
-  uploadBookImage, // <-- this enables image upload
+  uploadBookImage, 
   bookController.update
 );
 

@@ -1,12 +1,4 @@
-// const express = require('express');
-// const router =express.Router();
-// const authcontroller =  require('../controllers/auth_controller')
 
-
-// router.post('/register',authcontroller.register);
-// router.post('/login',authcontroller.login);
-
-// module.exports = router;
 const express = require('express');
 const { body } = require('express-validator');
 const User = require('../models/users'); 
@@ -84,4 +76,27 @@ router.post(
 
 router.post('/login', loginValidation, validate,   authController.login);
 router.put('/profile', isAuthenticated, singleUpload('profileImage'), authController.updateProfile);
+router.post('/forgot-password',
+  body('email').isEmail().withMessage('Valid email is required'),
+  validate,
+  authController.forgotPassword
+);
+router.post('/reset-password/:token',
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .withMessage('Password must include at least one number and one special character'),
+  validate,
+  authController.resetPassword
+);
+router.put('/change-password',
+  isAuthenticated,
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .withMessage('New password must include at least one number and one special character'),
+  validate,
+  authController.changePassword
+);
 module.exports = router;

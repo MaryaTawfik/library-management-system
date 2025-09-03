@@ -40,6 +40,8 @@ connectDB()
         app.use('/payments', paymentRoutes);
         app.use('/admin', adminRoutes);
         app.use('/api', borrowRoute);
+
+           require("./utils/cronJob");
     })
     .catch((err) => {
         console.error('Could not connect to DB, routes not mounted:', err.message || err);
