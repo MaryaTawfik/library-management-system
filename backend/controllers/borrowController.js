@@ -51,27 +51,42 @@ const getBorrowHistory = async (req, res) => {
   try {
     const { userId } = req.params;
     const history = await borrowService.getBorrowHistory(userId);
+    const today = new Date();
 
-    const userResponse = history.map((borrow) => ({
-      borrowId: borrow._id,
-      title: borrow.book?.title,
-      author: borrow.book?.author,
-      category: borrow.book?.catagory,
-      image: borrow.book?.imageUrl,
-      borrowDate: borrow.borrowDate,
-      returnDate: borrow.status === "pending_return" ? null : borrow.returnDate,
-      dueDate: borrow.duedate,
-      status: borrow.overdue  ? `${borrow.status}_overdue`  : borrow.status,
-        overdue: borrow.overdue,   
-    
-     
-    }));
+    const userResponse = history.map((borrow) => {
+      const isOverdue =
+        borrow.status === "borrowed" &&
+        borrow.duedate &&
+        borrow.duedate < today;
+
+      return {
+        borrowId: borrow._id,
+        book: {
+          title: borrow.book?.title || "Untitled",
+          author: borrow.book?.author || "Unknown",
+          imageUrl: borrow.book?.imageUrl || null,
+          category: borrow.book?.catagory || "Unknown",
+        },
+        user: {
+          // since this is the history for a single user, we can attach logged-in user info
+          name: `${req.user.firstName} ${req.user.lastName}`,
+          email: req.user.email,
+        },
+        borrowDate: borrow.borrowDate,
+        dueDate: borrow.duedate,
+        returnDate:
+          borrow.status === "pending_return" ? null : borrow.returnDate,
+        status: isOverdue ? `${borrow.status}_overdue` : borrow.status,
+        overdue: isOverdue,
+      };
+    });
 
     res.status(200).json({ status: "success", data: userResponse });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 const getActiveBorrows = async (req, res) => {
   try {
