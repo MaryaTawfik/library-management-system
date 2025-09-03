@@ -267,7 +267,7 @@ const getAllBorrows = async () => {
     .populate("book", "title author imageUrl")
     .populate("user", "firstName lastName email")
     .sort({ createdAt: -1 })
-    .select("_id book user borrowDate returnDate status");
+    .select("_id book user borrowDate returnDate duedate status");
 };
 
 

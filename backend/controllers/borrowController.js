@@ -230,6 +230,7 @@ const getAllBorrows = async (req, res) => {
         email: b.user?.email,
       },
       borrowDate: b.borrowDate,
+      dueDate: b.duedate,
       returnDate: b.returnDate,
       status: b.status,
     }));
