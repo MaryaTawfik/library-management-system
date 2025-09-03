@@ -19,6 +19,8 @@ import BookDetailsPage from "./pages/BookDetailsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import BorrowedBooks from "./pages/BorrowedBooks";
 import Profile from "./pages/Profile";
+import AdminBorrowApproval from "./pages/AdminBorrowApproval";
+
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
@@ -97,12 +99,16 @@ const App = () => {
             <Route
               path="/admin-dashboard"
               element={
-                <ProtectedRoute role="admin" user={user}>
+                <ProtectedRoute role="Admin" user={user}>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
             />
-          
+            <Route path="/admin-approvals" element={
+              <ProtectedRoute role="Admin" user={user}>
+                <AdminBorrowApproval/>
+              </ProtectedRoute>
+            } />
 
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/books" />} />

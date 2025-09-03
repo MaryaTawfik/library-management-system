@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { getBookById } from "../services/booksService";
 import { borrowBook } from "../services/borrowService";
+import { toast } from "react-toastify";
 import {
   FaBarcode,
   FaCalendarAlt,
@@ -39,7 +40,7 @@ export default function BookDetailPage() {
       })
       .catch((err) => {
         console.error("Failed to fetch book:", err);
-        alert("Failed to load book. Try again later.");
+        toast.error("Failed to load book. Try again later.");
       })
       .finally(() => setLoading(false));
   }, [id]);
@@ -47,37 +48,43 @@ export default function BookDetailPage() {
   if (loading) return <p>Loading...</p>;
   if (!book) return <p>Book not found.</p>;
 
-  const handleBorrow = async () => {
+const handleBorrow = async () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
-    localStorage.setItem(
-      "pendingBorrow",
-      JSON.stringify({ bookId: book._id })
-    );
+    // Not logged in → redirect
+    localStorage.setItem("pendingBorrow", JSON.stringify({ bookId: book._id }));
     navigate("/login");
+    return;
+  }
+
+  if (!user.is_member) {
+    // Non-members cannot borrow
+    toast.error("Only members can borrow books");
     return;
   }
 
   try {
     const res = await borrowBook(book._id);
-    alert(res.message || "Book borrowed successfully!");
+    toast.success(res.message || "Book borrowed successfully!");
 
-    // ✅ Save borrowed book in localStorage (array)
+    // Update localStorage with borrowed books
     let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooks")) || [];
-    borrowedBooks.push(book); // add the current book
+    borrowedBooks.push(book);
     localStorage.setItem("borrowedBooks", JSON.stringify(borrowedBooks));
 
-    // ✅ Update available copies in UI
+    // Update UI for available copies
     setBook((prev) => ({
       ...prev,
       avaliablecopies: prev.avaliablecopies - 1,
     }));
   } catch (err) {
     console.error("Borrow failed:", err.response?.data || err.message);
-    alert(err.response?.data?.error || "Failed to borrow. Try again.");
+    // Show backend error if exists, else fallback
+    toast.error(err.response?.data?.err || "Can't borrow more than 3 books at a time");
   }
 };
+
 
 
   return (

@@ -4,6 +4,7 @@ import { CiSearch } from "react-icons/ci";
 import { GiBookshelf } from "react-icons/gi";
 import { RiHandCoinLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import jemealogo from "../assets/jemealogo.jpg";
 
 const Sidebar = ({ SidebarToggle, userRole }) => {
   return (
@@ -16,13 +17,8 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
         
         {/* --- Top Section --- */}
         <div>
-          <div className="p-1">
-            <h1 className="lg:text-3xl text-left mb-6 font-[Merriweather]">
-              <span className="text-black">My </span>
-              <span className="text-[#FA7C54] ">Book </span>
-              <br />
-              <span className="text-black ml-5">Shelf</span>
-            </h1>
+          <div className="p-1 mb-4 ml-0">
+            <img src={jemealogo} alt="Jemea Logo" className="w-25 mx-auto rounded-full" />
           </div>
 
           {/* Shared Nav Links */}
@@ -30,15 +26,9 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
             <Link to="/home" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
               <IoMdHome /> Home
             </Link>
-            <Link to="/search" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
-              <CiSearch /> Search
-            </Link>
-            <Link to="/my-shelf" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
-              <GiBookshelf /> My Shelf
-            </Link>
-            <Link to="/contribute" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
-              <RiHandCoinLine /> Contribute
-            </Link>
+            
+            
+
 
             {/* Role-based Links */}
             {userRole === "student" && (
@@ -55,12 +45,16 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
               </>
             )}
 
-            {userRole === "admin" && (
-              
-              <Link to="/admin-dashboard" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
+            {userRole === "Admin" && (
+              <>
+               <Link to="/admin-dashboard" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
                 🛠 Admin Dashboard
               </Link>
-              
+              <Link to="/admin-approvals" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
+                📋 Admin Approvals
+              </Link> 
+              </>
+             
             )}
           </div>
         </div>

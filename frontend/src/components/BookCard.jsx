@@ -7,15 +7,13 @@ export default function BookCard({ book }) {
   return (
     <div className="mb-33 bg-gray-200 border border-gray-300 h-auto rounded-xl shadow-sm hover:shadow-md transition py-5 flex flex-col">
       <div className="w-full min-h-full bg-gray-100 flex items-center justify-center rounded-md overflow-hidden mb-9">
-        {book.image ? (
+         (
           <img
-            src={book.image}
+            src={book.imageUrl}
             alt={book.title}
             className="object-contain min-h-full"
           />
-        ) : (
-          <span className="text-6xl text-gray-400">📚</span>
-        )}
+        )
       </div>
 
       <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">

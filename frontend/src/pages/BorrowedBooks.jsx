@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { getBorrowedBooks } from "../services/borrowService";
+import { getBorrowedBooks, requestReturnBook } from "../services/borrowService";
 
 // Dummy data fallback
 const dummyData = [
   {
-    id: "1",
-    title: "The Hobbit",
-    author: "J.R.R. Tolkien",
-    category: "Fantasy",
-    image: "/placeholder.png",
-    borrowedDate: "2025-08-20T00:00:00Z",
-    dueDate: "2025-09-03T00:00:00Z",
-    status: "borrowed",
+    borrowId: "dummy1",
+    borrowDate: "2025-08-19",
+    dueDate: "2025-09-02",
+    status: "Borrowed",
+    book: {
+      title: "The Great Gatsby",
+      author: "F. Scott Fitzgerald",
+      category: "Classic Literature",
+      imageUrl: "/placeholder.png",
+    },
   },
   {
-    id: "2",
-    title: "1984",
-    author: "George Orwell",
-    category: "Dystopian",
-    image: "/placeholder.png",
-    borrowedDate: "2025-08-25T00:00:00Z",
-    dueDate: "2025-09-08T00:00:00Z",
-    status: "borrowed",
+    borrowId: "dummy2",
+    borrowDate: "2025-08-16",
+    dueDate: "2025-08-30",
+    status: "Borrowed",
+    book: {
+      title: "To Kill a Mockingbird",
+      author: "Harper Lee",
+      category: "Classic Literature",
+      imageUrl: "/placeholder.png",
+    },
   },
 ];
 
@@ -29,23 +33,74 @@ const BorrowedBooks = () => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Calculate remaining days
   const getDaysRemaining = (dueDate) => {
+    if (!dueDate || dueDate === "-") return "N/A";
     const due = new Date(dueDate);
+    if (isNaN(due)) return "Invalid Date";
     const today = new Date();
     const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
     return diffDays > 0 ? `${diffDays} days remaining` : "Overdue";
   };
 
+  const handleReturn = async (borrowId) => {
+  try {
+    // Set local status to Pending for immediate feedback
+    setBorrowedBooks((prev) =>
+      prev.map((book) =>
+        book.borrowId === borrowId ? { ...book, status: "pending_return" } : book
+      )
+    );
+
+    const res = await requestReturnBook(borrowId);
+
+    // After backend, update status based on API response
+    setBorrowedBooks((prev) =>
+      prev.map((book) =>
+        book.borrowId === borrowId
+          ? { ...book, status: res.status || "pending_return" } // backend may return "returned"
+          : book
+      )
+    );
+  } catch (err) {
+    alert(err.response?.data?.error || "Failed to request return");
+
+    // Revert to borrowed if request fails
+    setBorrowedBooks((prev) =>
+      prev.map((book) =>
+        book.borrowId === borrowId ? { ...book, status: "borrowed" } : book
+      )
+    );
+  }
+};
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Try fetching from backend
         const data = await getBorrowedBooks();
-        setBorrowedBooks(data);
+        console.log("Fetched borrowed books:", data);
+
+        // Normalize data so it always has book.title, book.author, book.category, book.imageUrl
+        const normalized = data.map((item) => ({
+          borrowId: item.borrowId,
+          borrowDate: item.borrowDate,
+          dueDate: item.dueDate,
+          status: item.status,
+          book: {
+            title: item.title || item.book?.title || "Untitled",
+            author: item.author || item.book?.author || "Unknown",
+            category: item.category || item.book?.catagory || "Uncategorized",
+            imageUrl: item.image || item.book?.imageUrl || "/placeholder.png",
+          },
+        }));
+
+        setBorrowedBooks(normalized);
       } catch (error) {
         console.error(error);
-        console.warn("Backend offline, using dummy data");
-        // Fallback to dummy
+        console.warn(
+          "Backend offline or user not a member, using dummy data"
+        );
         setBorrowedBooks(dummyData);
       } finally {
         setLoading(false);
@@ -55,44 +110,61 @@ const BorrowedBooks = () => {
     fetchData();
   }, []);
 
+  const filteredBooks = borrowedBooks.filter(
+    (book) =>
+      book.status?.toLowerCase() === "borrowed" ||
+      book.status?.toLowerCase() === "pending_return"
+  );
+
   if (loading) return <div className="text-center mt-10">Loading...</div>;
 
   return (
     <div className="mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold text-center mb-1">My Borrowed Books</h2>
+      <h2 className="text-2xl font-bold text-center mb-1">
+        My Borrowed Books
+      </h2>
       <p className="text-center text-gray-500 mb-6">
         Keep track of your current borrowings
       </p>
 
-      {borrowedBooks.length === 0 ? (
-        <p className="text-center text-gray-600">No borrowed books at the moment.</p>
+      {filteredBooks.length === 0 ? (
+        <p className="text-center text-gray-600">
+          No borrowed books at the moment.
+        </p>
       ) : (
-        borrowedBooks.map((book) => (
+        filteredBooks.map((book) => (
           <div
-            key={book.id}
+            key={book.borrowId}
             className="bg-gray-100 rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row md:items-center gap-10"
           >
             <img
-              src={book.image || "/placeholder.png"}
-              alt={book.title}
+              src={book.book.imageUrl}
+              alt={book.book.title}
               className="w-24 h-36 object-cover rounded self-center md:self-start"
             />
-
             <div className="flex-1 space-y-2">
-              <h3 className="text-lg font-semibold">{book.title}</h3>
-              <p className="text-gray-700">by {book.author}</p>
+              <h3 className="text-lg font-semibold">{book.book.title}</h3>
+              <p className="text-gray-700">by {book.book.author}</p>
               <span className="inline-block bg-green-600 text-white text-xs px-2 py-1 rounded mb-2">
-                {book.category}
+                {book.book.category}
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 text-sm text-gray-600 mt-3">
                 <div>
                   <p className="font-medium">Borrowed Date</p>
-                  <p>{new Date(book.borrowedDate).toLocaleDateString()}</p>
+                  <p>
+                    {book.borrowDate
+                      ? new Date(book.borrowDate).toLocaleDateString()
+                      : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="font-medium">Due Date</p>
-                  <p>{new Date(book.dueDate).toLocaleDateString()}</p>
+                  <p>
+                    {book.dueDate
+                      ? new Date(book.dueDate).toLocaleDateString()
+                      : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="font-medium mb-1">Status</p>
@@ -103,12 +175,23 @@ const BorrowedBooks = () => {
               </div>
 
               <div className="mt-4 flex gap-2">
-                <button className="px-4 py-1 text-sm border rounded hover:bg-gray-200 transition">
-                  Renew
-                </button>
-                <button className="px-4 py-1 text-sm border rounded hover:bg-gray-200 transition">
-                  Return
-                </button>
+               <button
+  disabled={book.status === "pending_return" || book.status === "returned"}
+  onClick={() => handleReturn(book.borrowId)}
+  className={`px-4 py-1 text-sm border rounded hover:bg-gray-200 transition ${
+    book.status === "pending_return" || book.status === "returned"
+      ? "opacity-50 cursor-not-allowed"
+      : ""
+  }`}
+>
+  {book.status === "borrowed"
+    ? "Return"
+    : book.status === "pending_return"
+    ? "Pending Approval"
+    : "Returned"}
+</button>
+
+
               </div>
             </div>
           </div>
