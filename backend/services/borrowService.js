@@ -270,7 +270,7 @@ const getAllBorrows = async () => {
     .select("_id book user borrowDate returnDate status");
 };
 
-// ✅ NEW: Get all pending returns
+
 const getPendingReturns = async () => {
   return await Borrow.find({ status: "pending_return" })
     .populate("book", "title author catagory imageUrl")

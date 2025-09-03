@@ -27,9 +27,16 @@ const borrowSchema=new mongoose.Schema({
         type:Date
         
     },
+
+    overdue: { type: Boolean, default: false },
+
     duedate:{
         type:Date
     },
+//     borrowedBy: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User', 
+//   },
 //     borrowedBooks: 
 //   {
 //     type: mongoose.Schema.Types.ObjectId,
