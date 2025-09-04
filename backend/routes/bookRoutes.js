@@ -23,7 +23,7 @@ router.patch(
   uploadBookImage, 
   bookController.update
 );
-
+router.get('/paginated', bookController.getPaginatedBooks);
 router.delete('/:id', authMiddleware.isAuthenticated, Role.isAdmin, bookController.remove);
 
 module.exports = router;

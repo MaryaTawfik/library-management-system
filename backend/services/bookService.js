@@ -65,7 +65,30 @@ const updateBook = async (id, updatedData) => {
   }
 };
 
+const getBooksPaginated = async (query, page = 1, limit = 10) => {
+  const searchQuery = {};
 
+  // Basic search by title or author
+  if (query.search) {
+    const regex = new RegExp(query.search, 'i'); // case-insensitive
+    searchQuery.$or = [{ title: regex }, { catagory : regex }];
+  }
+  console.log('Search Query:', searchQuery);
+  const skip = (page - 1) * limit;
+
+  const [books, total] = await Promise.all([
+    Book.find(searchQuery).skip(skip).limit(limit),
+    Book.countDocuments(searchQuery)
+  ]);
+  console.log('Books found:', books.length);
+
+  return {
+    books,
+    total,
+    page,
+    pages: Math.ceil(total / limit)
+  };
+};
 
 
 module.exports = {
@@ -73,6 +96,7 @@ module.exports = {
   getBookById,
   createBook,
   deleteBook,
+  getBooksPaginated,
   updateBook
 };
 

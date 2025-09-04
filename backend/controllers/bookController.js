@@ -134,11 +134,33 @@ const remove = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+const getPaginatedBooks = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = req.query;
+
+    const result = await bookService.getBooksPaginated({ search }, parseInt(page), parseInt(limit));
+
+    res.json({
+      status: 'success',
+      data: result.books,
+      pagination: {
+        total: result.total,
+        page: result.page,
+        pages: result.pages
+        
+      },
+     
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
 
 module.exports = {
   getAll,
   getOne,
   create,
   remove,
+  getPaginatedBooks,
   update
 };
