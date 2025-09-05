@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -28,6 +29,15 @@ const App = () => {
   const [user, setUser] = useState(null);   // 👈 state for user
   const [userRole, setUserRole] = useState(null);
 
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setUserRole(parsedUser.role);
+    }
+  }, []);
   // Load user from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -70,10 +80,13 @@ const App = () => {
             <Route path="/contribute" element={<Contribute />} />
             <Route path="/profile" element={<Profile />} />
 
+            <Route path="/profile" element={<Profile />} />
+
             {/* Student routes */}
             <Route
               path="/borrow-history"
               element={
+                <ProtectedRoute role="student" user={user}>
                 <ProtectedRoute role="student" user={user}>
                   <BorrowHistory />
                 </ProtectedRoute>
@@ -82,6 +95,7 @@ const App = () => {
             {/* <Route
               path="/payment"
               element={
+                <ProtectedRoute role="student" user={user}>
                 <ProtectedRoute role="student" user={user}>
                   <PaymentPage />
                 </ProtectedRoute>
@@ -141,6 +155,7 @@ const App = () => {
 
         <footer className="bg-white text-center py-3">footer</footer>
       </div>
+      <ToastContainer />
     </div>
   );
 };

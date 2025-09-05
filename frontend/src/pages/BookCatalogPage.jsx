@@ -12,7 +12,6 @@ export default function BookCatalogPage() {
 
   useEffect(() => {
     getAllBooks().then((data) => {
-      // if backend returns {status, data}, normalize it
       const normalized = data.data || data;
       setBooks(normalized);
       setFilteredBooks(normalized);
@@ -37,8 +36,8 @@ export default function BookCatalogPage() {
   }, [search, selectedCatagory, books]);
 
   return (
-    <div className="min-h-screen px-8 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-cyan-950 mb-1">Book Catalog</h1>
+    <div className="min-h-screen px-6  max-w-7xl mx-auto bg-white rounded-2xl">
+      <h1 className="text-3xl font-bold text-yellow-700 mb-2">Book Catalog</h1>
       <p className="text-gray-800 text-sm mb-6">
         Browse and search our library collection
       </p>
@@ -54,21 +53,22 @@ export default function BookCatalogPage() {
         ]}
       />
 
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-gray-600 ">
+      <div className="flex justify-between items-center mb-4 bg-white">
+        <p className="text-sm text-gray-600 bg-white border border-gray-300 px-2">
           Showing {filteredBooks.length} of {books.length} books
         </p>
-
-        <button className="flex items-center gap-2 text-sm text-gray-700 border border-gray-300 hover:text-green-700 transition whitespace-nowrap">
-          <FaFilter className="text-orange-600" />
-          <span>Advanced Filters</span>
+        <button className="flex items-center text-sm text-gray-700 border border-gray-300 bg-white hover:text-yellow-700 px-2">
+          <FaFilter className="text-yellow-700 mr-1" />
+          Advanced Filters
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredBooks.map((book) => (
-          <BookCard key={book._id || book.bookId} book={book} />
-        ))}
+      <div className="h-[70vh] overflow-y-auto bg-white p-4 rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredBooks.map((book) => (
+            <BookCard key={book._id || book.bookId} book={book} />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-import { API_BASE } from "./api";
-
 export const register = async (userData) => {
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: "POST",

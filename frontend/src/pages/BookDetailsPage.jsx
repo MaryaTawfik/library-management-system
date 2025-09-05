@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { getBookById } from "../services/booksService";
 import { borrowBook } from "../services/borrowService";
 import { toast } from "react-toastify";
@@ -17,9 +18,9 @@ import {
 function InfoItem({ icon, label, value }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="text-black text-lg mt-1">{icon}</div>
+      <div className="text-yellow-800 text-lg mt-1">{icon}</div>
       <div>
-        <p className="text-sm font-semibold text-orange-700">{label}</p>
+        <p className="text-sm font-semibold text-gray-900">{label}</p>
         <p className="text-sm text-gray-700">{value}</p>
       </div>
     </div>
@@ -27,8 +28,8 @@ function InfoItem({ icon, label, value }) {
 }
 
 export default function BookDetailPage() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -88,10 +89,10 @@ const handleBorrow = async () => {
 
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 ">
       <Link
         to="/books"
-        className="inline-block text-sm text-gray-600 hover:text-green-700 mb-6"
+        className="inline-block text-sm text-white bg-yellow-700 rounded px-1 py-1 hover:text-gray-700 mb-6"
       >
         ← Back to Catalog
       </Link>
@@ -194,3 +195,4 @@ const handleBorrow = async () => {
     </div>
   );
 }
+

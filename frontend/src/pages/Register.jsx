@@ -38,7 +38,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("https://library-management-system-1-mrua.onrender.com/auth/register", {
+      const res = await fetch("http://localhost:5000/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -118,7 +118,6 @@ export default function Register() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
           <div className="relative">
             <input
               name="confirmPassword"
