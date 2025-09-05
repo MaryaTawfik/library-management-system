@@ -39,7 +39,7 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
             className="cursor-pointer text-xl"
           />
           <p className="text-base lg:text-lg font-bold font-[Roboto]">
-            E-library
+            ASTUMSJ Library
           </p>
         </div>
 

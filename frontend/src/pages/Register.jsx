@@ -118,7 +118,6 @@ export default function Register() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
           <div className="relative">
             <input
               name="confirmPassword"
