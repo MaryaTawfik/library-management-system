@@ -4,16 +4,20 @@ import { CiSearch } from "react-icons/ci";
 import { GiBookshelf } from "react-icons/gi";
 import { RiHandCoinLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import { useAtom } from "jotai";
+import { userAtom } from "../atoms/authAtom"; // ✅ import jotai atom
 import jemealogo from "../assets/jemealogo.jpg";
 
-const Sidebar = ({ SidebarToggle, userRole }) => {
+const Sidebar = ({ SidebarToggle }) => {
+  const [user] = useAtom(userAtom); 
+  const userRole = user?.role; // fallback if no user
+
   return (
     <div
       className={`fixed top-0 left-0 h-full w-40 bg-gray-100 z-50 transition-transform duration-300 
         ${SidebarToggle ? "translate-x-0" : "-translate-x-full"}`}
     >
-      {/* Make the whole sidebar a flex column */}
-      <div className="flex flex-col h-full justify-between">
+=      <div className="flex flex-col h-full justify-between">
         
         {/* --- Top Section --- */}
         <div>
@@ -26,9 +30,6 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
             <Link to="/home" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
               <IoMdHome /> Home
             </Link>
-            
-            
-
 
             {/* Role-based Links */}
             {userRole === "student" && (
@@ -39,7 +40,7 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
                 <Link to="/borrowed-books" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
                   📚 Borrowed Books
                 </Link>
-                <Link to="/payment" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
+                <Link to="/payment-plans" className="flex items-center gap-1 p-2 hover:bg-gray-200 font-[Poppins]">
                   💳 Payment
                 </Link>
               </>
@@ -47,14 +48,13 @@ const Sidebar = ({ SidebarToggle, userRole }) => {
 
             {userRole === "Admin" && (
               <>
-               <Link to="/admin-dashboard" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
-                🛠 Admin Dashboard
-              </Link>
-              <Link to="/admin-approvals" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
-                📋 Admin Approvals
-              </Link> 
+                <Link to="/admin-dashboard" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
+                  🛠 Admin Dashboard
+                </Link>
+                <Link to="/admin-approvals" className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]">
+                  📋 Admin Approvals
+                </Link> 
               </>
-             
             )}
           </div>
         </div>

@@ -7,7 +7,7 @@ import Search from "./pages/Search";
 import My_shelf from "./pages/My_shelf";
 import Contribute from "./pages/Contribute";
 import AdminDashboard from "./pages/AdminDashboard";
-import PaymentPage from "./pages/PaymentPage";
+// import PaymentPage from "./pages/PaymentPlans";
 import BorrowHistory from "./pages/BorrowHistory";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,7 +20,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import BorrowedBooks from "./pages/BorrowedBooks";
 import Profile from "./pages/Profile";
 import AdminBorrowApproval from "./pages/AdminBorrowApproval";
-
+import PendingPayment from "./pages/PendingPayment";
+import PaymentPlans from "./pages/PaymentPlans";
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
@@ -78,11 +79,27 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/payment"
               element={
                 <ProtectedRoute role="student" user={user}>
                   <PaymentPage />
+                </ProtectedRoute>
+              }
+            /> */}
+              <Route
+              path="/payment-plans"
+              element={
+                <ProtectedRoute role="student">
+                  <PaymentPlans />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pending-payment"
+              element={
+                <ProtectedRoute role="student">
+                  <PendingPayment />
                 </ProtectedRoute>
               }
             />

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getBorrowedBooks, requestReturnBook } from "../services/borrowService";
 
-// Dummy data fallback
 const dummyData = [
   {
     borrowId: "dummy1",
@@ -33,7 +32,6 @@ const BorrowedBooks = () => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Calculate remaining days
   const getDaysRemaining = (dueDate) => {
     if (!dueDate || dueDate === "-") return "N/A";
     const due = new Date(dueDate);
@@ -45,7 +43,6 @@ const BorrowedBooks = () => {
 
   const handleReturn = async (borrowId) => {
   try {
-    // Set local status to Pending for immediate feedback
     setBorrowedBooks((prev) =>
       prev.map((book) =>
         book.borrowId === borrowId ? { ...book, status: "pending_return" } : book
@@ -54,18 +51,16 @@ const BorrowedBooks = () => {
 
     const res = await requestReturnBook(borrowId);
 
-    // After backend, update status based on API response
     setBorrowedBooks((prev) =>
       prev.map((book) =>
         book.borrowId === borrowId
-          ? { ...book, status: res.status || "pending_return" } // backend may return "returned"
+          ? { ...book, status: res.status || "pending_return" } 
           : book
       )
     );
   } catch (err) {
     alert(err.response?.data?.error || "Failed to request return");
 
-    // Revert to borrowed if request fails
     setBorrowedBooks((prev) =>
       prev.map((book) =>
         book.borrowId === borrowId ? { ...book, status: "borrowed" } : book
@@ -81,7 +76,6 @@ const BorrowedBooks = () => {
         const data = await getBorrowedBooks();
         console.log("Fetched borrowed books:", data);
 
-        // Normalize data so it always has book.title, book.author, book.category, book.imageUrl
         const normalized = data.map((item) => ({
           borrowId: item.borrowId,
           borrowDate: item.borrowDate,
@@ -175,21 +169,21 @@ const BorrowedBooks = () => {
               </div>
 
               <div className="mt-4 flex gap-2">
-               <button
-  disabled={book.status === "pending_return" || book.status === "returned"}
-  onClick={() => handleReturn(book.borrowId)}
-  className={`px-4 py-1 text-sm border rounded hover:bg-gray-200 transition ${
-    book.status === "pending_return" || book.status === "returned"
-      ? "opacity-50 cursor-not-allowed"
-      : ""
-  }`}
->
-  {book.status === "borrowed"
-    ? "Return"
-    : book.status === "pending_return"
-    ? "Pending Approval"
-    : "Returned"}
-</button>
+                <button
+    disabled={book.status === "pending_return" || book.status === "returned"}
+    onClick={() => handleReturn(book.borrowId)}
+    className={`px-4 py-1 text-sm border rounded hover:bg-gray-200 transition ${
+      book.status === "pending_return" || book.status === "returned"
+        ? "opacity-50 cursor-not-allowed"
+        : ""
+    }`}
+  >
+    {book.status === "borrowed"
+      ? "Return"
+      : book.status === "pending_return"
+      ? "Pending Approval"
+      : "Returned"}
+  </button>
 
 
               </div>

@@ -6,21 +6,26 @@ import { FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { CgEnter } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa";
+import { useAtom } from "jotai";
+import { userAtom } from "../atoms/authAtom"; // ✅ import jotai atom
 
 
 
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user,setUser] = useAtom(userAtom);
+  // const user = JSON.parse(localStorage.getItem("user"));
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("user"); 
     setDropdownOpen(false); 
-    navigate("/welcome"); 
+    setUser(null);
+    navigate("/login"); 
   };
 
   const firstLetter = (user?.firstName || user?.lastName || "").charAt(0).toUpperCase();
+  const profileImage = user?.profileImage || null;
 
 
   return (
@@ -67,7 +72,15 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
               >
                 {/* Avatar */}
                 <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-300 text-black font-semibold">
-                  {firstLetter}
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    firstLetter
+                  )}
                 </div>
               </button>
 

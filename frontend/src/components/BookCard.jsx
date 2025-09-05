@@ -39,7 +39,7 @@ export default function BookCard({ book }) {
 
       <Link
         to={`/books/${bookLinkId}`}
-        className="text-center py-2 rounded-md bg-orange-600 hover:bg-gray-700 text-white text-sm"
+        className="text-center py-2 rounded-md bg-yellow-800 hover:bg-gray-700 text-white text-sm"
       >
         View Details
       </Link>

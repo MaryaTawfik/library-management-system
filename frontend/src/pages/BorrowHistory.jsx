@@ -11,6 +11,7 @@ const BorrowHistory = () => {
     const fetchHistory = async () => {
       try {
         const backendData = await getBorrowHistory();
+        console.log("Borrow history fetched successfully:", backendData);
         setBorrowedBooks(backendData || []);
       } catch (err) {
         console.error("Error fetching borrow history:", err);
@@ -49,11 +50,11 @@ const BorrowHistory = () => {
             <div>
               <h3 className="text-lg font-semibold">{borrow.title}</h3>
               <p className="text-gray-700">by {borrow.author}</p>
-              {borrow.category && (
+              {/* {borrow.category && (
                 <span className="inline-block mt-1 text-xs text-white bg-green-600 px-2 py-1 rounded">
                   {borrow.category}
                 </span>
-              )}
+              )} */}
             </div>
 
             {/* Dates and Status */}

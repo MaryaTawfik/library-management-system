@@ -191,8 +191,16 @@ export default function Login() {
         navigate("/"); // regular user homepage
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.error || "Login failed. Try again.");
+      console.error("Login error:", err.response?.data || err.message);
+
+  const message =
+    (err.response && err.response.data
+      ? JSON.stringify(err.response.data)
+      : err.message) || "Login failed";
+
+  setError(message);
+      
+     
     }
   };
 
