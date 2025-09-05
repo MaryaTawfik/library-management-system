@@ -21,13 +21,15 @@ const bookBorrow = async (bookId, userId) => {
     throw new Error("No copies available");
   }
 
-  const activeBorrows = await Borrow.countDocuments({
-    user: userId,
-    status: "borrowed",
-  });
-  if (activeBorrows >= 3) {
-    throw new Error("User already has 3 active borrows");
-  }
+const activeBorrows = await Borrow.countDocuments({
+  user: userId,
+  status: { $in: ["borrowed", "pending_return"] }, // ✅ count both
+});
+
+if (activeBorrows >= 3) {
+  throw new Error("User already has 3 active borrows (including pending returns)");
+}
+
 
   const borrow = await Borrow.create({
     user: userId,
