@@ -1,5 +1,12 @@
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 
+/*const catagories = [
+  "All Catagories",
+  "Computer Science",
+  "Mathematics",
+  "Physics",
+  "History",
+];*/
 export default function SearchBar({
   search,
   setSearch,
@@ -13,10 +20,10 @@ export default function SearchBar({
   };
 
   return (
-    <div className="px-6 py-2 border-gray-200 shadow-2xl rounded-lg mb-7 bg-stone-100">
+    <div className="px-6 py-6 border-gray-400 rounded-lg mb-7 bg-gray-100">
       {/* Heading with icon */}
-      <div className="flex items-center text-yellow-900 text-lg font-semibold mb-3">
-        <FaSearch className="mr-2 text-yellow-800" />
+      <div className="flex items-center text-orange-800 text-lg font-semibold mb-3">
+        <FaSearch className="mr-2 text-orange-600" />
         <span>Search & Filter</span>
       </div>
 
@@ -25,7 +32,7 @@ export default function SearchBar({
         {/* Left side Search + Category */}
         <div className="flex items-center gap-3 flex-1 max-w-3xl">
           {/* Search box */}
-          <div className="flex items-center flex-grow bg-white  rounded-lg px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-amber-600">
+          <div className="flex items-center flex-grow bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-amber-600">
             <input
               type="text"
               placeholder="Search by title, author, or catagory"
@@ -40,7 +47,7 @@ export default function SearchBar({
             <select
               value={selectedCatagory}
               onChange={(e) => setSelectedCatagory(e.target.value)}
-              className="w-full appearance-none bg-white border-gray-100 rounded-md px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-100"
+              className="w-full appearance-none bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               {catagories.map((cat) => (
                 <option key={cat} value={cat}>
