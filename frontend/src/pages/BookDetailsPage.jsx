@@ -15,9 +15,9 @@ import {
 function InfoItem({ icon, label, value }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="text-black text-lg mt-1">{icon}</div>
+      <div className="text-yellow-800 text-lg mt-1">{icon}</div>
       <div>
-        <p className="text-sm font-semibold text-orange-700">{label}</p>
+        <p className="text-sm font-semibold text-gray-900">{label}</p>
         <p className="text-sm text-gray-700">{value}</p>
       </div>
     </div>
@@ -41,15 +41,15 @@ export default function BookDetailPage() {
   const handleBorrow = () => navigate("/welcome");
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 ">
       <Link
         to="/books"
-        className="inline-block text-sm text-gray-600 hover:text-green-700 mb-6"
+        className="inline-block text-sm text-white bg-yellow-700 rounded px-1 py-1 hover:text-gray-700 mb-6"
       >
         ← Back to Catalog
       </Link>
 
-      <div className="flex flex-col md:flex-row bg-gray-100 rounded-lg p-6 border border-gray-200">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg p-6 border border-gray-200">
         {/* Left - Image + Availability */}
         <div className="flex flex-col md:w-1/3 bg-white rounded-lg p-6 shadow-md border-r border-gray-300 relative">
           <div className="flex-1 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden mb-4">
@@ -65,7 +65,7 @@ export default function BookDetailPage() {
           </div>
 
           <div className="mt-2 px-2 py-1">
-            <p className="text-green-700 font-semibold text-sm mb-1">
+            <p className="text-yellow-700 font-semibold text-sm mb-1">
               Availability
             </p>
             <div className="flex justify-between items-center text-sm text-gray-800">
@@ -75,8 +75,8 @@ export default function BookDetailPage() {
               <span
                 className={
                   book.avaliablecopies > 0
-                    ? "text-green-700 font-medium"
-                    : "text-white font-medium bg-amber-600 px-2 py-1 rounded"
+                    ? "text-yellow-700 font-medium"
+                    : "text-white font-medium bg-yellow-700 px-2 py-1 rounded"
                 }
               >
                 {book.avaliablecopies > 0 ? "Available" : "Unavailable"}
@@ -87,28 +87,28 @@ export default function BookDetailPage() {
           {book.avaliablecopies > 0 ? (
             <button
               onClick={handleBorrow}
-              className="w-full bg-orange-700 hover:bg-gray-800 text-white font-semibold py-2 rounded-lg mt-4"
+              className="w-full bg-gray-400 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg mt-4"
             >
               Borrow Book
             </button>
           ) : (
             <button
               disabled
-              className="w-full bg-gray-600 cursor-not-allowed text-white font-semibold py-2 rounded-lg mt-4"
+              className="w-full bg-teal-600 cursor-not-allowed text-white font-semibold py-2 rounded-lg mt-4"
             >
               Unavailable
             </button>
           )}
         </div>
 
-        {/* Right - Info */}
+        {/* Right Info */}
         <div className="md:w-2/3 space-y-6 pl-0 md:pl-8 mt-6 md:mt-0">
           <div className="relative bg-white p-6 rounded-lg">
-            <span className="absolute top-4 right-4 px-3 py-1 border border-green-400 text-orange-700 bg-white rounded-full text-xs font-semibold shadow-sm">
+            <span className="absolute top-4 right-4 px-3 py-1 border border-gray-400 text-yellow-700 bg-white rounded-full text-xs font-semibold shadow-sm">
               {book.catagory}
             </span>
 
-            <h1 className="text-2xl font-bold text-orange-800 mb-1">
+            <h1 className="text-2xl font-bold text-yellow-900 mb-1">
               {book.title}
             </h1>
             <p className="text-gray-700 font-medium mb-4">by {book.author}</p>
@@ -116,7 +116,7 @@ export default function BookDetailPage() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-orange-700 font-semibold text-lg mb-1">
+            <h2 className="text-yellow-700 font-semibold text-lg mb-1">
               Book Information
             </h2>
             <div className="w-full h-px bg-gray-100 my-3" />

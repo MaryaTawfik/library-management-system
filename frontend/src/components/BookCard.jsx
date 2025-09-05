@@ -4,37 +4,38 @@ export default function BookCard({ book }) {
   const bookLinkId = book._id || book.bookId;
 
   return (
-    <div className="mb-8 bg-stone-700 border border-slate-700 h-auto rounded-xl shadow-sm hover:shadow-md transition py-5 flex flex-col">
+    <div
+      className=" bg-white border border-slate-100 h-auto rounded-xl shadow-sm hover:shadow-md transition py-1 px-1
+   flex flex-col"
+    >
       <div className="h-full bg-white rounded-lg overflow-hidden flex flex-col">
-        <div className="w-full h-48 flex items-center justify-center bg-gray-100 mb-4">
-          {book.imageUrl ? (
-            <img
-              src={book.imageUrl}
-              alt={book.title}
-              className="object-cover h-full w-full"
-            />
-          ) : (
-            <span className="text-6xl text-gray-400">📚</span>
-          )}
+        <div className="w-full h-48 flex items-center justify-center shadow-amber-500 bg-gray-100 mb-4">
+          <img
+            src={book.imageUrl}
+            alt={book.title}
+            className="object-cover h-full w-full"
+          />
         </div>
 
-        <h4 className="text-lg font-semibold text-gray-800 line-clamp-1">
+        <h4 className="text-lg font-semibold text-gray-800 line-clamp-1 px-1">
           {book.title}
         </h4>
-        <p className="text-sm text-gray-600 line-clamp-1">By {book.author}</p>
-        <p className="text-xs text-gray-500 mb-2 line-clamp-1">
+        <p className="text-sm text-gray-600 line-clamp-1 px-1">
+          By {book.author}
+        </p>
+        <p className="text-xs text-gray-500 mb-2 line-clamp-1 px-1">
           {book.catagory}
         </p>
 
-        <div className="flex justify-between items-center text-sm mb-3 mt-auto px-4">
+        <div className="flex justify-between items-center text-sm mb-3 mt-auto px-1">
           <span className="font-medium">
             Copies: {book.avaliablecopies} of {book.totalcopies}
           </span>
           <span
             className={
               book.avaliablecopies > 0
-                ? "text-yellow-500"
-                : "text-white bg-yellow-700 rounded px-2"
+                ? "text-yellow-700 font-medium "
+                : "text-white bg-yellow-800 rounded px-2"
             }
           >
             {book.avaliablecopies > 0 ? "Available" : "Unavailable"}
@@ -43,7 +44,7 @@ export default function BookCard({ book }) {
 
         <Link
           to={`/books/${bookLinkId}`}
-          className="w-full text-center py-2 mt-2 bg-slate-700 hover:bg-gray-700 text-white text-sm rounded"
+          className="w-full text-center py-2 mt-2 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded"
         >
           View Details
         </Link>

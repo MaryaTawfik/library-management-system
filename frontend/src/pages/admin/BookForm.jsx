@@ -1,3 +1,4 @@
+// src/pages/admin/BookForm.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -6,6 +7,7 @@ import {
   updateBook,
 } from "../../services/booksService";
 import { IoArrowBack } from "react-icons/io5";
+import { toast } from "react-toastify"; // 👈 import toast
 
 export default function BookForm() {
   const { id } = useParams();
@@ -25,12 +27,12 @@ export default function BookForm() {
     edition: "",
     publisher: "",
     language: "English",
+    imageUrl: "",
   });
 
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   // Load existing book if editing
   useEffect(() => {
@@ -39,14 +41,15 @@ export default function BookForm() {
       getBookById(id)
         .then((data) => {
           setBook(data);
-          setPreviewUrl(data.image || ""); // show existing image if any
+          setPreviewUrl(data.imageUrl || "");
+          toast.info("📖 Book details loaded");
         })
         .catch(() => {
-          setError("Failed to load book");
+          toast.error("❌ Failed to load book");
         })
         .finally(() => setLoading(false));
     }
-  }, [id]);
+  }, [id, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,6 +61,7 @@ export default function BookForm() {
     if (selected) {
       setFile(selected);
       setPreviewUrl(URL.createObjectURL(selected));
+      toast.info("🖼️ Preview updated");
     }
   };
 
@@ -67,52 +71,58 @@ export default function BookForm() {
 
     try {
       const formData = new FormData();
-      Object.entries(book).forEach(([key, value]) => {
-        formData.append(key, value);
+
+      // Append text fields
+      Object.keys(book).forEach((key) => {
+        formData.append(key, book[key]);
       });
-      if (file) formData.append("image", file);
+
+      // Append image if selected
+      if (file) {
+        formData.append("imageUrl", file); // 👈 backend expects "imageUrl"
+      }
 
       const token = localStorage.getItem("token");
 
       if (isEditMode) {
         await updateBook(id, formData, token);
-        alert("Book updated!");
+        toast.success("✅ Book updated successfully!");
       } else {
         await createBook(formData, token);
-        alert("Book added!");
+        toast.success("📚 Book added successfully!");
       }
 
-      navigate("/admin/books");
+      navigate("/admin/books"); // redirect
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Something went wrong.");
+      console.error("Error saving book:", err);
+      toast.error(
+        `❌ Failed to save book: ${err.response?.data?.message || err.message}`
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 bg-stone-500 rounded-2xl min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-9 bg-gray-50 border-8 border-white shadow-2xl rounded-2xl min-h-screen">
       {/* Back to Books */}
       <button
         onClick={() => navigate("/admin/books")}
-        className="flex items-center text-gray-200 bg-stone-700 rounded px-2 py-2 hover:text-black mb-4 text-sm"
+        className="flex items-center text-gray-200 bg-yellow-600 rounded px-1 py-1 hover:text-black mb-4 text-sm"
       >
         <IoArrowBack className="mr-1 text-lg" />
         Back to Books
       </button>
 
       {/* Heading */}
-      <h1 className="text-2xl font-semibold text-white mb-1">
+      <h1 className="text-2xl font-semibold text-yellow-800 mb-1">
         {isEditMode ? "Edit Book" : "Add New Book"}
       </h1>
-      <p className="text-sm text-gray-300 mb-6">
+      <p className="text-sm text-gray-800 mb-6">
         {isEditMode
           ? "Update book details in the library collection"
           : "Add new book to the library collection"}
       </p>
-
-      {error && <p className="text-red-600 mb-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4 p-6 rounded">
         {/* Title */}
@@ -124,7 +134,7 @@ export default function BookForm() {
             value={book.title}
             onChange={handleChange}
             required
-            className="w-full border px-3 py-2 bg-slate-700 text-white rounded"
+            className="w-full border px-3 py-2 bg-white rounded"
           />
         </div>
 
@@ -261,8 +271,8 @@ export default function BookForm() {
           />
           {previewUrl && (
             <img
-              src={previewUrl}
-              alt="Book preview"
+              src={previewUrl || book.imageUrl}
+              alt="Book cover"
               className="mt-2 w-32 h-44 object-cover border"
             />
           )}
@@ -283,7 +293,7 @@ export default function BookForm() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-slate-700 text-white px-6 py-2 rounded hover:bg-orange-700"
+          className="bg-slate-400 text-white px-6 py-2 rounded hover:bg-orange-700"
         >
           {loading ? "Saving..." : isEditMode ? "Update Book" : "Add Book"}
         </button>

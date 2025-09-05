@@ -25,31 +25,25 @@ const MOCK_USERS = [
   },
 ];
 
+// Fetch all users
 export const getAllUsers = async () => {
   try {
     const res = await API.get("/admin/users");
     return res.data || [];
   } catch (err) {
-    console.warn(
-      "usersService.getAllUsers failed, returning mock",
-      err.message
-    );
-    return MOCK_USERS;
+    console.warn("usersService.getAllUsers failed:", err.message);
+    return []; // fallback empty array
   }
 };
 
-export const toggleUserBlock = async (id) => {
+// Toggle block/unblock
+export const toggleUserBlock = async (id, block = true) => {
   try {
-    const res = await API.post(`/admin/users/${id}/block`);
-    return res.data;
+    const url = `/admin/users/${id}/${block ? "block" : "unblock"}`;
+    const res = await API.put(url);
+    return res.data; // backend returns { message, data }
   } catch (err) {
-    console.warn(
-      "usersService.toggleUserBlock failed, updating mock",
-      err.message
-    );
-    // mimic toggle for mock
-    const user = MOCK_USERS.find((u) => u._id === id);
-    if (user) user.status = user.status === "active" ? "blocked" : "active";
-    return { success: true };
+    console.error("toggleUserBlock failed:", err.response?.data || err.message);
+    throw err; // propagate error to handle in UI
   }
 };

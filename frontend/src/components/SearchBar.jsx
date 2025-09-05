@@ -13,7 +13,7 @@ export default function SearchBar({
   };
 
   return (
-    <div className="px-6 py-6 border-gray-400 rounded-lg mb-7 bg-stone-600">
+    <div className="px-6 py-2 border-gray-200 shadow-2xl rounded-lg mb-7 bg-stone-100">
       {/* Heading with icon */}
       <div className="flex items-center text-yellow-900 text-lg font-semibold mb-3">
         <FaSearch className="mr-2 text-yellow-800" />
@@ -40,7 +40,7 @@ export default function SearchBar({
             <select
               value={selectedCatagory}
               onChange={(e) => setSelectedCatagory(e.target.value)}
-              className="w-full appearance-none bg-white border rounded-md px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full appearance-none bg-white border-gray-100 rounded-md px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-100"
             >
               {catagories.map((cat) => (
                 <option key={cat} value={cat}>

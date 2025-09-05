@@ -1,23 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ roles }) => {
+export const ProtectedRoute = ({ children, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" />;
+  if (role && user.role !== role) return <Navigate to="/home" />;
 
-  // normalize stored role and allowed roles to lowercase to avoid casing issues
-  const userRole = user?.role ? String(user.role).toLowerCase() : null;
-
-  if (roles) {
-    const allowed = roles.map((r) => String(r).toLowerCase());
-    if (!allowed.includes(userRole)) {
-      return <Navigate to="/home" replace />;
-    }
-  }
-
-  return <Outlet />; // render nested routes
+  return children;
 };
-
-export default ProtectedRoute;

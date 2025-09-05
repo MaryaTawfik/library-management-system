@@ -16,6 +16,10 @@ export default function ManageUsers() {
 
   const dropdownRefs = useRef({});
 
+  const [borrowCounts, setBorrowCounts] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5; // adjust how many users per page
+
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
@@ -31,6 +35,38 @@ export default function ManageUsers() {
     }
   };
 
+  const loadBorrowCounts = async () => {
+    try {
+      const res = await getAllBorrows();
+      const list = Array.isArray(res) ? res : res?.data || [];
+
+      const map = {};
+
+      list.forEach((r) => {
+        const uid = r?.user?.email; // use email as unique ID
+        if (!uid) return;
+
+        if (!map[uid]) {
+          map[uid] = { total: 0, current: 0 };
+        }
+
+        map[uid].total += 1;
+
+        // current means borrowed or overdue
+        if (!r?.status || r.status === "borrowed" || r.status === "overdue") {
+          map[uid].current += 1;
+        }
+      });
+
+      setBorrowCounts(map);
+      toast.success("Borrow records refreshed ✅");
+    } catch (err) {
+      console.warn("Failed to load borrow records", err.message || err);
+      setBorrowCounts({});
+      toast.error("Failed to load borrow records ❌");
+    }
+  };
+
   useEffect(() => {
     (async () => {
       await fetchUsers();
@@ -38,48 +74,33 @@ export default function ManageUsers() {
     })();
   }, []);
 
-  const handleToggle = async (id) => {
+  const handleToggle = async (user) => {
+    if (!user?._id) return;
+
     try {
       setLoading(true);
-      await toggleUserBlock(id);
-      await fetchUsers();
+      const block = user.status !== "blocked";
+      const res = await toggleUserBlock(user._id, block);
+      const updatedStatus = res.data?.status || (block ? "blocked" : "active");
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === user._id ? { ...u, status: updatedStatus } : u
+        )
+      );
+
+      if (selectedUser?._id === user._id) {
+        setSelectedUser((prev) => ({ ...prev, status: updatedStatus }));
+      }
+      setError(null);
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data || err.message);
       setError("Action failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const [borrowCounts, setBorrowCounts] = useState({});
-
-  const loadBorrowCounts = async () => {
-    try {
-      const records = await getAllBorrows();
-      const list = Array.isArray(records) ? records : records?.data || [];
-      const map = {};
-      list.forEach((r) => {
-        const uid =
-          r?.user?._id ||
-          r?.user?.id ||
-          r?.userID ||
-          r?.user?.userID ||
-          r?.user?.userId ||
-          null;
-        if (!uid) return;
-        if (!map[uid]) map[uid] = { total: 0, current: 0 };
-        map[uid].total += 1;
-        if (!r?.status || r.status === "borrowed" || r.status === "overdue")
-          map[uid].current += 1;
-      });
-      setBorrowCounts(map);
-    } catch (err) {
-      console.warn("Failed to load borrow records", err.message || err);
-      setBorrowCounts({});
-    }
-  };
-
-  // helper: normalize different backend shapes into a predictable object used by the UI
   const normalizeUser = (raw) => {
     const src = raw?.user || raw || {};
     const _id = src._id || src.id || raw?._id || raw?.id || null;
@@ -103,13 +124,13 @@ export default function ManageUsers() {
     const membershipExpires =
       src.expiryDate || src?.membership?.expires || null;
     const joinDate = src.createdAt || src.joinDate || null;
-    const borrowTotal =
-      src?.borrowings?.total ??
-      src?.totalBorrowings ??
-      src?.borrowCount ??
-      null;
-    const borrowCurrent =
-      src?.borrowings?.current ?? src?.currentBorrowings ?? null;
+    const borrowings = src.borrowings || [];
+
+    const borrowTotal = borrowings.length;
+    const borrowCurrent = borrowings.filter(
+      (b) => b.status === "borrowed"
+    ).length;
+
     const status = src.status || raw?.status || "-";
 
     return {
@@ -167,28 +188,42 @@ export default function ManageUsers() {
     return matchesSearch && matchesStatus;
   });
 
+  // pagination logic
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+
   return (
-    <div className="p-6 bg-stone-500 min-h-screen rounded-2xl">
+    <div className=" bg-white min-h-screen rounded-2xl">
       <div className="mb-6">
-        <h1 className="text-3xl text-white font-bold">Manage Users</h1>
-        <p className="text-gray-300">View and manage all library users</p>
+        <h1 className="text-3xl text-yellow-700 font-bold">Manage Users</h1>
+        <p className="text-gray-800">View and manage all library users</p>
       </div>
 
-      {loading && <div className="text-white mb-4">Loading users...</div>}
-      {error && <div className="text-red-300 mb-4">{error}</div>}
+      {loading && <div className="text-gray-600 mb-4">Loading users...</div>}
+      {error && <div className="text-red-600 mb-4">{error}</div>}
 
-      <div className="flex flex-row items-center gap-4  border-8 border-stone-600 rounded mb-6 bg-white px-4 py-2">
+      {/* Search + Filter */}
+      <div className="flex flex-row items-center gap-4 border-2 border-gray-100 shadow-2xl rounded mb-6 bg-white px-4 py-2">
         <FaSearch className="text-gray-500" />
         <input
           type="text"
           placeholder="Search by name or email..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // reset to first page on search
+          }}
           className="flex-grow outline-none"
         />
         <select
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
+          onChange={(e) => {
+            setFilterStatus(e.target.value);
+            setCurrentPage(1); // reset to first page on filter
+          }}
           className="border px-3 py-2 rounded"
         >
           <option value="all">All Statuses</option>
@@ -197,9 +232,10 @@ export default function ManageUsers() {
         </select>
       </div>
 
+      {/* Table */}
       <div className="bg-white overflow-x-auto rounded shadow">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-700 text-white">
+        <table className="w-full text-sm bg-white">
+          <thead className="bg-white text-black">
             <tr>
               <th className="px-4 py-3 text-left">User</th>
               <th className="px-4 py-3 text-left">Membership</th>
@@ -210,20 +246,19 @@ export default function ManageUsers() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((userRaw, idx) => {
+            {paginatedUsers.map((userRaw, idx) => {
               const u = normalizeUser(userRaw);
               const rowKey = u._id || idx;
               const membershipStatus = u.membershipStatus || "-";
               const membershipExpires = u.membershipExpires || null;
               const joinDate = u.joinDate || "-";
-              const borrowTotal =
-                borrowCounts[u._id]?.total ?? u.borrowTotal ?? "-";
-              const borrowCurrent =
-                borrowCounts[u._id]?.current ?? u.borrowCurrent ?? "-";
               const statusText = u.status || "-";
 
               return (
-                <tr key={rowKey} className="border-t hover:bg-gray-50">
+                <tr
+                  key={rowKey}
+                  className="border-2 border-gray-200 hover:bg-gray-50"
+                >
                   <td className="px-4 py-3">
                     <div className="font-medium">{u.name || "-"}</div>
                     <div className="text-gray-500">{u.email || "-"}</div>
@@ -233,7 +268,7 @@ export default function ManageUsers() {
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         (membershipStatus || "").toString().toLowerCase() ===
                         "active"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-100 text-teal-700"
                           : "bg-gray-100 text-gray-600"
                       }`}
                     >
@@ -249,11 +284,12 @@ export default function ManageUsers() {
                     {joinDate ? new Date(joinDate).toLocaleDateString() : "-"}
                   </td>
                   <td className="px-4 py-3">
-                    <div>Total: {borrowTotal}</div>
+                    <div>Total: {u.borrowTotal}</div>
                     <div className="text-gray-500">
-                      Current: {borrowCurrent}
+                      Current: {u.borrowCurrent}
                     </div>
                   </td>
+
                   <td className="px-4 py-3">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
@@ -289,13 +325,10 @@ export default function ManageUsers() {
                           View Profile
                         </button>
                         <button
-                          onClick={() => {
-                            handleToggle(u._id);
-                            setOpenMenuId(null);
-                          }}
+                          onClick={() => handleToggle(u)}
                           className="w-full text-left px-4 py-2 hover:bg-gray-100"
                         >
-                          {statusText === "blocked"
+                          {u.status === "blocked"
                             ? "Unblock User"
                             : "Block User"}
                         </button>
@@ -305,7 +338,7 @@ export default function ManageUsers() {
                 </tr>
               );
             })}
-            {filteredUsers.length === 0 && (
+            {paginatedUsers.length === 0 && (
               <tr>
                 <td colSpan="6" className="text-center text-gray-500 py-6">
                   No users found.
@@ -314,6 +347,27 @@ export default function ManageUsers() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span>
+          Page {currentPage} of {totalPages || 1}
+        </span>
+        <button
+          disabled={currentPage === totalPages || totalPages === 0}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
 
       {/* Profile Modal */}
@@ -366,12 +420,15 @@ export default function ManageUsers() {
               </p>
               <p>
                 <strong>Total Borrowings:</strong>{" "}
-                {borrowCounts[selectedUser?._id]
-                  ? borrowCounts[selectedUser._id].total
-                  : selectedUser?.borrowings?.total ??
-                    selectedUser?.totalBorrowings ??
-                    "-"}
+                {selectedUser?.borrowings?.length ?? 0}
               </p>
+              <p>
+                <strong>Current Borrowings:</strong>{" "}
+                {selectedUser?.borrowings?.filter(
+                  (b) => b.status === "borrowed"
+                ).length ?? 0}
+              </p>
+
               <p>
                 <strong>Current Borrowings:</strong>{" "}
                 {borrowCounts[selectedUser?._id]
@@ -390,20 +447,18 @@ export default function ManageUsers() {
               </button>
               <button
                 onClick={() => {
-                  handleToggle(selectedUser?._id || selectedUser?.id);
-                  setSelectedUser(null);
+                  handleToggle(selectedUser);
+                  setSelectedUser(null); // optional: close modal immediately
                 }}
-                className={`px-4 py-2 text-white rounded ${
-                  (selectedUser?.status || "").toString().toLowerCase() ===
-                  "active"
+                className={`flex-start justify-between px-4 py-2 text-white rounded ${
+                  selectedUser?.status?.toLowerCase() === "active"
                     ? "bg-red-600 hover:bg-red-700"
-                    : "bg-green-600 hover:bg-green-700"
+                    : "bg-green-600 hover:bg-teal-700"
                 }`}
               >
-                {(selectedUser?.status || "").toString().toLowerCase() ===
-                "active"
-                  ? "Block User"
-                  : "Unblock User"}
+                {selectedUser?.status?.toLowerCase() === "active"
+                  ? "Block"
+                  : "Unblock"}
               </button>
             </div>
           </div>

@@ -1,11 +1,8 @@
 // src/services/bookService.js
 import API from "./api";
-const API_URL = "/books"; // API client already uses baseURL
-/*const BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://library-management-system-1-mrua.onrender.com";
-const API_URL = `${BASE_URL}/books`;
-*/
+
+const API_URL = "/books"; // baseURL is already set in API
+
 /**
  * Get all books
  */
@@ -19,7 +16,7 @@ export const getAllBooks = async () => {
     return [
       {
         bookId: "B001",
-        image: "/book1.png",
+        imageUrl: "/book1.png",
         title: "Don’t Make Me Think",
         category: "Computer Science",
         description: "A classic on usability and design principles.",
@@ -38,7 +35,7 @@ export const getAllBooks = async () => {
         bookId: "B002",
         imageUrl: "/book2.png",
         title: "The Design of Everyday Things",
-        catagory: "Design",
+        category: "Design",
         description: "How human-centered design makes products usable.",
         author: "Don Norman",
         pages: 380,
@@ -56,7 +53,7 @@ export const getAllBooks = async () => {
 };
 
 /**
- * Get single book by id
+ * Get single book by ID
  */
 export const getBookById = async (id) => {
   try {
@@ -72,22 +69,18 @@ export const getBookById = async (id) => {
 /**
  * Create new book
  */
-export const createBook = async (bookData, token) => {
-  // bookData can be FormData if contains image
-  const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const res = await API.post(API_URL, bookData, { headers });
+export const createBook = async (formData, token) => {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await API.post(API_URL, formData, { headers });
   return res.data;
 };
 
 /**
  * Update existing book
  */
-export const updateBook = async (id, bookData, token) => {
-  const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await API.put(`${API_URL}/${id}`, bookData, { headers });
+export const updateBook = async (id, formData, token) => {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await API.patch(`${API_URL}/${id}`, formData, { headers });
   return res.data;
 };
 
@@ -95,8 +88,7 @@ export const updateBook = async (id, bookData, token) => {
  * Delete book
  */
 export const deleteBook = async (id, token) => {
-  const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const res = await API.delete(`${API_URL}/${id}`, { headers });
   return res.data;
 };
