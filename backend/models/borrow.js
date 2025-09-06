@@ -31,7 +31,8 @@ const borrowSchema=new mongoose.Schema({
     overdue: { type: Boolean, default: false },
 
     duedate:{
-        type:Date
+        type:Date,
+        
     },
     reminderSent: { type: Boolean, default: false }, 
 

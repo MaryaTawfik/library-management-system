@@ -20,9 +20,12 @@ const bookSchema=new mongoose.Schema({
     totalcopies:{
         type:Number,
     },
-    avaliablecopies:{
-       type:Number,
-    },
+   avaliablecopies: {
+  type: Number,
+  default: function () {
+    return this.totalcopies; // 👈 auto fill available copies = total
+  }
+},
     isbn:{
         type:String,
         required:true , 

@@ -41,6 +41,6 @@ router.get(
 );
 router.get("/overdue/users",authMiddleware.isAuthenticated,
   Role.isAdmin, borrowController.getOverdueUsers);
-router.get("/returned/overdue",authMiddleware.isAuthenticated,
-  Role.isAdmin, borrowController.getReturnedOverdueUsers);
+router.get("/returned/overdue", borrowController.getReturnedOverdueUsers);
+
 module.exports = router;

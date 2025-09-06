@@ -23,7 +23,7 @@ const bookBorrow = async (bookId, userId) => {
 
 const activeBorrows = await Borrow.countDocuments({
   user: userId,
-  status: { $in: ["borrowed", "pending_return"] }, // ✅ count both
+  status: { $in: ["borrowed", "pending_return"] }, 
 });
 
 if (activeBorrows >= 3) {
@@ -34,7 +34,7 @@ if (activeBorrows >= 3) {
   const borrow = await Borrow.create({
     user: userId,
     book: book._id,
-    duedate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+duedate: new Date(Date.now() + 1 * 60 * 1000),
     status: "borrowed",
   });
 

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 const registeruser = async (data) => {
   const newUser = new User(data);
