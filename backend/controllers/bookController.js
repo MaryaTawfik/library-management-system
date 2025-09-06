@@ -24,6 +24,8 @@ const getOne = async (req, res) => {
   }
 };
 
+
+
 const create = async (req, res) => {
   try {
     const {
@@ -32,7 +34,7 @@ const create = async (req, res) => {
       publishedYear,
       catagory,
       totalcopies,
-      avaliablecopies,
+      availablecopies,
       isbn,
       pages,
       description
@@ -74,7 +76,7 @@ const create = async (req, res) => {
       publishedYear,
       catagory,
       totalcopies,
-      avaliablecopies,
+      availablecopies,
       isbn,
       pages,
       description,

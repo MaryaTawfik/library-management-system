@@ -10,13 +10,15 @@ const getBookById = async (id) => {
   return await Book.findById(id);
 };
 
+
+
 const createBook = async (
   title,
   author,
   publishedYear,
   catagory,
   totalcopies,
-  avaliablecopies,
+  availablecopies,
   isbn,
   pages,
   description,
@@ -28,7 +30,7 @@ const createBook = async (
     publishedYear,
     catagory,
     totalcopies,
-    avaliablecopies,
+    availablecopies,
     isbn,
     pages,
     description,
