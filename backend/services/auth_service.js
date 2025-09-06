@@ -70,7 +70,7 @@ const requestPasswordReset = async (email) => {
     .digest("hex");
 
   user.resetPasswordToken = resetTokenHash;
-  user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+  user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000;
   await user.save();
 
   const resetUrl = `${

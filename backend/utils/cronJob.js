@@ -19,14 +19,14 @@ const sendEmail = async (to, subject, text) => {
       subject,
       text,
     });
-    console.log(`📧 Email sent to ${to}`);
+    console.log(`Email sent to ${to}`);
   } catch (err) {
     console.error("Error sending email:", err.message);
   }
 };
 
 cron.schedule("0 0 * * *", async () => {
-  console.log("🔄 Running daily borrow & membership check...");
+  console.log("Running daily borrow & membership check...");
 
   const now = new Date();
 
