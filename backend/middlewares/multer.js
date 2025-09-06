@@ -1,23 +1,32 @@
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../utils/cloudinary');
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../utils/cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'library',
-    allowed_formats: ['jpg', 'png', 'jpeg'],
+    folder: "library",
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 
 const parser = multer({ storage });
 
-// Generic single upload wrapper factory with error handling & logging
 const singleUpload = (fieldName) => (req, res, next) => {
   parser.single(fieldName)(req, res, (err) => {
     if (err) {
-      console.error(`Multer/Cloudinary upload error on field ${fieldName}:`, err);
-      return res.status(400).json({ status: 'error', message: 'Image upload failed', field: fieldName, details: err.message || String(err) });
+      console.error(
+        `Multer/Cloudinary upload error on field ${fieldName}:`,
+        err
+      );
+      return res
+        .status(400)
+        .json({
+          status: "error",
+          message: "Image upload failed",
+          field: fieldName,
+          details: err.message || String(err),
+        });
     }
     if (req.file) {
       console.log(`Uploaded file meta (${fieldName}):`, {
@@ -35,7 +44,6 @@ const singleUpload = (fieldName) => (req, res, next) => {
   });
 };
 
-// Specific middleware for books using field 'imageUrl'
-const uploadBookImage = singleUpload('imageUrl');
+const uploadBookImage = singleUpload("imageUrl");
 
 module.exports = { parser, singleUpload, uploadBookImage };

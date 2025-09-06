@@ -1,4 +1,3 @@
-
 const Borrow = require("../models/borrow");
 const Book = require("../models/book");
 const User = require("../models/users");
@@ -17,30 +16,28 @@ const bookBorrow = async (bookId, userId) => {
   }
 
   const book = await Book.findById(bookId);
-  if (!book || book.avaliablecopies <= 0) {
+  if (!book || book.availablecopies <= 0) {
     throw new Error("No copies available");
   }
-const activeBorrows = await Borrow.countDocuments({
-  user: userId,
-  status: { $in: ["borrowed", "pending_return"] }, 
-});
+  const activeBorrows = await Borrow.countDocuments({
+    user: userId,
+    status: { $in: ["borrowed", "pending_return"] },
+  });
 
-
-
-
-if (activeBorrows >= 3) {
-  throw new Error("User already has 3 active borrows (including pending returns)");
-}
-
+  if (activeBorrows >= 3) {
+    throw new Error(
+      "User already has 3 active borrows (including pending returns)"
+    );
+  }
 
   const borrow = await Borrow.create({
     user: userId,
     book: book._id,
-duedate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+    duedate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     status: "borrowed",
   });
 
-  book.avaliablecopies -= 1;
+  book.availablecopies -= 1;
   await book.save();
 
   member.borrowedBooks = member.borrowedBooks || [];
@@ -49,7 +46,6 @@ duedate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
 
   return borrow;
 };
-
 
 const requestReturn = async (borrowId, userId) => {
   const borrow = await Borrow.findById(borrowId);
@@ -63,13 +59,11 @@ const requestReturn = async (borrowId, userId) => {
     throw new Error("Book is not currently borrowed or already pending return");
   }
 
-  
   borrow.status = "pending_return";
   await borrow.save();
 
   return borrow;
 };
-
 
 const approveReturn = async (borrowId) => {
   const borrow = await Borrow.findById(borrowId).populate("book user");
@@ -79,17 +73,14 @@ const approveReturn = async (borrowId) => {
     throw new Error("Book is not pending return");
   }
 
-  
   borrow.status = "returned";
   borrow.returnDate = new Date();
   await borrow.save();
 
-
   const book = borrow.book;
-  book.avaliablecopies += 1;
+  book.availablecopies += 1;
   await book.save();
 
- 
   const user = borrow.user;
   if (Array.isArray(user.borrowedBooks)) {
     user.borrowedBooks = user.borrowedBooks.filter(
@@ -100,7 +91,6 @@ const approveReturn = async (borrowId) => {
 
   return borrow;
 };
-
 
 const rejectReturn = async (borrowId) => {
   const borrow = await Borrow.findById(borrowId);
@@ -141,7 +131,6 @@ const getAllBorrows = async () => {
     .select("_id book user borrowDate returnDate duedate status");
 };
 
-
 const getPendingReturns = async () => {
   return await Borrow.find({ status: "pending_return" })
     .populate("book", "title author catagory imageUrl")
@@ -155,7 +144,7 @@ const deleteBorrow = async (borrowId) => {
 
   const book = borrow.book;
   if (borrow.status !== "returned" && book) {
-    book.avaliablecopies += 1;
+    book.availablecopies += 1;
     await book.save();
   }
 
@@ -190,7 +179,9 @@ const getOverdueUsers = async () => {
     return {
       user: {
         id: borrow.user?._id,
-        name: borrow.user ? `${borrow.user.firstName} ${borrow.user.lastName}` : null,
+        name: borrow.user
+          ? `${borrow.user.firstName} ${borrow.user.lastName}`
+          : null,
         email: borrow.user?.email,
       },
       book: {
@@ -206,13 +197,12 @@ const getOverdueUsers = async () => {
     };
   });
 
- 
   return formatted.sort((a, b) => b.overdueDays - a.overdueDays);
 };
 const getReturnedOverdueUsers = async () => {
   const records = await Borrow.find({
     status: "returned",
-    $expr: { $gt: ["$returnDate", "$duedate"] }, // returned after due date
+    $expr: { $gt: ["$returnDate", "$duedate"] },
   })
     .populate("book", "title author")
     .populate("user", "firstName lastName email");
@@ -239,12 +229,11 @@ const getReturnedOverdueUsers = async () => {
       borrowDate: borrow.borrowDate,
       dueDate: borrow.duedate,
       returnDate: borrow.returnDate,
-      status: borrow.status, 
+      status: borrow.status,
       overdueDays,
     };
   });
 };
-
 
 module.exports = {
   bookBorrow,
@@ -256,6 +245,6 @@ module.exports = {
   getActiveBorrowsForUser,
   getPendingReturns,
   deleteBorrow,
-getOverdueUsers,
-getReturnedOverdueUsers,
+  getOverdueUsers,
+  getReturnedOverdueUsers,
 };

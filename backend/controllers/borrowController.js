@@ -1,4 +1,3 @@
-
 const borrowService = require("../services/borrowService");
 
 const borrowBook = async (req, res) => {
@@ -13,8 +12,6 @@ const borrowBook = async (req, res) => {
   }
 };
 
-
-
 const requestReturn = async (req, res) => {
   try {
     const { borrowId } = req.params;
@@ -24,7 +21,6 @@ const requestReturn = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 const approveReturn = async (req, res) => {
   try {
@@ -46,7 +42,6 @@ const rejectReturn = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 const getBorrowHistory = async (req, res) => {
   try {
@@ -87,7 +82,6 @@ const getBorrowHistory = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 const getActiveBorrows = async (req, res) => {
   try {
@@ -134,7 +128,7 @@ const getAllBorrows = async (req, res) => {
       borrowDate: b.borrowDate,
       dueDate: b.duedate,
       returnDate: b.returnDate,
-       status: b.overdue ? `${b.status}_overdue` : b.status,
+      status: b.overdue ? `${b.status}_overdue` : b.status,
       overdue: b.overdue,
     }));
 
@@ -143,7 +137,6 @@ const getAllBorrows = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 const getPendingReturns = async (req, res) => {
   try {
@@ -190,7 +183,6 @@ const getOverdueUsers = async (req, res) => {
   }
 };
 
-
 const getReturnedOverdueUsers = async (req, res) => {
   try {
     const data = await borrowService.getReturnedOverdueUsers();
@@ -199,8 +191,6 @@ const getReturnedOverdueUsers = async (req, res) => {
     res.status(400).json({ status: "error", message: err.message });
   }
 };
-
-
 
 module.exports = {
   borrowBook,
@@ -213,5 +203,5 @@ module.exports = {
   getPendingReturns,
   deleteBorrow,
   getOverdueUsers,
-getReturnedOverdueUsers,
+  getReturnedOverdueUsers,
 };

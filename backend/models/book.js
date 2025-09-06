@@ -1,62 +1,56 @@
-const mongoose= require("mongoose")
+const mongoose = require("mongoose");
 
-const bookSchema=new mongoose.Schema({
-    title:{
-        type:String , 
-        required:true , 
-        trim:true},
-    author:{
-        type:String,
-        required:true,
-        trim:true
+const bookSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    publishedYear:{
-    type:Number},
-    
-    catagory:{
-        type:String,
-        required:true
+    author: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    totalcopies:{
-        type:Number,
+    publishedYear: {
+      type: Number,
     },
-   avaliablecopies: {
-  type: Number,
-  default: function () {
-    return this.totalcopies; // 👈 auto fill available copies = total
-  }
-},
-    isbn:{
-        type:String,
-        required:true , 
-        unique:true
+
+    catagory: {
+      type: String,
+      required: true,
     },
-    pages:{
-        type:Number,
-        min:1
+    totalcopies: {
+      type: Number,
     },
-    description:{
-        type:String,
-        trim:true,
-        maxlength:2000
+    availablecopies: {
+      type: Number,
+      default: function () {
+        return this.totalcopies;
+      },
+    },
+    isbn: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    pages: {
+      type: Number,
+      min: 1,
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
     },
     imageUrl: {
-
-    type: String,
-    trim: true,
-    default: 'https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg' 
+      type: String,
+      trim: true,
+      default:
+        "https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg",
+    },
   },
+  { timestamps: true }
+);
 
-
-
-}, { timestamps: true });
-    
-  
-
-
-
-
-
-
-
-module.exports = mongoose.model('book' , bookSchema)
+module.exports = mongoose.model("book", bookSchema);

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Book = require('../models/book');
+const mongoose = require("mongoose");
+const Book = require("../models/book");
 
 const getAllBooks = async () => {
   return await Book.find();
@@ -9,8 +9,6 @@ const getBookById = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return await Book.findById(id);
 };
-
-
 
 const createBook = async (
   title,
@@ -34,7 +32,7 @@ const createBook = async (
     isbn,
     pages,
     description,
-    imageUrl
+    imageUrl,
   });
 
   return newBook;
@@ -52,12 +50,12 @@ const updateBook = async (id, updatedData) => {
     const updatedBook = await Book.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
-      context: 'query'
+      context: "query",
     });
     return updatedBook;
   } catch (err) {
     if (err && err.code === 11000) {
-      const field = Object.keys(err.keyValue || {})[0] || 'field';
+      const field = Object.keys(err.keyValue || {})[0] || "field";
       const message = `Duplicate value for ${field}. Please provide a unique value.`;
       const e = new Error(message);
       e.status = 409;
@@ -70,28 +68,26 @@ const updateBook = async (id, updatedData) => {
 const getBooksPaginated = async (query, page = 1, limit = 10) => {
   const searchQuery = {};
 
-  // Basic search by title or author
   if (query.search) {
-    const regex = new RegExp(query.search, 'i'); // case-insensitive
-    searchQuery.$or = [{ title: regex }, { catagory : regex }];
+    const regex = new RegExp(query.search, "i");
+    searchQuery.$or = [{ title: regex }, { catagory: regex }];
   }
-  console.log('Search Query:', searchQuery);
+  console.log("Search Query:", searchQuery);
   const skip = (page - 1) * limit;
 
   const [books, total] = await Promise.all([
     Book.find(searchQuery).skip(skip).limit(limit),
-    Book.countDocuments(searchQuery)
+    Book.countDocuments(searchQuery),
   ]);
-  console.log('Books found:', books.length);
+  console.log("Books found:", books.length);
 
   return {
     books,
     total,
     page,
-    pages: Math.ceil(total / limit)
+    pages: Math.ceil(total / limit),
   };
 };
-
 
 module.exports = {
   getAllBooks,
@@ -99,7 +95,5 @@ module.exports = {
   createBook,
   deleteBook,
   getBooksPaginated,
-  updateBook
+  updateBook,
 };
-
-
