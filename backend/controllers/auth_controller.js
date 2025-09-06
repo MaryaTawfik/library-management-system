@@ -86,7 +86,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Already exists: register, login, updateProfile
+
 
 const forgotPassword = async (req, res) => {
   try {

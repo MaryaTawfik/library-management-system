@@ -1,4 +1,4 @@
-const parser = require("../utils/multer");
+// const parser = require("../utils/multer");
 const bookController = require("../controllers/bookController");
 const authMiddleware = require("../middlewares/authenticate");
 const { uploadBookImage } = require("../middlewares/multer");
@@ -6,13 +6,14 @@ const Role = require("../middlewares/role");
 const router = require("express").Router();
 
 router.get("/", bookController.getAll);
+router.get("/paginated", bookController.getPaginatedBooks); 
 router.get("/:id", bookController.getOne);
+
 router.post(
   "/",
   authMiddleware.isAuthenticated,
   Role.isAdmin,
   uploadBookImage,
-
   bookController.create
 );
 
@@ -24,12 +25,12 @@ router.patch(
   bookController.update
 );
 
-router.get("/paginated", bookController.getPaginatedBooks);
 router.delete(
   "/:id",
   authMiddleware.isAuthenticated,
   Role.isAdmin,
   bookController.remove
 );
+
 
 module.exports = router;

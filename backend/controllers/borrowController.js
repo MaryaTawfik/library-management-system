@@ -32,7 +32,7 @@ const approveReturn = async (req, res) => {
   }
 };
 
-// Admin rejects return
+
 const rejectReturn = async (req, res) => {
   try {
     const { borrowId } = req.params;
@@ -64,7 +64,7 @@ const getBorrowHistory = async (req, res) => {
           category: borrow.book?.catagory || "Unknown",
         },
         user: {
-          // since this is the history for a single user, we can attach logged-in user info
+          
           name: `${req.user.firstName} ${req.user.lastName}`,
           email: req.user.email,
         },

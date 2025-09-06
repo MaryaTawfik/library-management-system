@@ -52,15 +52,15 @@ const getuserpayment = async (req, res) => {
       .status(500)
       .json({ message: "can not get user payments", error: error.message });
   }
-}; //what should the response be
+}; 
 const getAllpayments = async (req, res) => {
   try {
     const payments = await paymentService.getAllPayments();
     res.json({ data: payments });
   } catch (error) {
-    console.error(error); // Log the error for server-side debugging
+    console.error(error); 
 
-    // Generate a user-friendly error message
+    
     res.status(500).json({
       message:
         "Unable to retrieve payments at this time. Please try again later.",

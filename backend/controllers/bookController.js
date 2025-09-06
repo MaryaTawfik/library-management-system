@@ -141,7 +141,7 @@ const remove = async (req, res) => {
     if (!deleted) {
       return res.status(404).json("Book is not found");
     }
-    res.json({ message: "Book is deleted" });
+    res.json({ message: "Book is deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -149,6 +149,8 @@ const remove = async (req, res) => {
 const getPaginatedBooks = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = "" } = req.query;
+
+    console.log("Query Parameters:", { page, limit, search }); 
 
     const result = await bookService.getBooksPaginated(
       { search },
