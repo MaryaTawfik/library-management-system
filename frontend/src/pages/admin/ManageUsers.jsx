@@ -124,12 +124,6 @@ export default function ManageUsers() {
     const membershipExpires =
       src.expiryDate || src?.membership?.expires || null;
     const joinDate = src.createdAt || src.joinDate || null;
-    const borrowings = src.borrowings || [];
-
-    const borrowTotal = borrowings.length;
-    const borrowCurrent = borrowings.filter(
-      (b) => b.status === "borrowed"
-    ).length;
 
     const status = src.status || raw?.status || "-";
 
@@ -142,8 +136,6 @@ export default function ManageUsers() {
       membershipStatus,
       membershipExpires,
       joinDate,
-      borrowTotal,
-      borrowCurrent,
       status,
       raw: raw,
     };
@@ -196,17 +188,17 @@ export default function ManageUsers() {
   );
 
   return (
-    <div className=" bg-white min-h-screen rounded-2xl">
-      <div className="mb-6">
+    <div className=" bg-white min-h-screen rounded-2xl font-[sanif sarif] shadow-sm  border-white p-6 ">
+      <div className="mb-6 font-[inter]">
         <h1 className="text-3xl text-yellow-700 font-bold">Manage Users</h1>
-        <p className="text-gray-800">View and manage all library users</p>
+        <p className="text-gray-800 mt-3">View and manage all library users</p>
       </div>
 
       {loading && <div className="text-gray-600 mb-4">Loading users...</div>}
       {error && <div className="text-red-600 mb-4">{error}</div>}
 
       {/* Search + Filter */}
-      <div className="flex flex-row items-center gap-4 border-2 border-gray-100 shadow-2xl rounded mb-6 bg-white px-4 py-2">
+      <div className="flex flex-row items-center gap-4 border-2 border-gray-100 shadow-xl rounded mb-6 bg-white px-4 py-2 ">
         <FaSearch className="text-gray-500" />
         <input
           type="text"
@@ -224,7 +216,7 @@ export default function ManageUsers() {
             setFilterStatus(e.target.value);
             setCurrentPage(1); // reset to first page on filter
           }}
-          className="border px-3 py-2 rounded"
+          className="border-2 border-gray-50 shadow-sm  px-3 py-2 rounded font[poppins]"
         >
           <option value="all">All Statuses</option>
           <option value="active">Active</option>
@@ -233,14 +225,13 @@ export default function ManageUsers() {
       </div>
 
       {/* Table */}
-      <div className="bg-white overflow-x-auto rounded shadow">
-        <table className="w-full text-sm bg-white">
-          <thead className="bg-white text-black">
+      <div className="bg-white rounded shadow">
+        <table className="w-full overflow-x-scroll text-sm bg-white ">
+          <thead className="bg-white text-black font-[roboto] font-semibold shadow-sm">
             <tr>
               <th className="px-4 py-3 text-left">User</th>
               <th className="px-4 py-3 text-left">Membership</th>
               <th className="px-4 py-3 text-left">Join Date</th>
-              <th className="px-4 py-3 text-left">Borrowings</th>
               <th className="px-4 py-3 text-left">Status</th>
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
@@ -257,7 +248,7 @@ export default function ManageUsers() {
               return (
                 <tr
                   key={rowKey}
-                  className="border-2 border-gray-200 hover:bg-gray-50"
+                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
                 >
                   <td className="px-4 py-3">
                     <div className="font-medium">{u.name || "-"}</div>
@@ -282,12 +273,6 @@ export default function ManageUsers() {
                   </td>
                   <td className="px-4 py-3">
                     {joinDate ? new Date(joinDate).toLocaleDateString() : "-"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div>Total: {u.borrowTotal}</div>
-                    <div className="text-gray-500">
-                      Current: {u.borrowCurrent}
-                    </div>
                   </td>
 
                   <td className="px-4 py-3">
@@ -349,27 +334,28 @@ export default function ManageUsers() {
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center gap-2 mt-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => p - 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          Prev
-        </button>
-        <span>
-          Page {currentPage} of {totalPages || 1}
-        </span>
-        <button
-          disabled={currentPage === totalPages || totalPages === 0}
-          onClick={() => setCurrentPage((p) => p + 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-end items-center mt-6 gap-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            ◀ Prev
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Next ▶
+          </button>
+        </div>
+      )}
       {/* Profile Modal */}
       {selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -418,27 +404,8 @@ export default function ManageUsers() {
                   ? new Date(selectedUser.createdAt).toLocaleDateString()
                   : "-"}
               </p>
-              <p>
-                <strong>Total Borrowings:</strong>{" "}
-                {selectedUser?.borrowings?.length ?? 0}
-              </p>
-              <p>
-                <strong>Current Borrowings:</strong>{" "}
-                {selectedUser?.borrowings?.filter(
-                  (b) => b.status === "borrowed"
-                ).length ?? 0}
-              </p>
-
-              <p>
-                <strong>Current Borrowings:</strong>{" "}
-                {borrowCounts[selectedUser?._id]
-                  ? borrowCounts[selectedUser._id].current
-                  : selectedUser?.borrowings?.current ??
-                    selectedUser?.currentBorrowings ??
-                    "-"}
-              </p>
             </div>
-            <div className="mt-6 flex justify-end space-x-2">
+            <div className="mt-6 flex justify-between space-x-2">
               <button
                 onClick={() => setSelectedUser(null)}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
@@ -453,7 +420,7 @@ export default function ManageUsers() {
                 className={`flex-start justify-between px-4 py-2 text-white rounded ${
                   selectedUser?.status?.toLowerCase() === "active"
                     ? "bg-red-600 hover:bg-red-700"
-                    : "bg-green-600 hover:bg-teal-700"
+                    : "bg-teal-800 hover:bg-teal-700"
                 }`}
               >
                 {selectedUser?.status?.toLowerCase() === "active"

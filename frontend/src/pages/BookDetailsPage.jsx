@@ -41,53 +41,49 @@ export default function BookDetailPage() {
   const handleBorrow = () => navigate("/welcome");
 
   return (
-    <div className="max-w-6xl mx-auto px-4 ">
+    <div className="max-w-6xl mx-auto px-4  border-8 border-white shadow-sm font-[sanif sarif] min-h-screen  rounded-2xl">
       <Link
         to="/books"
-        className="inline-block text-sm text-white bg-yellow-700 rounded px-1 py-1 hover:text-gray-700 mb-6"
+        className="inline-block text-sm text-white bg-yellow-700 rounded px-1 py-1 hover:text-gray-700 mb-6 font-[inter]"
       >
         ← Back to Catalog
       </Link>
 
-      <div className="flex flex-col md:flex-row bg-white rounded-lg p-6 border border-gray-200">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg border-gray-200">
         {/* Left - Image + Availability */}
-        <div className="flex flex-col md:w-1/3 bg-white rounded-lg p-6 shadow-md border-r border-gray-300 relative">
-          <div className="flex-1 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden mb-4">
-            {book.imageUrl ? (
-              <img
-                src={book.imageUrl}
-                alt={book.title}
-                className="w-full object-contain"
-              />
-            ) : (
-              <span className="text-6xl text-gray-400">📚</span>
-            )}
+        <div className="flex flex-col md:w-1/3 bg-white rounded-lg  shadow-md border border-gray-100 relative">
+          <div className="flex-1 flex items-center justify-center shadow-xl bg-gray-100 rounded-md  mb-4">
+            <img
+              src={book.imageUrl}
+              alt={book.title}
+              className="w-full object-contain"
+            />
           </div>
 
           <div className="mt-2 px-2 py-1">
-            <p className="text-yellow-700 font-semibold text-sm mb-1">
+            <p className="text-yellow-700 font-semibold text-sm mb-1 font-[roboto]">
               Availability
             </p>
             <div className="flex justify-between items-center text-sm text-gray-800">
               <span>
-                {book.avaliablecopies} of {book.totalcopies} copies
+                {book.availablecopies} of {book.totalcopies} copies
               </span>
               <span
                 className={
-                  book.avaliablecopies > 0
+                  book.availablecopies > 0
                     ? "text-yellow-700 font-medium"
                     : "text-white font-medium bg-yellow-700 px-2 py-1 rounded"
                 }
               >
-                {book.avaliablecopies > 0 ? "Available" : "Unavailable"}
+                {book.availablecopies > 0 ? "Available" : "Unavailable"}
               </span>
             </div>
           </div>
 
-          {book.avaliablecopies > 0 ? (
+          {book.availablecopies > 0 ? (
             <button
               onClick={handleBorrow}
-              className="w-full bg-gray-400 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg mt-4"
+              className="w-full bg-gray-400 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg mt-4 font-[inter]"
             >
               Borrow Book
             </button>
@@ -102,13 +98,13 @@ export default function BookDetailPage() {
         </div>
 
         {/* Right Info */}
-        <div className="md:w-2/3 space-y-6 pl-0 md:pl-8 mt-6 md:mt-0">
+        <div className=" border-4 border-slate-100 shadow-md md:w-2/3 space-y-6 pl-0 md:pl-8 mt-6 md:mt-0">
           <div className="relative bg-white p-6 rounded-lg">
             <span className="absolute top-4 right-4 px-3 py-1 border border-gray-400 text-yellow-700 bg-white rounded-full text-xs font-semibold shadow-sm">
               {book.catagory}
             </span>
 
-            <h1 className="text-2xl font-bold text-yellow-900 mb-1">
+            <h1 className="text-2xl font-bold text-yellow-900 mb-1 font-[inter]">
               {book.title}
             </h1>
             <p className="text-gray-700 font-medium mb-4">by {book.author}</p>
@@ -116,7 +112,7 @@ export default function BookDetailPage() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-yellow-700 font-semibold text-lg mb-1">
+            <h2 className="text-black font-semibold text-lg mb-1 font-[inter]">
               Book Information
             </h2>
             <div className="w-full h-px bg-gray-100 my-3" />
@@ -129,7 +125,7 @@ export default function BookDetailPage() {
               <InfoItem
                 icon={<FaCalendarAlt />}
                 label="Publication Year"
-                value={new Date(book.publishedYear).getFullYear()}
+                value={book.publishedYear}
               />
               <InfoItem
                 icon={<FaLayerGroup />}

@@ -169,22 +169,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/admin-payments"
-              element={
-                <ProtectedRoute role="admin">
-                  <AdminPayments />
-                </ProtectedRoute>
-              }
-            />
-            {/* <Route
-              path="/admin-approvals"
-              element={
-                <ProtectedRoute role="Admin" user={user}>
-                  <AdminBorrowApproval />
-                </ProtectedRoute>
-              }
-            /> */}
 
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/books" />} />

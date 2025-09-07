@@ -93,31 +93,17 @@ export default function BorrowingRecords() {
       .slice(0, 2);
   };
 
-  // const handleMarkReturned = async (recordId) => {
-  //   setLoading(true);
-  //   try {
-  //     await updateBorrowStatus(recordId, "returned");
-  //     toast.success("📘 Book marked as returned!");
-  //     await fetchRecords();
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("❌ Failed to update record");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
-    <div className=" bg-white border-4 border-white shadow-2xl min-h-screen rounded-2xl">
-      <h1 className="text-2xl text-yellow-700 font-bold mb-1">
+    <div className=" bg-white border-4 border-white shadow-sm min-h-screen rounded-2xl font-[sanif sarif] ">
+      <h1 className="text-2xl text-yellow-700 font-bold font-[inter] mb-1">
         Borrowing Records
       </h1>
-      <p className="text-gray-800 mb-6">
+      <p className="text-gray-800 mt-3 font-[inter]">
         View all borrowing and return history
       </p>
 
       {/* Search + Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 border-8 border-gray-50 bg-white px-4 rounded shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 mt-6 border-8 border-gray-50 bg-white px-4 rounded shadow-xl">
         <input
           type="text"
           placeholder="Search by book title, user name, or author…"
@@ -134,7 +120,7 @@ export default function BorrowingRecords() {
             setStatusFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="border-2 border-gray-50 bg-white text-gray-700 px-4 py-2 rounded w-full sm:w-48"
+          className="border-2 border-gray-50 bg-white text-gray-700 text-sm px-4 py-2 rounded w-full sm:w-48"
         >
           <option value="all">All Status</option>
           <option value="borrowed">Borrowed</option>
@@ -144,9 +130,9 @@ export default function BorrowingRecords() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-white border-2 border-gray-50 text-black">
+      <div className="bg-white shadow ">
+        <table className="w-full text-sm  overflow-x-scroll">
+          <thead className="bg-white border-2 border-gray-50 text-black font-[roboto]">
             <tr>
               <th className="text-left px-4 py-3">Book</th>
               <th className="text-left px-4 py-3">User</th>
@@ -154,7 +140,6 @@ export default function BorrowingRecords() {
               <th className="text-left px-4 py-3">Due Date</th>
               <th className="text-left px-4 py-3">Return Date</th>
               <th className="text-left px-4 py-3">Status</th>
-              <th className="text-left px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -170,14 +155,14 @@ export default function BorrowingRecords() {
               paginatedRecords.map((record) => (
                 <tr
                   key={record.id || JSON.stringify(record.raw)}
-                  className="border-4 border-gray-100 hover:bg-gray-50 transition"
+                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img
                         src={record.book?.imageUrl}
                         alt={record.book?.title}
-                        className="w-10 h-14 object-cover rounded"
+                        className="w-10 h-14 object-cover rounded shadow-sm"
                       />
                       <div>
                         <div
@@ -246,16 +231,6 @@ export default function BorrowingRecords() {
                         (record.status || "unknown").slice(1)}
                     </span>
                   </td>
-                  {/* <td className="px-4 py-3">
-                    {record.status === "borrowed" && (
-                      <button
-                        onClick={() => handleMarkReturned(record.id)}
-                        className="px-2 py-1 bg-yellow-600 text-white rounded text-sm"
-                      >
-                        Mark Returned
-                      </button>
-                    )}
-                  </td> */}
                 </tr>
               ))}
 
@@ -273,35 +248,25 @@ export default function BorrowingRecords() {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex justify-end items-center mt-4 gap-2 text-sm">
+        <div className="flex justify-end items-center mt-6 gap-4">
           <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
-            Prev
+            ◀ Prev
           </button>
-          {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${
-                currentPage === i + 1 ? "bg-gray-200 font-semibold" : ""
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
           <button
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
-            Next
+            Next ▶
           </button>
         </div>
       )}
