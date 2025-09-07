@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "npx --yes install @rollup/rollup-linux-x64-gnu || true"
   },
+  
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
     "axios": "^1.11.0",

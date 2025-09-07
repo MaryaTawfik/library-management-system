@@ -4,8 +4,7 @@ import { Link} from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../atoms/authAtom"; // ✅ jotai auth state
 import jemealogo from "../assets/jemealogo.jpg";
-import { FaUserCircle, FaRegUser } from "react-icons/fa";
-import { CgEnter } from "react-icons/cg";
+
 
 const Sidebar = ({ SidebarToggle }) => {
   const [user,] = useAtom(userAtom);
