@@ -151,7 +151,7 @@ This project was proudly built by Neculer Bombs, a team of five passionate devel
 Marya Tawfik     https://github.com/MaryaTawfik
 Fetha Awel       https://github.com/Fatiha-A
 Hanan Nuru       https://github.com/hanannur
-Fenet sif Al-din https://github.com/fenet-s
+Fenet seifudin https://github.com/fenet-s
 jerusalem Girma  https://github.com/laviee143
 
 📧 Contact Email: neculerbombs.dev@gmail.com
