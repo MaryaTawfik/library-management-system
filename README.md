@@ -116,12 +116,17 @@ Nodemailer – Email notifications
 
 Frontend
 
-React.js
+React.js – component-based UI
 
-Axios – API communication
+React Router DOM – routing & navigation
 
-TailwindCSS / Shadcn UI (if used) – Styling
+Jotai – state management (auth, blogs, etc.)
 
+Tailwind CSS – utility-first styling
+
+shadcn/ui – ready-to-use UI components
+
+react-icons – icons (IoMdHome, FaUserCircle, etc.)
 ⚙️ Setup Instructions
 1. git clone
 https://github.com/MaryaTawfik/library-management-system.git
@@ -144,7 +149,21 @@ npm run dev
 3. Frontend Setup
 cd ../frontend
 npm install
-npm start
+npm run dev
+
+📸 UI Preview
+<img width="1602" height="1022" alt="image" src="https://github.com/user-attachments/assets/47808709-78ef-41ea-9aee-533b36fb90f4" />
+
+<img width="1594" height="1028" alt="image" src="https://github.com/user-attachments/assets/e1f54f29-3e8f-4d3d-b132-3294ee21bbbb" />
+
+<img width="1598" height="933" alt="image" src="https://github.com/user-attachments/assets/872a994d-b570-428e-a1d9-bffede7cf2f5" />
+
+<img width="1232" height="970" alt="image" src="https://github.com/user-attachments/assets/c06e62ee-37b7-4578-ba94-e02e332eee95" />
+
+
+<img width="1592" height="887" alt="image" src="https://github.com/user-attachments/assets/6b555675-ecb6-48b6-98dd-f005aabfc2d2" />
+
+<img width="1009" height="1078" alt="image" src="https://github.com/user-attachments/assets/0dca2708-4263-4308-9e2f-765025ca1708" />
 
 👨‍💻 Developer Group – Neculer Bombs
 This project was proudly built by Neculer Bombs, a team of five passionate developers dedicated to building scalable, secure, and user-friendly systems.
