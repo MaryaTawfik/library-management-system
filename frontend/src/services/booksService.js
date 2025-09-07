@@ -12,7 +12,8 @@ export const getAllBooks = async () => {
     return res.data || [];
   } catch (err) {
     console.error("Error fetching books:", err.message);
-    // fallback mock data
+fallback mock data
+
     return [
       {
         bookId: "B001",
@@ -92,3 +93,4 @@ export const deleteBook = async (id, token) => {
   const res = await API.delete(`${API_URL}/${id}`, { headers });
   return res.data;
 };
+

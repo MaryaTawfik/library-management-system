@@ -85,17 +85,19 @@ export default function ManageBooks() {
   );
 
   return (
-    <div className=" bg-white border-8 border-white rounded-2xl min-h-screen">
-      <div className="flex justify-between items-center mb-6">
+    <div className=" bg-white border-2 border-white shadow-sm rounded-xl min-h-screen font-[sanif sarif]">
+      <div className="flex justify-between items-center mb-6 font-bold font-[inter]">
         <div className="flex-col">
-          <h1 className="text-2xl text-yellow-700 font-bold">
+          <h1 className="text-2xl text-yellow-700 font-bold font-[inter]">
             📚 Manage Books
           </h1>
-          <p className="text-gray-800">Add, edit, and manage book collection</p>
+          <p className="text-gray-800 mt-3">
+            Add, edit, and manage book collection
+          </p>
         </div>
         <button
           onClick={() => navigate("/admin/books/add")}
-          className="bg-yellow-700 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           + Add Book
         </button>
@@ -103,8 +105,8 @@ export default function ManageBooks() {
 
       <input
         type="text"
-        placeholder="Search by title, author, category, or ISBN..."
-        className="w-full mb-9 p-2 bg-white border-2 shadow-2xl border-stone-100 rounded"
+        placeholder="Search by title, author, category, or isbn..."
+        className="w-full mb-6 p-2 bg-white border-4 hover:border-amber-50 shadow-lg border-stone-100 font-[poppins] rounded"
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
@@ -112,9 +114,9 @@ export default function ManageBooks() {
         }}
       />
 
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full bg-white text-sm">
-          <thead className="bg-white text-left text-black font-semibold">
+      <div className="bg-white rounded shadow">
+        <table className="min-w-full overflow-x-scroll  bg-white text-sm">
+          <thead className="bg-white text-left text-black font-semibold font-[roboto]">
             <tr>
               <th className="px-4 py-3">Book</th>
               <th className="px-4 py-3">Author</th>
@@ -125,19 +127,19 @@ export default function ManageBooks() {
             </tr>
           </thead>
           <tbody>
-            {currentBooks.map((book) => (
+            {currentBooks.map((book, index) => (
               <tr
-                key={book.bookId || book._id}
-                className="border-6 border-gray-100 shadow-black"
+                key={book.bookId || index}
+                className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
               >
                 <td className="px-4 py-3 flex items-center gap-3">
                   <img
                     src={book.imageUrl}
                     alt={book.title}
-                    className="w-10 h-14 object-cover rounded"
+                    className="w-10 h-14 object-cover shadow-md rounded"
                   />
                   <div>
-                    <div className="font-medium">{book.title}</div>
+                    <div className="font-medium font-[sans]">{book.title}</div>
                     <div className="text-xs text-gray-500 gap-2">
                       ISBN: {book.isbn}
                     </div>
@@ -150,10 +152,10 @@ export default function ManageBooks() {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  {book.avaliablecopies} of {book.totalcopies}
+                  {book.availablecopies} of {book.totalcopies}
                 </td>
                 <td className="px-4 py-3">
-                  {book.avaliablecopies > 0 ? (
+                  {book.availablecopies > 0 ? (
                     <span className="bg-teal-50 text-yellow-700 px-2 py-1 rounded text-xs">
                       Available
                     </span>
@@ -212,11 +214,11 @@ export default function ManageBooks() {
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-6 gap-4">
+        <div className="flex justify-end items-center mt-6 gap-4">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
             ◀ Prev
           </button>
@@ -226,7 +228,7 @@ export default function ManageBooks() {
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
             Next ▶
           </button>

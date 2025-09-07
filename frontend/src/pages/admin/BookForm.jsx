@@ -104,7 +104,7 @@ export default function BookForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-9 bg-gray-50 border-8 border-white shadow-2xl rounded-2xl min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-9 bg-gray-50 border-8 border-white shadow-sm rounded-2xl min-h-screen font-[sanif sarif]">
       {/* Back to Books */}
       <button
         onClick={() => navigate("/admin/books")}
@@ -115,10 +115,10 @@ export default function BookForm() {
       </button>
 
       {/* Heading */}
-      <h1 className="text-2xl font-semibold text-yellow-800 mb-1">
+      <h1 className="text-2xl font-semibold text-yellow-800 mb-1 font-[inter]">
         {isEditMode ? "Edit Book" : "Add New Book"}
       </h1>
-      <p className="text-sm text-gray-800 mb-6">
+      <p className="text-sm text-gray-800 mb-3 mt-3 font-[inter]">
         {isEditMode
           ? "Update book details in the library collection"
           : "Add new book to the library collection"}
@@ -201,7 +201,7 @@ export default function BookForm() {
           <div className="flex-1">
             <label className="block font-medium">Published Year</label>
             <input
-              type="date"
+              type="number"
               name="publishedYear"
               value={book.publishedYear}
               onChange={handleChange}
@@ -227,7 +227,7 @@ export default function BookForm() {
             <input
               type="number"
               name="avaliablecopies"
-              value={book.avaliablecopies}
+              value={book.availablecopies}
               onChange={handleChange}
               className="w-full border px-3 py-2 bg-white rounded"
             />
@@ -293,7 +293,7 @@ export default function BookForm() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-slate-400 text-white px-6 py-2 rounded hover:bg-orange-700"
+          className="bg-slate-400 text-white px-6 py-2 rounded hover:bg-orange-700 font-[inter]"
         >
           {loading ? "Saving..." : isEditMode ? "Update Book" : "Add Book"}
         </button>

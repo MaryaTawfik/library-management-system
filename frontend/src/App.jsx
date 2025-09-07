@@ -191,6 +191,21 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
+
+            {/* Public routes */}
+            <Route path="/" element={<Navigate to="/books" />} />
+            <Route path="/books" element={<BookCatalogPage />} />
+            <Route path="/books/:id" element={<BookDetailsPage />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route
+              path="/login"
+              element={<Login setUser={setUser} setUserRole={setUserRole} />}
+            />
+            <Route path="/register" element={<Register />} />
+            <Route path="/guest" element={<Guest />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
             <Route
               path="/admin-payments"
               element={

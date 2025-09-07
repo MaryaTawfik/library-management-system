@@ -68,43 +68,43 @@ const Sidebar = ({ SidebarToggle }) => {
     </>
   )}
 
-  {/* Admin-only Links */}
-  {userRole === "Admin" && (
-    <>
-      <Link
-        to="/admin-dashboard"
-        className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
-      >
-        🛠 Admin Dashboard
-      </Link>
-      <Link
-        to="/admin-approvals"
-        className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
-      >
-        📋 Admin Approvals
-      </Link>
-      <Link
-        to="/admin/books"
-        className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
-      >
-        📚 Manage Books
-      </Link>
-      <Link
-        to="/admin/users"
-        className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
-      >
-        👥 Manage Users
-      </Link>
-      <Link
-        to="/borrow/records"
-        className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
-      >
-        📖 Borrow Records
-      </Link>
-    </>
-  )}
-</div>
-  
+            {userRole === "Admin" && (
+              <>
+                <Link
+                  to="/admin-dashboard"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                >
+                  🛠 Dashboard
+                </Link>
+
+                <Link
+                  to="/admin-payments"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                >
+                  📋 Admin Approvals
+                </Link>
+                <Link
+                  to="/admin/books"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                >
+                  📚 Manage Books
+                </Link>
+                <Link
+                  to="/admin/users"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                >
+                  👥 Manage Users
+                </Link>
+                <Link
+                  to="/borrow/records"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                >
+                  📖 Borrow Records
+                </Link>
+              </>
+            )}
+          </div>
+
         </div>
 
         

@@ -23,9 +23,12 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
 
   return (
     <header className="fixed w-full bg-white shadow-sm z-20">
+      <nav className=" flex-shirink-0 max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+       
+        <div className="flex items-center gap-3 ">
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
 
-        {/* Left: Sidebar toggle + Brand */}
+       
         <div className="flex items-center gap-3 flex-shrink-0">
           <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
@@ -36,6 +39,8 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
           </p>
         </div>
 
+        {/* Right: Nav Items */}
+        <div className="relative flex-shirink-0 items-center gap-4 flex-shrink-0">
         {/* Centered Arabic Quote */}
         <div className="flex-1 flex justify-center">
           <p className="arabic-calligraphy hidden md:block text-center">

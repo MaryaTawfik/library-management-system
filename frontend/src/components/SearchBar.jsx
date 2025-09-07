@@ -13,7 +13,7 @@ export default function SearchBar({
   };
 
   return (
-    <div className="px-6 py-2 border-gray-200 shadow-2xl rounded-lg mb-7 bg-stone-100">
+    <div className="px-6 py-2 border-gray-200 shadow-lg rounded-lg mb-7 bg-stone-100">
       {/* Heading with icon */}
       <div className="flex items-center text-yellow-900 text-lg font-semibold mb-3">
         <FaSearch className="mr-2 text-yellow-800" />
