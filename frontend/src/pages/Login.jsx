@@ -5,7 +5,7 @@ import axios from "axios";
 import { useAtom } from "jotai";
 import { userAtom, tokenAtom } from "../atoms/authAtom"; // Jotai atoms
 import LogoTitle from "../components/LogoTitle";
-import bgImage from "../assets/librarypic.jpg";
+import bgImage from "../assets/loginbg.jpg";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +16,8 @@ export default function Login() {
   // Jotai atoms for global state
   const [, setUser] = useAtom(userAtom);
   const [, setToken] = useAtom(tokenAtom);
+  const [loading, setLoading] = useState(false); 
+  
 
   // Update form data dynamically
   const handleChange = (e) => {
@@ -26,6 +28,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); // reset error
+    setLoading(true); // start loading
 
     try {
       const res = await axios.post(
@@ -53,8 +56,16 @@ export default function Login() {
         navigate("/"); // regular user homepage
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.error || "Login failed. Try again.");
+      console.error("Login error:", err.response?.data || err.message);
+
+  const message =
+    (err.response && err.response.data
+      ? JSON.stringify(err.response.data)
+      : err.message) || "Login failed";
+
+  setError(message);
+      
+     
     }
   };
 
@@ -108,15 +119,13 @@ export default function Login() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
           {/* Remember me & Forgot password */}
           <div className="flex justify-between items-center mb-6 text-sm text-gray-200">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="accent-[#FA7C54]" />
-              Remember me
-            </label>
+            
             <Link
               to="/forgot-password"
-              className="text-[#FA7C54] hover:underline"
+              className="text-white hover:underline"
             >
               Forgot password?
             </Link>
@@ -124,8 +133,9 @@ export default function Login() {
 
           {/* Submit */}
           <button
+             disabled={loading}
             type="submit"
-            className="w-full bg-[#FA7C54] text-white py-2 rounded-lg hover:bg-[#e66c45] transition"
+            className="w-full bg-yellow-700 text-white py-2 rounded-lg hover:bg-yellow-600 transition"
           >
             Login
           </button>
@@ -137,14 +147,12 @@ export default function Login() {
             New User?{" "}
             <Link
               to="/register"
-              className="text-[#FA7C54] underline font-semibold"
+              className="text-white underline font-semibold"
             >
               Register Here
             </Link>
           </p>
-          <Link to="/guest" className="text-gray-200 hover:underline">
-            Use as Guest
-          </Link>
+          
         </div>
       </div>
     </div>

@@ -28,6 +28,9 @@ import PendingPayment from "./pages/PendingPayment";
 import AdminPayments from "./pages/AdminPayments";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BorrowedBooks from "./pages/BorrowedBooks";
+import AdminBorrowApproval from "./pages/AdminBorrowApproval";
+
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
   const [user, setUser] = useState(null); // 👈 state for user
@@ -72,6 +75,20 @@ const App = () => {
 
         <main className="flex-grow p-6 mt-16">
           <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Navigate to="/books" />} />
+            <Route path="/books" element={<BookCatalogPage />} />
+            <Route path="/books/:id" element={<BookDetailsPage />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route
+              path="/login"
+              element={<Login setUser={setUser} setUserRole={setUserRole} />}
+            />
+            <Route path="/register" element={<Register />} />
+            <Route path="/guest" element={<Guest />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* General pages */}
             <Route path="/home" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/my-shelf" element={<My_shelf />} />
@@ -88,6 +105,14 @@ const App = () => {
               }
             />
             <Route
+              path="/borrowed-books"
+              element={
+                <ProtectedRoute role="student" user={user}>
+                  <BorrowedBooks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/payment"
               element={
                 <ProtectedRoute role="student" user={user}>
@@ -95,14 +120,22 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            {/* <Route
-              path="/borrowed-books"
+            <Route
+              path="/payment-plans"
               element={
                 <ProtectedRoute role="student" user={user}>
-                  <BorrowedBooks />
+                  <PaymentPlans />
                 </ProtectedRoute>
               }
-            /> */}
+            />
+            <Route
+              path="/pending-payment"
+              element={
+                <ProtectedRoute role="student" user={user}>
+                  <PendingPayment />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin routes */}
             <Route
@@ -113,27 +146,16 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+             <Route path="/admin-approvals" element={
+              <ProtectedRoute role="Admin" user={user}>
+                <AdminBorrowApproval/>
+              </ProtectedRoute>
+            } />
             <Route
               path="/admin/books"
               element={
                 <ProtectedRoute role="Admin" user={user}>
                   <ManageBooks />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
-                <ProtectedRoute role="Admin" user={user}>
-                  <ManageUsers />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/borrow/records"
-              element={
-                <ProtectedRoute role="Admin" user={user}>
-                  <BorrowingRecords />
                 </ProtectedRoute>
               }
             />
@@ -154,21 +176,22 @@ const App = () => {
               }
             />
             <Route
-              path="/admin-dashboard"
+              path="/admin/users"
               element={
                 <ProtectedRoute role="Admin" user={user}>
-                  <AdminDashboard />
+                  <ManageUsers />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/admin-payments"
+              path="/borrow/records"
               element={
                 <ProtectedRoute role="Admin" user={user}>
-                  <AdminPayments />
+                  <BorrowingRecords />
                 </ProtectedRoute>
               }
             />
+
 
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/books" />} />
@@ -182,11 +205,29 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/guest" element={<Guest />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            <Route
+              path="/admin-payments"
+              element={
+                <ProtectedRoute role="Admin" user={user}>
+                  <AdminPayments />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route
+              path="/admin-approvals"
+              element={
+                <ProtectedRoute role="Admin" user={user}>
+                  <AdminBorrowApproval />
+                </ProtectedRoute>
+              }
+            /> */}
           </Routes>
         </main>
 
-        <footer className="bg-white text-center py-3">footer</footer>
       </div>
+
+      {/* Toast notifications */}
       <ToastContainer />
     </div>
   );

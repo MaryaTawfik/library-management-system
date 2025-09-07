@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { getBookById } from "../services/booksService";
+import { borrowBook } from "../services/borrowService";
+import { toast } from "react-toastify";
 import {
   FaBarcode,
   FaCalendarAlt,
@@ -28,17 +30,62 @@ export default function BookDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getBookById(id).then((data) => {
-      const normalized = data.data || data;
-      setBook(normalized);
-    });
+    getBookById(id)
+      .then((data) => {
+        const normalized = data.data || data;
+        setBook(normalized);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch book:", err);
+        toast.error("Failed to load book. Try again later.");
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (!book) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!book) return <p>Book not found.</p>;
 
-  const handleBorrow = () => navigate("/welcome");
+const handleBorrow = async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    // Not logged in → redirect
+    localStorage.setItem("pendingBorrow", JSON.stringify({ bookId: book._id }));
+    navigate("/login");
+    return;
+  }
+
+  if (!user.is_member) {
+    // Non-members cannot borrow
+    toast.error("Only members can borrow books");
+    return;
+  }
+
+  try {
+    const res = await borrowBook(book._id);
+    toast.success(res.message || "Book borrowed successfully!");
+
+    // Update localStorage with borrowed books
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooks")) || [];
+    borrowedBooks.push(book);
+    localStorage.setItem("borrowedBooks", JSON.stringify(borrowedBooks));
+
+    // Update UI for available copies
+    setBook((prev) => ({
+      ...prev,
+      avaliablecopies: prev.avaliablecopies - 1,
+    }));
+  } catch (err) {
+    console.error("Borrow failed:", err.response?.data || err.message);
+    // Show backend error if exists, else fallback
+    toast.error(err.response?.data?.err || "Can't borrow more than 3 books at a time");
+  }
+};
+
+
 
   return (
     <div className="max-w-6xl mx-auto px-4  border-8 border-white shadow-sm font-[sanif sarif] min-h-screen  rounded-2xl">
@@ -158,9 +205,11 @@ export default function BookDetailPage() {
                 value={book.totalcopies}
               />
             </div>
+
           </div>
         </div>
       </div>
     </div>
   );
 }
+

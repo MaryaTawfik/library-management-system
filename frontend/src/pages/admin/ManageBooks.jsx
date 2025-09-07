@@ -27,11 +27,9 @@ export default function ManageBooks() {
       setBooks(data.data || data);
 
       toast.dismiss();
-      toast.success("📚 Books list refreshed");
     } catch (error) {
       console.error("Failed to load books", error);
       toast.dismiss();
-      toast.error("❌ Failed to load books");
     } finally {
       setLoading(false);
     }

@@ -9,8 +9,7 @@ const PendingPayment = () => {
   const { planId, amount } = location.state || {};
 
   const [file, setFile] = useState(null);
-  const [bankTransactionID, setReference] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ new loading state
+  const [bankTransactionID, setReference] = useState("")
 
   const plans = {
     1: { name: "Basic", price: "300 birr / month" },
@@ -27,19 +26,16 @@ const PendingPayment = () => {
     }
 
     try {
-      setLoading(true); // disable button while submitting
       const user = JSON.parse(localStorage.getItem("user") || null);
-      if (!user) throw new Error("User not found");
+if (!user) throw new Error("User not found");
+await createPayment(user._id, bankTransactionID, amount, file);
 
-      await createPayment(user._id, bankTransactionID, amount, file);
 
       toast.success("Payment submitted successfully! ✅ Waiting for approval.");
       navigate("/home");
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit payment.");
-    } finally {
-      setLoading(false); // re-enable button after submission
     }
   };
 
@@ -60,22 +56,19 @@ const PendingPayment = () => {
           onChange={(e) => setFile(e.target.files[0])}
           className="block w-full border rounded-lg p-2 mb-4"
         />
-        <input
-          type="text"
-          placeholder="Bank Transaction ID "
-          value={bankTransactionID}
-          onChange={(e) => setReference(e.target.value)}
-          className="block w-full border rounded-lg p-2 mb-4"
-        />
+      <input
+  type="text"
+  placeholder="Bank Transaction ID (optional)"
+  value={bankTransactionID}
+  onChange={(e) => setReference(e.target.value)}
+  className="block w-full border rounded-lg p-2 mb-4"
+/>
 
         <button
           onClick={handleSubmitPayment}
-          disabled={loading} // ✅ disable while loading
-          className={`w-full py-2 rounded-lg text-white ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#FA7C54] hover:bg-[#e66c45]"
-          }`}
+          className="w-full bg-[#FA7C54] text-white py-2 rounded-lg hover:bg-[#e66c45]"
         >
-          {loading ? "Submitting..." : "Submit Payment"} {/* ✅ show text change */}
+          Submit Payment
         </button>
       </div>
     </div>
