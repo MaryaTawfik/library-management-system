@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 
 const usersSchema = new mongoose.Schema(
   {
-    userID: { type: String, required: true },
+
+    userID: { type: String, required: true, unique: true, },
     firstName: {
       type: String,
       minlength: 3,
@@ -29,7 +30,8 @@ const usersSchema = new mongoose.Schema(
     department: { type: String, trim: true },
     phoneNumber: { type: Number, required: true },
     acadamicYear: {
-      type: Date,
+
+      type: String,
       trim: true,
       enum: ["1st", "2nd", "3rd", "4th", "5th"],
     },
@@ -47,12 +49,18 @@ const usersSchema = new mongoose.Schema(
       enum: ["blocked", "active"],
       default: "active",
     },
-    is_member: { type: Boolean, required: true },
-    expiryDate: { type: Date, required: true },
+
+    is_member: { type: Boolean, required: true, default: false },
+    membershipReminderSent: { type: Boolean, default: false },
+    membershipExpiryNotified: { type: Boolean, default: false },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+    expiryDate: { type: Date },
     profileImage: {
       type: String,
       trim: true,
-      default: "https://via.placeholder.com/150",
+      default:
+        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-svg%2Fprofile-placeholder&psig=AOvVaw2ot0_itMU9_Jc37Npt7h82&ust=1756628651663000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJi-sqGNso8DFQAAAAAdAAAAABAE",
     },
   },
   { timestamps: true }

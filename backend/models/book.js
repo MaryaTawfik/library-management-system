@@ -23,7 +23,13 @@ const bookSchema = new mongoose.Schema(
     totalcopies: {
       type: Number,
     },
-    avaliablecopies: Number,
+
+    availablecopies: {
+      type: Number,
+      default: function () {
+        return this.totalcopies;
+      },
+    },
     isbn: {
       type: String,
       required: true,
@@ -41,7 +47,9 @@ const bookSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       trim: true,
-      default: "https://via.placeholder.com/150",
+
+      default:
+        "https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg",
     },
   },
   { timestamps: true }

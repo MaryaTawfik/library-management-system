@@ -14,14 +14,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
-  try {
-    const updated = await adminService.updateUser(req.params.id, req.body);
-    res.json({ message: "User updated", data: updated });
-  } catch (err) {
-    res.status(500).json({ message: "Update failed", error: err.message });
-  }
-};
 
 const blockUser = async (req, res) => {
   try {
@@ -65,7 +57,7 @@ const getBlockedUsers = async (req, res) => {
 
 module.exports = {
   getAllUsers,
-  updateUser,
+
   deleteUser,
   blockUser,
   unblockUser,

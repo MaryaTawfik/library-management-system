@@ -1,19 +1,12 @@
-// const express = require('express');
-// const router =express.Router();
-// const authcontroller =  require('../controllers/auth_controller')
 
-// router.post('/register',authcontroller.register);
-// router.post('/login',authcontroller.login);
-
-// module.exports = router;
 const express = require("express");
 const { body } = require("express-validator");
 const User = require("../models/users");
 const authController = require("../controllers/auth_controller");
 const { isAuthenticated } = require("../middlewares/authenticate");
-const parser = require("../middlewares/multer");
+const { parser, singleUpload } = require("../middlewares/multer");
 const { isStudent } = require("../middlewares/role");
-
+const validate = require("../middlewares/validate");
 const router = express.Router();
 
 const registerValidation = [
@@ -75,17 +68,52 @@ const loginValidation = [
 
 router.post(
   "/register",
-  parser.single("profileImage"), // ✅ Add this to handle file upload
+
+  parser.single("profileImage"),
   registerValidation,
+  validate,
   authController.register
 );
 
-router.post("/login", loginValidation, authController.login);
+router.post("/login", loginValidation, validate, authController.login);
 router.put(
   "/profile",
   isAuthenticated,
-  isStudent,
-  parser.single("profileImage"),
+  singleUpload("profileImage"),
   authController.updateProfile
+);
+router.post(
+  "/forgot-password",
+  body("email").isEmail().withMessage("Valid email is required"),
+  validate,
+  authController.forgotPassword
+);
+router.post(
+  "/reset-password/:token",
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters")
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .withMessage(
+      "Password must include at least one number and one special character"
+    ),
+  validate,
+  authController.resetPassword
+);
+router.put(
+  "/change-password",
+  isAuthenticated,
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("Current password is required"),
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("New password must be at least 8 characters")
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .withMessage(
+      "New password must include at least one number and one special character"
+    ),
+  validate,
+  authController.changePassword
 );
 module.exports = router;
