@@ -21,11 +21,10 @@ export default function BorrowingRecords() {
   const fetchRecords = async () => {
     setLoading(true);
     try {
-      toast.info("📡 Fetching borrowing records...");
+      
       const res = await getAllBorrows();
       const list = Array.isArray(res) ? res : res?.data || [];
       setRecords(list);
-      toast.success("✅ Records loaded successfully!");
     } catch (err) {
       console.error(err);
       toast.error("❌ Failed to load borrowing records");

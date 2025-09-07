@@ -84,9 +84,9 @@ const BorrowHistory = () => {
                 </p>
               </div>
 
-              <div>
+              <div className="text-center m-auto m-6">
                 <p className="font-medium">Status</p>
-                <span
+                <p
                   className={`${
                     borrow.status === "returned"
                       ? "text-green-700 bg-green-200"
@@ -96,7 +96,7 @@ const BorrowHistory = () => {
                   } font-semibold px-2 py-1 rounded`}
                 >
                   {borrow.status}
-                </span>
+                </p>
               </div>
             </div>
           </div>

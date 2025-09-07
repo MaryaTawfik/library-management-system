@@ -29,16 +29,16 @@ export default function BookCard({ book }) {
 
         <div className="flex justify-between items-center text-sm mb-3 mt-auto px-1">
           <span className="font-medium">
-            Copies: {book.avaliablecopies} of {book.totalcopies}
+            Copies: {book.availablecopies} of {book.totalcopies}
           </span>
           <span
             className={
-              book.avaliablecopies > 0
+              book.availablecopies > 0
                 ? "text-yellow-700 font-medium "
                 : "text-white bg-yellow-800 rounded px-2"
             }
           >
-            {book.avaliablecopies > 0 ? "Available" : "Unavailable"}
+            {book.availablecopies > 0 ? "Available" : "Unavailable"}
           </span>
         </div>
 
