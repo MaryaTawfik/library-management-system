@@ -4,6 +4,7 @@ const cloudinary = require("../utils/cloudinary");
 const getAll = async (req, res) => {
   try {
     const books = await bookService.getAllBooks();
+
     res.json({ status: "success", data: books || [] });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
@@ -19,6 +20,7 @@ const getOne = async (req, res) => {
     }
     res.json(oneBook);
   } catch (err) {
+
     res.status(500).json({ status: "error", message: err.message });
   }
 };
@@ -31,11 +33,13 @@ const create = async (req, res) => {
       publishedYear,
       catagory,
       totalcopies,
+
       availablecopies,
       isbn,
       pages,
       description,
     } = req.body;
+
 
     if (!title || !author || !isbn) {
       return res
@@ -146,6 +150,7 @@ const remove = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 const getPaginatedBooks = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = "" } = req.query;
@@ -177,6 +182,7 @@ module.exports = {
   getOne,
   create,
   remove,
+
   getPaginatedBooks,
   update,
 };

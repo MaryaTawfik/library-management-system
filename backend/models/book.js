@@ -23,6 +23,7 @@ const bookSchema = new mongoose.Schema(
     totalcopies: {
       type: Number,
     },
+
     availablecopies: {
       type: Number,
       default: function () {
@@ -46,6 +47,7 @@ const bookSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       trim: true,
+
       default:
         "https://img.freepik.com/premium-photo/blank-hardcover-book-mockup-minimalist-surface-mockup-template_1143726-2471.jpg",
     },
