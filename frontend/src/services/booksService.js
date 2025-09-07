@@ -12,7 +12,7 @@ export const getAllBooks = async () => {
     return res.data || [];
   } catch (err) {
     console.error("Error fetching books:", err.message);
-fallback mock data
+//fallback mock data
 
     return [
       {

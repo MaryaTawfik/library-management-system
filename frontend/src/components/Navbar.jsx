@@ -4,7 +4,7 @@ import { FaUserCircle, FaRegUser } from "react-icons/fa";
 import { CgEnter } from "react-icons/cg";
 import { Link, useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
-import { userAtom } from "../atoms/authAtom"; // ✅ import jotai atom
+import { userAtom } from "../atoms/authAtom";
 
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   const [user, setUser] = useAtom(userAtom);
@@ -23,12 +23,8 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
 
   return (
     <header className="fixed w-full bg-white shadow-sm z-20">
-      <nav className=" flex-shirink-0 max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-       
-        <div className="flex items-center gap-3 ">
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-
-       
+        {/* Left: Sidebar toggle + Brand */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
@@ -39,12 +35,12 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
           </p>
         </div>
 
-        {/* Right: Nav Items */}
-        <div className="relative flex-shirink-0 items-center gap-4 flex-shrink-0">
         {/* Centered Arabic Quote */}
         <div className="flex-1 flex justify-center">
           <p className="arabic-calligraphy hidden md:block text-center">
-المكتبة الإلكترونية  </p>      </div>
+            المكتبة الإلكترونية
+          </p>
+        </div>
 
         {/* Right: User avatar / login */}
         <div className="relative flex items-center gap-4 flex-shrink-0">
@@ -102,13 +98,11 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
       {/* CSS for Arabic calligraphy */}
       <style>
         {`
-          <style>
-@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
-</style>
+          @import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
 
           .arabic-calligraphy {
             font-family: 'Fustat', serif;
-            font-size: 10px;
+            font-size: 16px;
             color: #b8860b;
             white-space: nowrap;
             line-height: 1.1;
