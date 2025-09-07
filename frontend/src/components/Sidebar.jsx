@@ -72,32 +72,38 @@ const Sidebar = ({ SidebarToggle }) => {
               <>
                 <Link
                   to="/admin-dashboard"
-                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
                 >
                   🛠 Dashboard
                 </Link>
-
+                <Link
+                  to="/admin-approvals"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
+                >
+                  📋 Admin Borrow Approvals
+                </Link>
+                
                 <Link
                   to="/admin-payments"
-                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
                 >
-                  📋 Admin Approvals
+                  📋 Admin Payments
                 </Link>
                 <Link
                   to="/admin/books"
-                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
                 >
                   📚 Manage Books
                 </Link>
                 <Link
                   to="/admin/users"
-                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
                 >
                   👥 Manage Users
                 </Link>
                 <Link
                   to="/borrow/records"
-                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Inter]"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-200 font-[Poppins]"
                 >
                   📖 Borrow Records
                 </Link>
