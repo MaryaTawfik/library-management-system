@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 const Book = require("../models/book");
 
@@ -16,18 +17,21 @@ const createBook = async (
   publishedYear,
   catagory,
   totalcopies,
+
   availablecopies,
   isbn,
   pages,
   description,
   imageUrl
 ) => {
+
   const newBook = await Book.create({
     title,
     author,
     publishedYear,
     catagory,
     totalcopies,
+
     availablecopies,
     isbn,
     pages,
@@ -39,6 +43,7 @@ const createBook = async (
 };
 
 const deleteBook = async (id) => {
+
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return await Book.findByIdAndDelete(id);
 };
@@ -94,6 +99,7 @@ module.exports = {
   getBookById,
   createBook,
   deleteBook,
+
   getBooksPaginated,
   updateBook,
 };

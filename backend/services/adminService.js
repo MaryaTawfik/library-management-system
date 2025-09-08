@@ -1,3 +1,4 @@
+
 const User = require('../models/users');
 
 const getAllUsers = async () => {
@@ -14,6 +15,7 @@ const blockUser = async (id) => {
 };
 
 const unblockUser = async (id) => {
+
   const user = await User.findByIdAndUpdate(id, { status: 'active' }, { new: true });
   if (!user) throw new Error('User not found');
   return user;
@@ -21,16 +23,19 @@ const unblockUser = async (id) => {
 
 const deleteUser = async (id) => {
   const user = await User.findByIdAndDelete(id);
+
   if (!user) throw new Error('User not found');
   return user;
 };
 
 const getBlockedUsers = async () => {
+
   return await User.find({ status: 'blocked' }).select('-password');
 };
 
 module.exports = {
   getAllUsers,
+
  
   deleteUser,
   blockUser,

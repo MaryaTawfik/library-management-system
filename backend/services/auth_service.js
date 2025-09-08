@@ -1,3 +1,4 @@
+
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
@@ -11,6 +12,7 @@ const registeruser = async (data) => {
 };
 
 const loginuser = async (email, password) => {
+
   const user = await User.findOne({ email }).select("+password");
   if (!user) throw new Error("User not found");
 
@@ -18,6 +20,7 @@ const loginuser = async (email, password) => {
   if (!isMatch) throw new Error("Invalid password");
 
   const token = jwt.sign(
+
     {
       id: user._id,
       userID: user.userID,

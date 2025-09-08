@@ -6,6 +6,7 @@ const { isAdmin } = require("../middlewares/role");
 
 router.get("/users", isAuthenticated, isAdmin, adminController.getAllUsers);
 
+
 router.delete(
   "/users/:id",
   isAuthenticated,
@@ -31,5 +32,6 @@ router.get(
   isAdmin,
   adminController.getBlockedUsers
 );
+
 
 module.exports = router;

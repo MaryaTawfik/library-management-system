@@ -1,3 +1,4 @@
+
 const express = require("express");
 const { body } = require("express-validator");
 const User = require("../models/users");
@@ -67,6 +68,7 @@ const loginValidation = [
 
 router.post(
   "/register",
+
   parser.single("profileImage"),
   registerValidation,
   validate,

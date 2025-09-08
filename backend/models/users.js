@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const usersSchema = new mongoose.Schema(
   {
+
     userID: { type: String, required: true, unique: true, },
     firstName: {
       type: String,
@@ -29,6 +30,7 @@ const usersSchema = new mongoose.Schema(
     department: { type: String, trim: true },
     phoneNumber: { type: Number, required: true },
     acadamicYear: {
+
       type: String,
       trim: true,
       enum: ["1st", "2nd", "3rd", "4th", "5th"],
@@ -47,6 +49,7 @@ const usersSchema = new mongoose.Schema(
       enum: ["blocked", "active"],
       default: "active",
     },
+
     is_member: { type: Boolean, required: true, default: false },
     membershipReminderSent: { type: Boolean, default: false },
     membershipExpiryNotified: { type: Boolean, default: false },

@@ -90,8 +90,8 @@ const Profile = () => {
               {user.phoneNumber || "Not provided"}
             </p>
             <div>
-              <span className="font-medium">Profile Picture:</span>
-              <div className="mt-2">
+              
+              {/* <div className="mt-2">
                 {user.profileImage ? (
                   <img
                     src={user.profileImage}
@@ -101,7 +101,7 @@ const Profile = () => {
                 ) : (
                   <p>Not provided</p>
                 )}
-              </div>
+              </div> */}
               <p>
                 <span className="font-medium">Member Status:</span> {user.is_member ? "Active ✅" : "Inactive ❌"}
               </p>
