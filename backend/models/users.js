@@ -52,6 +52,10 @@ const usersSchema = new mongoose.Schema(
     membershipExpiryNotified: { type: Boolean, default: false },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
+  
+  isVerified: { type: Boolean, default: false },
+  verificationToken: { type: String },
+  verificationExpires: { type: Date },
     expiryDate: { type: Date },
     profileImage: {
       type: String,

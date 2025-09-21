@@ -114,4 +114,8 @@ router.put(
   validate,
   authController.changePassword
 );
+
+router.get("/verify/:token", authController.verifyEmail);
+
+// router.get("/verify-email/:token", authController.verifyEmail);
 module.exports = router;
