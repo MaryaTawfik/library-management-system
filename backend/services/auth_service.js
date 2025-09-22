@@ -4,15 +4,16 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
-// const registeruser = async (data) => {
-//   // create user but mark unverified and generate a verification token
+
+// const  registeruser = async (data) => {
+//   // Generate verification token
 //   const verificationToken = crypto.randomBytes(32).toString("hex");
 //   const verificationTokenHash = crypto
 //     .createHash("sha256")
 //     .update(verificationToken)
 //     .digest("hex");
 
-//   // ensure new users are created unverified by default
+//   // Ensure new users are unverified by default
 //   data.isVerified = false;
 //   data.verificationToken = verificationTokenHash;
 //   data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
@@ -22,73 +23,31 @@ const nodemailer = require("nodemailer");
 
 //   const sanitizedUser = await User.findById(newUser._id).select("-password");
 
-//   // build verification urls
-//   // Primary: backend URL that directly hits the verify route so clicking the link
-//   // will immediately verify the user. Additionally include a frontend-friendly
-//   // link (if provided) so a deployed frontend can optionally exchange the token
-//   // with the backend via an API call.
+//   // Build verification URL
 //   const backendVerifyBase = process.env.BACKEND_URL || `http://localhost:5000`;
 //   const verificationUrl = `${backendVerifyBase}/auth/verify/${verificationToken}`;
+//   console.log("Email verification URL (for testing):", verificationUrl);
 
-//   const frontendBaseRaw = process.env.BASE_URL || process.env.CLIENT_URL || ""; // may include /login
-//   let frontendVerificationUrl = null;
-//   if (frontendBaseRaw) {
-//     const frontendBase = frontendBaseRaw.replace(/\/$/, '');
-//     // If the base already points to login page, append the token as a query param
-//     if (frontendBase.match(/\/login(\/?$|\?|$)/)) {
-//       frontendVerificationUrl = `${frontendBase}${frontendBase.includes('?') ? '&' : '?'}verifyToken=${verificationToken}`;
-//     } else {
-//       // otherwise point to the login path with token param
-//       frontendVerificationUrl = `${frontendBase}/login?verifyToken=${verificationToken}`;
-//     }
-//   }
-
-//   console.log("Email verification URL (backend):", verificationUrl);
-//   if (frontendVerificationUrl) console.log("Email verification URL (frontend):", frontendVerificationUrl);
-
-//   // send verification email if mail credentials provided
-//   let emailSent = false;
+//   // Send verification email if credentials provided
 //   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
 //     const transporter = nodemailer.createTransport({
 //       service: "gmail",
 //       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
 //     });
 
-//     let htmlBody = `<p>Click <a href="${verificationUrl}">this link</a> to verify your email (this will directly call the backend).</p>
-//              <p>If that doesn't work in your environment, copy and paste this backend URL into your browser:</p>
-//              <p>${verificationUrl}</p>`;
-
-//     if (frontendVerificationUrl) {
-//       htmlBody += `<hr/><p>Or, if you are using the frontend app, click this link (the frontend may exchange the token with the backend):</p>
-//                    <p><a href="${frontendVerificationUrl}">${frontendVerificationUrl}</a></p>`;
-//     }
-
-//     try {
-//       // verify transporter configuration early to get clearer errors
-//       await transporter.verify();
-//       await transporter.sendMail({
-//         to: newUser.email,
-//         subject: "Verify your email",
-//         html: htmlBody,
-//       });
-//       console.log('Verification email sent to', newUser.email);
-//       emailSent = true;
-//     } catch (err) {
-//       // Log full error for debugging (do not expose in production responses)
-//       console.error('Failed sending verification email:', err && (err.stack || err.message || err));
-//       console.error('SMTP config user:', process.env.EMAIL_USER ? process.env.EMAIL_USER : '(none)');
-//       // Keep going — user is created and token is logged above so manual verification is possible
-//       emailSent = false;
-//     }
-//   } else {
-//     // No email credentials — make it easy to test by logging the URLs
-//     console.warn('EMAIL_USER or EMAIL_PASS not set. Verification email will not be sent automatically.');
+//     await transporter.sendMail({
+//       to: newUser.email,
+//       subject: "Verify your email",
+//       html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>
+//              <p>If the above link doesn't work, copy and paste this URL into your browser:</p>
+//              <p>${verificationUrl}</p>`,
+//     });
 //   }
 
-//   // Return additional info to make testing easier locally: the backend and frontend URLs
-//   return { user: sanitizedUser, verificationUrl, frontendVerificationUrl, emailSent };
+//   return sanitizedUser;
 // };
-const  registeruser = async (data) => {
+
+const registeruser = async (data) => {
   // Generate verification token
   const verificationToken = crypto.randomBytes(32).toString("hex");
   const verificationTokenHash = crypto
@@ -106,9 +65,10 @@ const  registeruser = async (data) => {
 
   const sanitizedUser = await User.findById(newUser._id).select("-password");
 
-  // Build verification URL
+  // Build verification URLs
   const backendVerifyBase = process.env.BACKEND_URL || `http://localhost:5000`;
   const verificationUrl = `${backendVerifyBase}/auth/verify/${verificationToken}`;
+  const fallbackUrl = `${backendVerifyBase}/auth/verify-manual/${verificationToken}`;
   console.log("Email verification URL (for testing):", verificationUrl);
 
   // Send verification email if credentials provided
@@ -123,11 +83,14 @@ const  registeruser = async (data) => {
       subject: "Verify your email",
       html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>
              <p>If the above link doesn't work, copy and paste this URL into your browser:</p>
-             <p>${verificationUrl}</p>`,
+             <p>${fallbackUrl}</p>`,
     });
   }
 
-  return sanitizedUser;
+  return {
+    user: sanitizedUser,
+    emailSent: true, // Indicate that the email was sent
+  };
 };
 const loginuser = async (email, password) => {
   const user = await User.findOne({ email }).select("+password");
@@ -163,22 +126,6 @@ const loginuser = async (email, password) => {
   return { token, user: sanitizedUser };
 };
 
-// const verifyEmail = async (token) => {
-//   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-//   const user = await User.findOne({
-//     verificationToken: tokenHash,
-//     verificationExpires: { $gt: Date.now() },
-//   });
-
-//   if (!user) throw new Error("Invalid or expired verification token");
-
-//   user.isVerified = true;
-//   user.verificationToken = undefined;
-//   user.verificationExpires = undefined;
-//   await user.save();
-  
-//   return { success: true, message: "Email verified successfully" };
-// };
 
 const verifyEmail = async (token) => {
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");

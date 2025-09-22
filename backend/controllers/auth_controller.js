@@ -134,92 +134,146 @@ const changePassword = async (req, res) => {
 
 
 
+// const verifyEmail = async (req, res) => {
+//   try {
+//     const result = await authService.verifyEmail(req.params.token);
+
+//     if (result.success) {
+//       return res.send(`
+//         <!DOCTYPE html>
+//         <html lang="en">
+//         <head>
+//           <meta charset="UTF-8" />
+//           <title>Email Verified</title>
+//           <style>
+//             body {
+//               font-family: Arial, sans-serif;
+//               background: #f4f4f9;
+//               display: flex;
+//               align-items: center;
+//               justify-content: center;
+//               height: 100vh;
+//               margin: 0;
+//             }
+//             .card {
+//               background: white;
+//               padding: 2rem;
+//               border-radius: 12px;
+//               box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+//               text-align: center;
+//             }
+//             h1 { color: #4caf50; }
+//             p { margin-top: 1rem; }
+//           </style>
+//         </head>
+//         <body>
+//           <div class="card">
+//             <h1>✅ Email Verified</h1>
+//             <p>Your email has been successfully verified. You can now log in.</p>
+//           </div>
+//         </body>
+//         </html>
+//       `);
+//     }
+
+//     return res.status(400).send(`
+//       <!DOCTYPE html>
+//         <html lang="en">
+//         <head>
+//           <meta charset="UTF-8" />
+//           <title>Email Verified</title>
+//           <style>
+//             body {
+//               font-family: Arial, sans-serif;
+//               background: #f4f4f9;
+//               display: flex;
+//               align-items: center;
+//               justify-content: center;
+//               height: 100vh;
+//               margin: 0;
+//             }
+//             .card {
+//               background: white;
+//               padding: 2rem;
+//               border-radius: 12px;
+//               box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+//               text-align: center;
+//             }
+//             h1 { color: #ed1123ff; }
+//             p { margin-top: 1rem; }
+//           </style>
+//         </head>
+//         <body>
+//           <div class="card">
+//             <h1>❌ Verification Failed</h1>
+//             <p>${result.message || "Invalid or expired token."}</p>
+//           </div>
+//         </body>
+//         </html>`
+      
+     
+//     );
+
+//   } catch (error) {
+//     return res.status(500).send("<h1>⚠️ Something went wrong.</h1>");
+//   }
+// };
+
 const verifyEmail = async (req, res) => {
   try {
-    const result = await authService.verifyEmail(req.params.token);
+    const token = req.params.token; // Get token from the URL
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await User.findOne({
+      verificationToken: tokenHash,
+      verificationExpires: { $gt: Date.now() },
+    });
 
-    if (result.success) {
-      return res.send(`
+    if (!user) {
+      return res.status(400).send(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
           <meta charset="UTF-8" />
-          <title>Email Verified</title>
+          <title>Email Verification Failed</title>
           <style>
-            body {
-              font-family: Arial, sans-serif;
-              background: #f4f4f9;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              height: 100vh;
-              margin: 0;
-            }
-            .card {
-              background: white;
-              padding: 2rem;
-              border-radius: 12px;
-              box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-              text-align: center;
-            }
-            h1 { color: #4caf50; }
-            p { margin-top: 1rem; }
+            body { font-family: Arial, sans-serif; text-align: center; }
+            h1 { color: #ed1123ff; }
           </style>
         </head>
         <body>
-          <div class="card">
-            <h1>✅ Email Verified</h1>
-            <p>Your email has been successfully verified. You can now log in.</p>
-          </div>
+          <h1>❌ Verification Failed</h1>
+          <p>Invalid or expired token.</p>
         </body>
         </html>
       `);
     }
 
-    return res.status(400).send(`
-      <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <title>Email Verified</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background: #f4f4f9;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              height: 100vh;
-              margin: 0;
-            }
-            .card {
-              background: white;
-              padding: 2rem;
-              border-radius: 12px;
-              box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-              text-align: center;
-            }
-            h1 { color: #ed1123ff; }
-            p { margin-top: 1rem; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>❌ Verification Failed</h1>
-            <p>${result.message || "Invalid or expired token."}</p>
-          </div>
-        </body>
-        </html>`
-      
-     
-    );
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationExpires = undefined;
+    await user.save();
 
+    return res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Email Verified</title>
+        <style>
+          body { font-family: Arial, sans-serif; text-align: center; }
+          h1 { color: #4caf50; }
+        </style>
+      </head>
+      <body>
+        <h1>✅ Email Verified</h1>
+        <p>Your email has been successfully verified. You can now log in.</p>
+      </body>
+      </html>
+    `);
   } catch (error) {
     return res.status(500).send("<h1>⚠️ Something went wrong.</h1>");
   }
 };
-
-
 // const verifyEmail = async (req, res) => {
 //   try {
 //     const result = await authService.verifyEmail(req.params.token);

@@ -36,15 +36,13 @@ connectDB()
         }
 
      
-          app.use('/books', bookRoutes);
-          app.use('/auth', auth_route);
-          app.use('/payments', paymentRoutes);
-          app.use('/admin', adminRoutes);
-          app.use('/api', borrowRoute);
+        app.use('/books', bookRoutes);
+        app.use('/auth', auth_route);
+        app.use('/payments', paymentRoutes);
+        app.use('/admin', adminRoutes);
+        app.use('/api', borrowRoute);
 
-          console.log('Routes mounted: /books, /auth, /payments, /admin, /api');
-
-              require("./utils/cronJob");
+           require("./utils/cronJob");
     })
     .catch((err) => {
         console.error('Could not connect to DB, routes not mounted:', err.message || err);
@@ -53,18 +51,6 @@ connectDB()
 
 app.get('/', (req,res) => {
     res.send(`${process.env.APP_NAME} is running`);
-});
-
-// Lightweight health endpoint to help diagnose deployed routing/DB issues
-app.get('/health', async (req, res) => {
-    res.json({
-        ok: true,
-        appName: process.env.APP_NAME || 'Application',
-        env: process.env.NODE_ENV || 'development',
-        backendUrl: process.env.BACKEND_URL || null,
-        baseUrl: process.env.BASE_URL || null,
-        message: 'If /auth routes are mounted you should see /auth/verify available.'
-    });
 });
 
 

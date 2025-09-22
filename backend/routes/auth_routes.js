@@ -116,6 +116,7 @@ router.put(
 );
 
 router.get("/verify/:token", authController.verifyEmail);
+router.get("/verify-manual/:token", authController.verifyEmail);
 
 // router.get("/verify-email/:token", authController.verifyEmail);
 module.exports = router;
