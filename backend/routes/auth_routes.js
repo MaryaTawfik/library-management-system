@@ -115,8 +115,10 @@ router.put(
   authController.changePassword
 );
 
-router.get("/verify/:token", authController.verifyEmail);
-router.get("/verify-manual/:token", authController.verifyEmail);
+// router.get("/verify/:token", authController.verifyEmail);
 
-// router.get("/verify-email/:token", authController.verifyEmail);
+// router.get("/verify-debug/:token", authController.verifyEmailDebug);
+router.post("/verify-otp",authController.verifyOTP);
+router.post("/resend-otp",authController.resendOTP)
+
 module.exports = router;

@@ -41,25 +41,18 @@ const register = async (req, res) => {
     }
 
     const result = await authService.registeruser(data);
-    
-    const responsePayload = { message: "User registered successfully", user: result.user };
-    if (!result.emailSent) {
-      // expose verification urls to ease local testing when mail can't be sent
-      responsePayload.verificationUrl = result.verificationUrl;
-      if (result.frontendVerificationUrl) responsePayload.frontendVerificationUrl = result.frontendVerificationUrl;
-      responsePayload.note = 'Email not sent — use verificationUrl to verify manually.';
-    }
+    console.log("result:",result)
+    const responsePayload = { message: "User registered successfully .Please verify OTP sent to email.", user: result.user };
+    // if (!result.emailSent) {
+    //   // expose verification urls to ease local testing when mail can't be sent
+    //   responsePayload.verificationUrl = result.verificationUrl;
+    //   if (result.frontendVerificationUrl) responsePayload.frontendVerificationUrl = result.frontendVerificationUrl;
+    //   responsePayload.note = 'Email not sent — use verificationUrl to verify manually.';
+    // }
     res.status(201).json(responsePayload);
   } catch (err) {
-    if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
-      return res
-        .status(409)
-        .json({ message: "User already registered with this email" });
-    }
-
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
+   res.status(400).json({message:err.message});
+};}
 
 const login = async (req, res) => {
   try {
@@ -138,178 +131,29 @@ const changePassword = async (req, res) => {
 //   try {
 //     const result = await authService.verifyEmail(req.params.token);
 
-//     if (result.success) {
-//       return res.send(`
-//         <!DOCTYPE html>
-//         <html lang="en">
-//         <head>
-//           <meta charset="UTF-8" />
-//           <title>Email Verified</title>
-//           <style>
-//             body {
-//               font-family: Arial, sans-serif;
-//               background: #f4f4f9;
-//               display: flex;
-//               align-items: center;
-//               justify-content: center;
-//               height: 100vh;
-//               margin: 0;
-//             }
-//             .card {
-//               background: white;
-//               padding: 2rem;
-//               border-radius: 12px;
-//               box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-//               text-align: center;
-//             }
-//             h1 { color: #4caf50; }
-//             p { margin-top: 1rem; }
-//           </style>
-//         </head>
-//         <body>
-//           <div class="card">
-//             <h1>✅ Email Verified</h1>
-//             <p>Your email has been successfully verified. You can now log in.</p>
-//           </div>
-//         </body>
-//         </html>
-//       `);
-//     }
-
-//     return res.status(400).send(`
-//       <!DOCTYPE html>
-//         <html lang="en">
-//         <head>
-//           <meta charset="UTF-8" />
-//           <title>Email Verified</title>
-//           <style>
-//             body {
-//               font-family: Arial, sans-serif;
-//               background: #f4f4f9;
-//               display: flex;
-//               align-items: center;
-//               justify-content: center;
-//               height: 100vh;
-//               margin: 0;
-//             }
-//             .card {
-//               background: white;
-//               padding: 2rem;
-//               border-radius: 12px;
-//               box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-//               text-align: center;
-//             }
-//             h1 { color: #ed1123ff; }
-//             p { margin-top: 1rem; }
-//           </style>
-//         </head>
-//         <body>
-//           <div class="card">
-//             <h1>❌ Verification Failed</h1>
-//             <p>${result.message || "Invalid or expired token."}</p>
-//           </div>
-//         </body>
-//         </html>`
-      
-     
-//     );
-
-//   } catch (error) {
-//     return res.status(500).send("<h1>⚠️ Something went wrong.</h1>");
-//   }
-// };
-
-const verifyEmail = async (req, res) => {
-  try {
-    const token = req.params.token; // Get token from the URL
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const user = await User.findOne({
-      verificationToken: tokenHash,
-      verificationExpires: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return res.status(400).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <title>Email Verification Failed</title>
-          <style>
-            body { font-family: Arial, sans-serif; text-align: center; }
-            h1 { color: #ed1123ff; }
-          </style>
-        </head>
-        <body>
-          <h1>❌ Verification Failed</h1>
-          <p>Invalid or expired token.</p>
-        </body>
-        </html>
-      `);
-    }
-
-    user.isVerified = true;
-    user.verificationToken = undefined;
-    user.verificationExpires = undefined;
-    await user.save();
-
-    return res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <title>Email Verified</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; }
-          h1 { color: #4caf50; }
-        </style>
-      </head>
-      <body>
-        <h1>✅ Email Verified</h1>
-        <p>Your email has been successfully verified. You can now log in.</p>
-      </body>
-      </html>
-    `);
-  } catch (error) {
-    return res.status(500).send("<h1>⚠️ Something went wrong.</h1>");
-  }
-};
-// const verifyEmail = async (req, res) => {
-//   try {
-//     const result = await authService.verifyEmail(req.params.token);
-
 //     const frontendLogin = process.env.BASE_URL || process.env.CLIENT_URL || null;
 
 //     if (result.success) {
+//       console.log('Email verification succeeded for token:', req.params.token);
 //       if (frontendLogin) {
-//         // If frontend configured, redirect there so user sees login screen
-//         // Append ?verified=true so frontend can show a confirmation message
 //         const separator = frontendLogin.includes('?') ? '&' : '?';
 //         const url = `${frontendLogin}${separator}verified=true`;
 //         return res.redirect(url);
 //       }
 
-//       // No frontend configured — return a simple success HTML page
-//       return res.send(`
-//         <!DOCTYPE html>
-//         <html lang="en">
-//         <head><meta charset="utf-8" /><title>Email Verified</title></head>
-//         <body>
-//           <h1>✅ Email Verified</h1>
-//           <p>Your email has been successfully verified. You can now log in.</p>
-//         </body>
-//         </html>
-//       `);
+//       return res.send('<h1>Email verified. You can now log in.</h1>');
 //     }
-
+//     console.warn('Email verification failed for token:', req.params.token, 'message:', result.message);
 //     // Verification failed
 //     if (frontendLogin) {
 //       return res.redirect(`${frontendLogin}?error=${encodeURIComponent(result.message || 'Invalid or expired token')}`);
 //     }
 
-//     return res.status(400).send(`<h1>❌ Verification Failed</h1><p>${result.message || 'Invalid or expired token.'}</p>`);
+//     return res.status(400).send(`<h1>Verification Failed</h1><p>${result.message || 'Invalid or expired token.'}</p>`);
 
 //   } catch (error) {
+//     // Log full error for debugging
+//     console.error('verifyEmail error:', error && (error.stack || error.message || error));
 //     const frontendLogin = process.env.BASE_URL || process.env.CLIENT_URL || null;
 //     if (frontendLogin) {
 //       return res.redirect(`${frontendLogin}?error=Something went wrong`);
@@ -317,6 +161,35 @@ const verifyEmail = async (req, res) => {
 //     return res.status(500).send('<h1>⚠️ Something went wrong.</h1>');
 //   }
 // };
+const verifyOTP=async(req,res)=>{
+  try{
+    await authService.verifyOTP(req.body);
+    res.json({message:`email verified successfully . you can now log in`})
+  }
+ catch (error){
+  res.status(400).json({message: error.message})
+
+}};
+
+// Debug endpoint that returns JSON instead of redirecting (temporary)
+// const verifyEmailDebug = async (req, res) => {
+//   try {
+//     const result = await authService.verifyEmail(req.params.token);
+//     return res.json({ ok: true, result });
+//   } catch (error) {
+//     console.error('verifyEmailDebug error:', error && (error.stack || error.message || error));
+//     return res.status(500).json({ ok: false, error: error && (error.stack || error.message || String(error)) });
+//   }
+// };
+
+const resendOTP = async(req,res)=>{
+  try{
+    await authService.resendOTP(req.body);
+    res.json({message:'OTP resent successfully.'})
+  }catch(error){
+    res.status(400).json({message:error.message})
+  }
+}
 
 
 
@@ -327,5 +200,8 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
-  verifyEmail,
-};
+  // verifyEmail,
+  // verifyEmailDebug
+  resendOTP,
+  verifyOTP,
+}

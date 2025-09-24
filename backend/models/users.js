@@ -54,8 +54,11 @@ const usersSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
   
   isVerified: { type: Boolean, default: false },
-  verificationToken: { type: String },
-  verificationExpires: { type: Date },
+  // verificationToken: { type: String },
+  // verificationExpires: { type: Date },
+  otp:{ type:String},
+  otpExpiry:{ type:Date},
+
     expiryDate: { type: Date },
     profileImage: {
       type: String,

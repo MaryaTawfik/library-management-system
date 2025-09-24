@@ -5,92 +5,69 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
 
-// const  registeruser = async (data) => {
-//   // Generate verification token
-//   const verificationToken = crypto.randomBytes(32).toString("hex");
-//   const verificationTokenHash = crypto
-//     .createHash("sha256")
-//     .update(verificationToken)
-//     .digest("hex");
 
-//   // Ensure new users are unverified by default
-//   data.isVerified = false;
-//   data.verificationToken = verificationTokenHash;
-//   data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
+const transporter=nodemailer.createTransport({
+    service:'gmail',
+    auth:{
+      user:process.env.EMAIL_USER,
+      pass:process.env.EMAIL_PASS
+    }
+  })
+  const generateOTP =()=> crypto.randomInt(100000, 999999).toString();
+  const sendEmail = async (to, subject ,text)=>{
+    return transporter.sendMail({
+      from : process.env.EMAIL_USER,
+      to,
+      subject,
+      text,
 
-//   const newUser = new User(data);
-//   await newUser.save();
-
-//   const sanitizedUser = await User.findById(newUser._id).select("-password");
-
-//   // Build verification URL
-//   const backendVerifyBase = process.env.BACKEND_URL || `http://localhost:5000`;
-//   const verificationUrl = `${backendVerifyBase}/auth/verify/${verificationToken}`;
-//   console.log("Email verification URL (for testing):", verificationUrl);
-
-//   // Send verification email if credentials provided
-//   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-//     });
-
-//     await transporter.sendMail({
-//       to: newUser.email,
-//       subject: "Verify your email",
-//       html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>
-//              <p>If the above link doesn't work, copy and paste this URL into your browser:</p>
-//              <p>${verificationUrl}</p>`,
-//     });
-//   }
-
-//   return sanitizedUser;
-// };
-
-const registeruser = async (data) => {
-  // Generate verification token
-  const verificationToken = crypto.randomBytes(32).toString("hex");
-  const verificationTokenHash = crypto
-    .createHash("sha256")
-    .update(verificationToken)
-    .digest("hex");
-
-  // Ensure new users are unverified by default
-  data.isVerified = false;
-  data.verificationToken = verificationTokenHash;
-  data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
-
-  const newUser = new User(data);
-  await newUser.save();
-
-  const sanitizedUser = await User.findById(newUser._id).select("-password");
-
-  // Build verification URLs
-  const backendVerifyBase = process.env.BACKEND_URL || `http://localhost:5000`;
-  const verificationUrl = `${backendVerifyBase}/auth/verify/${verificationToken}`;
-  const fallbackUrl = `${backendVerifyBase}/auth/verify-manual/${verificationToken}`;
-  console.log("Email verification URL (for testing):", verificationUrl);
-
-  // Send verification email if credentials provided
-  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
-
-    await transporter.sendMail({
-      to: newUser.email,
-      subject: "Verify your email",
-      html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>
-             <p>If the above link doesn't work, copy and paste this URL into your browser:</p>
-             <p>${fallbackUrl}</p>`,
-    });
+  })
   }
 
-  return {
-    user: sanitizedUser,
-    emailSent: true, // Indicate that the email was sent
-  };
+
+const  registeruser = async (data) => {
+  // Generate verification token
+  // const verificationToken = crypto.randomBytes(32).toString("hex");
+  // const verificationTokenHash = crypto
+  //   .createHash("sha256")
+  //   .update(verificationToken)
+  //   .digest("hex");
+
+  
+  // data.isVerified = false;
+  // data.verificationToken = verificationTokenHash;
+  // data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
+const otp=generateOTP()
+const otpExpiry= new Date(Date.now()+24*60*60*1000)
+  const newUser = new User({ ...data, otp, otpExpiry });
+  await newUser.save();
+  await sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`);
+    return newUser;
+
+  // const sanitizedUser = await User.findById(newUser._id).select("-password");
+
+  // // Build verification URL
+  // const backendVerifyBase = process.env.BACKEND_URL || `http://localhost:5000`;
+  // const verificationUrl = `${backendVerifyBase}/auth/verify/${verificationToken}`;
+  // console.log("Email verification URL (for testing):", verificationUrl);
+
+  // // Send verification email if credentials provided
+  // if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+  //   const transporter = nodemailer.createTransport({
+  //     service: "gmail",
+  //     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  //   });
+
+  //   await transporter.sendMail({
+  //     to: newUser.email,
+  //     subject: "Verify your email",
+  //     html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>
+  //            <p>If the above link doesn't work, copy and paste this URL into your browser:</p>
+  //            <p>${verificationUrl}</p>`,
+  //   });
+  // }
+
+  // return sanitizedUser;
 };
 const loginuser = async (email, password) => {
   const user = await User.findOne({ email }).select("+password");
@@ -127,24 +104,52 @@ const loginuser = async (email, password) => {
 };
 
 
-const verifyEmail = async (token) => {
-  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-  const user = await User.findOne({
-    verificationToken: tokenHash,
-    verificationExpires: { $gt: Date.now() },
-  });
 
-  if (!user) {
-    return { success: false, message: "Invalid or expired token." };
-  }
+// const verifyEmail = async (token) => {
+//   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+//   const user = await User.findOne({
+//     verificationToken: tokenHash,
+//     verificationExpires: { $gt: Date.now() },
+//   });
 
-  user.isVerified = true;
-  user.verificationToken = undefined;
-  user.verificationExpires = undefined;
+//   if (!user) {
+//     return { success: false, message: "Invalid or expired token." };
+//   }
+
+//   user.isVerified = true;
+//   user.verificationToken = undefined;
+//   user.verificationExpires = undefined;
+//   await user.save();
+
+//   return { success: true };
+// };
+
+const verifyOTP= async({email,otp})=>{
+ const user = await User.findOne({ email });
+
+  if(!user) throw new Error ('user not found');
+  if (user.isVerified) throw new Error ('user already verified');
+  if(user.otp !== otp) throw new Error('invalid OTP');
+  if(user.otpExpiry< new Date()) throw new Error ('expired OTP')
+    user.isVerified=true;
+  user.otp=undefined;
+  user.otpExpiry=undefined;
+  await user.save();
+  return user;
+}
+
+const resendOTP = async ({email})=>{
+  const user = await User.findOne({email});
+  if(!user) throw new Error('user not found');
+  if (user.isVerified) throw new Error('user already verified');
+  const otp =generateOTP();
+  user.otp=otp;
+  user.otpExpiry= new Date(Date.now()+24*60*60*1000);
   await user.save();
 
-  return { success: true };
-};
+  await sendEmail(email, 'resend OTP verification',`Your new OTP is: ${otp}`);
+  return user
+}
 const updateUserProfile = async (id, data) => {
   const forbiddenFields = ["status", "is_member", "expiryDate", "role"];
   forbiddenFields.forEach((field) => delete data[field]);
@@ -242,5 +247,6 @@ module.exports = {
   requestPasswordReset,
   resetPassword,
   changePassword,
-  verifyEmail,
+  verifyOTP,
+   resendOTP,
 };
