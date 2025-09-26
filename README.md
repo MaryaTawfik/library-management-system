@@ -167,6 +167,7 @@ npm run dev
 
 👨‍💻 Developer Group – Neculer Bombs
 This project was proudly built by Neculer Bombs, a team of five passionate developers dedicated to building scalable, secure, and user-friendly systems.
+
 Marya Tawfik     https://github.com/MaryaTawfik
 Fetha Awel       https://github.com/Fatiha-A
 Hanan Nuru       https://github.com/hanannur
