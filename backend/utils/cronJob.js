@@ -1,29 +1,7 @@
 const cron = require("node-cron");
 const Borrow = require("../models/borrow");
 const User = require("../models/users");
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-const sendEmail = async (to, subject, text) => {
-  try {
-    await transporter.sendMail({
-      from: `"Library System" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      text,
-    });
-    console.log(`Email sent to ${to}`);
-  } catch (err) {
-    console.error("Error sending email:", err.message);
-  }
-};
+const { sendEmail } = require('./mailer');
 
 cron.schedule("0 0 * * *", async () => {
   console.log("Running daily borrow & membership check...");

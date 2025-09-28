@@ -7,69 +7,9 @@ const nodemailer = require("nodemailer");
 
 
 // Nodemailer transporter (fallback)
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
-  secure: process.env.SMTP_SECURE === 'true' || false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: { rejectUnauthorized: false },
-  connectionTimeout: 10 * 1000,
-  greetingTimeout: 10 * 1000,
-});
+const { sendEmail, generateOTP } = require('../utils/mailer');
 
-const generateOTP = () => crypto.randomInt(0, 1000000).toString().padStart(6, '0');
-
-// Optional SendGrid API client (preferred on cloud hosts where SMTP may be blocked)
-let sgMail = null;
-if (process.env.SENDGRID_API_KEY) {
-  try {
-    sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  } catch (e) {
-    console.warn('SendGrid module not installed. To use SendGrid set SENDGRID_API_KEY and install @sendgrid/mail');
-    sgMail = null;
-  }
-}
-
-/**
- * sendEmail: prefers SendGrid (if configured) otherwise falls back to Nodemailer.
- * Returns a promise that resolves when the provider accepts the message.
- */
-const sendEmail = async (to, subject, text, html) => {
-  // Prefer SendGrid API (works over HTTPS and avoids SMTP port blocking)
-  if (process.env.SENDGRID_API_KEY && sgMail) {
-    try {
-      const msg = {
-        to,
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-        subject,
-        text: text || undefined,
-        html: html || undefined,
-      };
-      return await sgMail.send(msg);
-    } catch (err) {
-      console.error('SendGrid send error:', err && (err.stack || err.message || err));
-      throw err;
-    }
-  }
-
-  // Nodemailer fallback (may be blocked on some cloud hosts)
-  try {
-    return await transporter.sendMail({
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to,
-      subject,
-      text,
-      html,
-    });
-  } catch (err) {
-    console.error('Nodemailer send error:', err && (err.stack || err.message || err));
-    throw err;
-  }
-};
+// (Email send implementation moved to utils/mailer.js)
 
 
 const  registeruser = async (data) => {
@@ -94,14 +34,13 @@ const  registeruser = async (data) => {
 
   // Send email in background to avoid blocking the request in environments
   // where SMTP may be slow or blocked (common on cloud hosts).
-  let emailConfigured = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+  const emailConfigured = !!(process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || process.env.EMAIL_USER);
   if (emailConfigured) {
-    // fire-and-forget, but log any errors
-    sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`)
+    sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`, `<p>Your OTP is <strong>${otp}</strong></p>`)
       .then(() => console.log('OTP email sent to', data.email))
       .catch((err) => console.error('Failed sending OTP email (background):', err && (err.stack || err.message || err)));
   } else {
-    console.warn('EMAIL_USER or EMAIL_PASS not set; OTP email not sent.');
+    console.warn('No email provider configured; OTP email not sent.');
   }
 
   return { user: sanitizedUser, emailSent: emailConfigured };
