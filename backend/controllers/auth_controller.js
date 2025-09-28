@@ -89,41 +89,41 @@ const updateProfile = async (req, res) => {
 
 
 
-const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const result = await authService.requestPasswordReset(email);
-    res.json(result);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+// const forgotPassword = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+//     const result = await authService.requestPasswordReset(email);
+//     res.json(result);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
-const resetPassword = async (req, res) => {
-  try {
-    const { token } = req.params;
-    const { newPassword } = req.body;
-    const result = await authService.resetPassword(token, newPassword);
-    res.json(result);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+// const resetPassword = async (req, res) => {
+//   try {
+//     const { token } = req.params;
+//     const { newPassword } = req.body;
+//     const result = await authService.resetPassword(token, newPassword);
+//     res.json(result);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
-const changePassword = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const { currentPassword, newPassword } = req.body;
-    const result = await authService.changePassword(
-      userId,
-      currentPassword,
-      newPassword
-    );
-    res.json(result);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+// const changePassword = async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+//     const { currentPassword, newPassword } = req.body;
+//     const result = await authService.changePassword(
+//       userId,
+//       currentPassword,
+//       newPassword
+//     );
+//     res.json(result);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
 
 
@@ -171,16 +171,8 @@ const verifyOTP=async(req,res)=>{
 
 }};
 
-// Debug endpoint that returns JSON instead of redirecting (temporary)
-// const verifyEmailDebug = async (req, res) => {
-//   try {
-//     const result = await authService.verifyEmail(req.params.token);
-//     return res.json({ ok: true, result });
-//   } catch (error) {
-//     console.error('verifyEmailDebug error:', error && (error.stack || error.message || error));
-//     return res.status(500).json({ ok: false, error: error && (error.stack || error.message || String(error)) });
-//   }
-// };
+
+
 
 const resendOTP = async(req,res)=>{
   try{
@@ -191,17 +183,37 @@ const resendOTP = async(req,res)=>{
   }
 }
 
+const forgetPassword= async(req,res)=>{
+  try{
+    const {email} = req.body;
+    const result = await authService.sendOTPforpasswored(email);
+    res.json(result);
+  }catch(error){
+    res.status(400).json({error:error.message});
 
+  }
+}
+
+const resetPasswordWithOTP = async(req,res)=>{
+  try{
+    const{ email,resetpasswordOtp,newPassword}=req.body;
+    const result = await authService.verifyOTPforpassword(email, resetpasswordOtp, newPassword);
+    res.json(result);
+  }catch(error){
+    res.status(400).json({error:error.message})
+  }
+}
 
 module.exports = {
   register,
   login,
   updateProfile,
-  forgotPassword,
-  resetPassword,
-  changePassword,
+  // forgotPassword,
+  // resetPassword,
+  // changePassword,
   // verifyEmail,
-  // verifyEmailDebug
+  resetPasswordWithOTP,
+forgetPassword,
   resendOTP,
   verifyOTP,
 }

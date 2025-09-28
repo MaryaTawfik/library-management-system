@@ -13,7 +13,8 @@ const transporter=nodemailer.createTransport({
       pass:process.env.EMAIL_PASS
     }
   })
-  const generateOTP =()=> crypto.randomInt(100000, 999999).toString();
+  const generateOTP = () => crypto.randomInt(0, 1000000).toString().padStart(6, '0');
+
   const sendEmail = async (to, subject ,text)=>{
     return transporter.sendMail({
       from : process.env.EMAIL_USER,
@@ -167,86 +168,112 @@ const updateUserProfile = async (id, data) => {
   return user;
 };
 
-const requestPasswordReset = async (email) => {
-  const user = await User.findOne({ email });
-  if (!user) throw new Error("User not found");
+// const requestPasswordReset = async (email) => {
+//   const user = await User.findOne({ email });
+//   if (!user) throw new Error("User not found");
 
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  const resetTokenHash = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+//   const resetToken = crypto.randomBytes(32).toString("hex");
+//   const resetTokenHash = crypto
+//     .createHash("sha256")
+//     .update(resetToken)
+//     .digest("hex");
 
-  user.resetPasswordToken = resetTokenHash;
-  user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000;
-  await user.save();
+//   user.resetPasswordToken = resetTokenHash;
+//   user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000;
+//   await user.save();
 
-  const resetUrl = `${
-    process.env.BASE_URL || "http://localhost:3000"
-  }/reset-password/${resetToken}`;
-  console.log("Reset URL (for testing):", resetUrl);
+//   const resetUrl = `${
+//     process.env.BASE_URL || "http://localhost:3000"
+//   }/reset-password/${resetToken}`;
+//   console.log("Reset URL (for testing):", resetUrl);
 
-  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
-    try {
-      await transporter.verify();
-      await transporter.sendMail({
-        to: user.email,
-        subject: "Password Reset Request",
-        html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
-      });
-      console.log('Password reset email sent to', user.email);
-    } catch (err) {
-      console.error('Failed sending password reset email:', err && (err.stack || err.message || err));
-    }
-  }
+//   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+//     });
+//     try {
+//       await transporter.verify();
+//       await transporter.sendMail({
+//         to: user.email,
+//         subject: "Password Reset Request",
+//         html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
+//       });
+//       console.log('Password reset email sent to', user.email);
+//     } catch (err) {
+//       console.error('Failed sending password reset email:', err && (err.stack || err.message || err));
+//     }
+//   }
 
-  return { message: "Password reset email sent", resetToken };
+//   return { message: "Password reset email sent", resetToken };
+// };
+
+// const resetPassword = async (token, newPassword) => {
+//   const resetTokenHash = crypto
+//     .createHash("sha256")
+//     .update(token)
+//     .digest("hex");
+
+//   const user = await User.findOne({
+//     resetPasswordToken: resetTokenHash,
+//     resetPasswordExpires: { $gt: Date.now() },
+//   });
+
+//   if (!user) throw new Error("Invalid or expired token");
+
+//   user.password = newPassword;
+//   user.resetPasswordToken = undefined;
+//   user.resetPasswordExpires = undefined;
+
+//   await user.save();
+//   return { message: "Password reset successful" };
+// };
+// const changePassword = async (userId, currentPassword, newPassword) => {
+//   const user = await User.findById(userId).select("+password");
+//   if (!user) throw new Error("User not found");
+
+//   const isMatch = await bcrypt.compare(currentPassword, user.password);
+//   if (!isMatch) throw new Error("Current password is incorrect");
+
+//   user.password = newPassword;
+//   await user.save();
+
+//   return { message: "Password changed successfully" };
+// };
+const sendOTPforpasswored= async(email)=>{
+  
+  const user = await User.findOne({email});
+  if(!user) throw Error ("user not found");
+   const resetpasswordOtp = generateOTP()
+   const resetPasswordExpires= new Date(Date.now()+10*60*1000)
+   user.resetpasswordOtp=resetpasswordOtp
+   user.resetPasswordExpires=resetPasswordExpires
+   await user.save()
+   await sendEmail(email,'OTP verification', ` y;our OTP is: ${resetpasswordOtp}`)
+   return {message:`OTP send to ${email}`}
+
+}
+
+const verifyOTPforpassword= async(email,resetpasswordOtp,newPassword)=>{
+const user = await User.findOne({email});
+if(!user) throw Error ('user not found')
+if(user.resetpasswordOtp!=resetpasswordOtp) throw Error ('invalid OTP');
+if(user.resetPasswordExpires< Date.now()) throw Error ('expired OTP')
+ user.password = newPassword;
+user.resetpasswordOtp=undefined;
+user.resetPasswordExpires=undefined;
+await user.save()
+return {message:"password reset seccessful"}
 };
-
-const resetPassword = async (token, newPassword) => {
-  const resetTokenHash = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
-
-  const user = await User.findOne({
-    resetPasswordToken: resetTokenHash,
-    resetPasswordExpires: { $gt: Date.now() },
-  });
-
-  if (!user) throw new Error("Invalid or expired token");
-
-  user.password = newPassword;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-
-  await user.save();
-  return { message: "Password reset successful" };
-};
-const changePassword = async (userId, currentPassword, newPassword) => {
-  const user = await User.findById(userId).select("+password");
-  if (!user) throw new Error("User not found");
-
-  const isMatch = await bcrypt.compare(currentPassword, user.password);
-  if (!isMatch) throw new Error("Current password is incorrect");
-
-  user.password = newPassword;
-  await user.save();
-
-  return { message: "Password changed successfully" };
-};
-
 module.exports = {
   registeruser,
   loginuser,
   updateUserProfile,
-  requestPasswordReset,
-  resetPassword,
-  changePassword,
+  // requestPasswordReset,
+  // resetPassword,
+  // changePassword,
+  verifyOTPforpassword,
+  sendOTPforpasswored,
   verifyOTP,
    resendOTP,
 };

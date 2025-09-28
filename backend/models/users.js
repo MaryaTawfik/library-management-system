@@ -50,15 +50,16 @@ const usersSchema = new mongoose.Schema(
     is_member: { type: Boolean, required: true, default: false },
     membershipReminderSent: { type: Boolean, default: false },
     membershipExpiryNotified: { type: Boolean, default: false },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
+    // resetPasswordToken: { type: String },
+    // resetPasswordExpires: { type: Date },
   
   isVerified: { type: Boolean, default: false },
   // verificationToken: { type: String },
   // verificationExpires: { type: Date },
   otp:{ type:String},
   otpExpiry:{ type:Date},
-
+  resetpasswordOtp:{type:String},
+  resetPasswordExpires:{type:Date},
     expiryDate: { type: Date },
     profileImage: {
       type: String,

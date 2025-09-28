@@ -80,45 +80,46 @@ router.put(
   singleUpload("profileImage"),
   authController.updateProfile
 );
-router.post(
-  "/forgot-password",
-  body("email").isEmail().withMessage("Valid email is required"),
-  validate,
-  authController.forgotPassword
-);
-router.post(
-  "/reset-password/:token",
-  body("newPassword")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters")
-    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
-    .withMessage(
-      "Password must include at least one number and one special character"
-    ),
-  validate,
-  authController.resetPassword
-);
-router.put(
-  "/change-password",
-  isAuthenticated,
-  body("currentPassword")
-    .notEmpty()
-    .withMessage("Current password is required"),
-  body("newPassword")
-    .isLength({ min: 8 })
-    .withMessage("New password must be at least 8 characters")
-    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
-    .withMessage(
-      "New password must include at least one number and one special character"
-    ),
-  validate,
-  authController.changePassword
-);
+// router.post(
+//   "/forgot-password",
+//   body("email").isEmail().withMessage("Valid email is required"),
+//   validate,
+//   authController.forgotPassword
+// );
+// router.post(
+//   "/reset-password/:token",
+//   body("newPassword")
+//     .isLength({ min: 8 })
+//     .withMessage("Password must be at least 8 characters")
+//     .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+//     .withMessage(
+//       "Password must include at least one number and one special character"
+//     ),
+//   validate,
+//   authController.resetPassword
+// );
+// router.put(
+//   "/change-password",
+//   isAuthenticated,
+//   body("currentPassword")
+//     .notEmpty()
+//     .withMessage("Current password is required"),
+//   body("newPassword")
+//     .isLength({ min: 8 })
+//     .withMessage("New password must be at least 8 characters")
+//     .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)
+//     .withMessage(
+//       "New password must include at least one number and one special character"
+//     ),
+//   validate,
+//   authController.changePassword
+// );
 
 // router.get("/verify/:token", authController.verifyEmail);
 
 // router.get("/verify-debug/:token", authController.verifyEmailDebug);
 router.post("/verify-otp",authController.verifyOTP);
 router.post("/resend-otp",authController.resendOTP)
-
+router.post("/reset-password-otp", authController.resetPasswordWithOTP);
+router.post("/forgot-password", authController.forgetPassword);
 module.exports = router;
