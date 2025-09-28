@@ -25,7 +25,7 @@ const Sidebar = ({ SidebarToggle ,setSidebarToggle}) => {
       <div className="flex flex-col h-full justify-between">
         {/* --- Top Section --- */}
         <div>
-          <div className="p-1 mb-4 ml-0 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-1 mb-4 ml-0  border-gray-200 dark:border-gray-700">
             <img
               src={jemealogo}
               alt="Jemea Logo"
@@ -115,13 +115,13 @@ const Sidebar = ({ SidebarToggle ,setSidebarToggle}) => {
         </div>
         {/* --- Bottom Section --- */}
        {/* --- Bottom Section --- */}
-<div className="p-2 border-t border-gray-200 dark:border-gray-700">
+<div className="p-2  border-gray-200 dark:border-gray-700">
   <div className="flex items-center gap-4 relative">
     {/* LinkedIn with dropdown */}
     <div className="relative">
       <FaLinkedin
         size={25}
-        className="cursor-pointer text-blue-600 hover:text-blue-800"
+        className="cursor-pointer text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600"
         onClick={(e) => {
           e.stopPropagation(); // ✅ prevent closing sidebar
           setLinkedinDropdownOpen(!linkedinDropdownOpen);
@@ -183,7 +183,7 @@ const Sidebar = ({ SidebarToggle ,setSidebarToggle}) => {
   rel="noopener noreferrer"
   className="flex items-center gap-2 px-3 py-2 shadow-md hover:shadow-lg transition-shadow border-0 border-gray-200"
 >
-  <SiGmail size={22} className="text-yellow-600" />
+  <SiGmail size={22} className="text-gray-900 dark:text-gray-400" />
 </a>
 
   </div>

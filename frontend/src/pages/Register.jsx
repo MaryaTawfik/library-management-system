@@ -67,9 +67,11 @@ export default function Register() {
 
       toast.success("✅ Registered successfully! Please login.");
         setLoading(false); // stop loading
-        setOtpEmail(form.email); // ✅ store email
-        navigate("/otp");
-
+        setOtpEmail(form.email);
+        setTimeout(() => {
+  navigate("/otp");
+ // ✅ store email
+}, 2000); // 2 second delay before navigation
     } catch (err) {
       console.error(err);
       setError(err.message);

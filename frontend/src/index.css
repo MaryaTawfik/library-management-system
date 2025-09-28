@@ -51,3 +51,11 @@
   direction: rtl;
   color: #ffd700; /* pure gold */
 }
+/* index.css or App.css */
+.bg-light {
+  background-image: url("./assets/loginbg.jpg");
+}
+
+.bg-dark {
+  background-image: url("./assets/dark.jpg");
+}
