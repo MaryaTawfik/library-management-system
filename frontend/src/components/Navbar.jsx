@@ -1,36 +1,77 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 import { FaUserCircle, FaRegUser } from "react-icons/fa";
 import { CgEnter } from "react-icons/cg";
 import { Link, useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../atoms/authAtom";
+import { LuSun ,LuMoon} from "react-icons/lu";
+import { themeAtom } from "../atoms/themeAtom";
+import { toEthiopian } from "ethiopian-date";
+import HijriDate from "hijri-date/lib/safe"; 
+
 
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   const [user, setUser] = useAtom(userAtom);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [theme, setTheme] = useAtom(themeAtom);
+  const [calendarType, setCalendarType] = useState("ethiopian");
+  const [dateString, setDateString] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    setDropdownOpen(false);
+    setProfileDropdownOpen(false);
     setUser(null);
     navigate("/login");
   };
+  useEffect(() => {
+    const today = new Date();
+
+    if (calendarType === "ethiopian") {
+      const [year, month, day] = toEthiopian(
+        today.getFullYear(),
+        today.getMonth() + 1,
+        today.getDate()
+      );
+      const months = [
+        "መስከረም", "ጥቅምት", "ህዳር", "ታኅሣሥ", "ጥር", "የካቲት",
+        "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን"
+      ];
+      setDateString(`${day} ${months[month - 1]} ${year}`);
+    } 
+    else if (calendarType === "gregorian") {
+      setDateString(today.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }));
+    } 
+    else if (calendarType === "arabic") {
+      const hijri = new HijriDate(today);
+      const monthsArabic = [
+        "محرم", "صفر", "ربيع الأول", "ربيع الثاني",
+        "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان",
+        "رمضان", "شوال", "ذو القعدة", "ذو الحجة"
+      ];
+      setDateString(`${hijri.getDate()} ${monthsArabic[hijri.getMonth()]} `);
+    }
+  }, [calendarType]);
 
   const firstLetter = (user?.firstName || user?.lastName || "").charAt(0).toUpperCase();
   const profileImage = user?.profileImage || null;
 
   return (
-    <header className="fixed w-full bg-white shadow-sm z-20">
+    <header className={`fixed w-full bg-white dark:bg-gray-900 shadow-sm z-20 ${theme === 'dark' ? 'dark' : ''}`}>
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         {/* Left: Sidebar toggle + Brand */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 flex-shrink-0 dark:text-white text-black">
           <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
             className="cursor-pointer text-xl"
           />
-          <p className="text-base lg:text-lg font-bold font-[Roboto]">
+          <p className="text-base lg:text-lg font-bold font-[Roboto] dark:text-white text-black">
             ASTUMSJ Library
           </p>
         </div>
@@ -41,17 +82,72 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
             المكتبة الإلكترونية
           </p>
         </div>
+        <div className="flex items-center bg-zinc-100 dark:bg-gray-900 rounded-lg ">
+    <button
+  onClick={() => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
 
-        {/* Right: User avatar / login */}
-        <div className="relative flex items-center gap-4 flex-shrink-0">
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", newTheme);
+  }}
+  className="bg-transparent p-3 hover:bg-zinc-200 dark:hover:bg-zinc-100/10 rounded-lg transition dark:text-white text-black"
+>
+  {theme === "dark" ? <LuSun className="text-xl" /> : <LuMoon className="text-xl" />}
+</button>
+
+</div>
+{/* Calendar Section */}
+<div className="relative flex items-center gap-2">
+  {/* Clickable Date */}
+  <button
+    onClick={() => setCalendarDropdownOpen(calendarDropdownOpen === "calendar" ? null : "calendar")}
+    className="text-sm text-gray-700 dark:text-gray-300 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+  >
+    {dateString}
+  </button>
+
+  {/* Calendar Dropdown */}
+  {calendarDropdownOpen === "calendar" && (
+    <div className="absolute right-0 mt-10 w-40 bg-white dark:bg-gray-900 rounded-md shadow-lg py-2 z-30">
+      <button
+        onClick={() => { setCalendarType("ethiopian"); setCalendarDropdownOpen(null); }}
+        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
+      >
+        Ethiopian
+      </button>
+      <button
+        onClick={() => { setCalendarType("gregorian"); setCalendarDropdownOpen(null); }}
+        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
+      >
+        Gregorian
+      </button>
+      <button
+        onClick={() => { setCalendarType("arabic"); setCalendarDropdownOpen(null); }}
+        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
+      >
+        Arabic (Hijri)
+      </button>
+    </div>
+  )}
+</div>
+
+    
+
+        <div className="relative flex items-center gap-4 flex-shrink-0 dark:text-white text-black">
           {user ? (
             <div className="relative">
               <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2 focus:outline-none"
               >
                 {/* Avatar */}
-                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-300 text-black font-semibold">
+                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-300 text-black font-semibold dark:bg-gray-700 dark:text-white overflow-hidden">
                   {profileImage ? (
                     <img
                       src={profileImage}
@@ -65,22 +161,22 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
               </button>
 
               {/* Dropdown */}
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border-none rounded-md shadow-lg py-2 z-30">
+              {profileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-900 border-none rounded-md shadow-lg py-2 z-30">
                   <div className="px-4 py-2 border-b">
                     <p className="text-sm font-medium">{user.username}</p>
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                   <Link
                     to="/profile"
-                    className="flex items-center gap-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800"
+                    onClick={() => setProfileDropdownOpen(false)}
                   >
                     <FaRegUser /> Profile
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-1 text-left w-full px-4 py-2 text-sm text-black hover:bg-gray-100"
+                    className="flex items-center gap-1 text-left w-full px-4 py-2 text-sm text-black hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800"
                   >
                     <CgEnter /> Log out
                   </button>
@@ -119,4 +215,4 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
   );
 };
 
-export default Navbar;
+export default Navbar; 

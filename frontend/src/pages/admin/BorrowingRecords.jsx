@@ -93,16 +93,16 @@ export default function BorrowingRecords() {
   };
 
   return (
-    <div className=" bg-white border-4 border-white shadow-sm min-h-screen rounded-2xl font-[sanif sarif] ">
+    <div className=" bg-white border-4 border-white dark:border-0 shadow-sm min-h-screen rounded-2xl font-[sanif sarif]  dark:bg-gray-900 dark:border-gray-700 p-6">
       <h1 className="text-2xl text-yellow-700 font-bold font-[inter] mb-1">
         Borrowing Records
       </h1>
-      <p className="text-gray-800 mt-3 font-[inter]">
+      <p className="text-gray-800 mt-3 font-[inter] dark:text-gray-300">
         View all borrowing and return history
       </p>
 
       {/* Search + Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 mt-6 border-8 border-gray-50 bg-white px-4 rounded shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 mt-6 border-8 border-gray-50 bg-white px-4 rounded shadow-xl dark:bg-gray-900 dark:border-gray-600 dark:border-1">
         <input
           type="text"
           placeholder="Search by book title, user name, or author…"
@@ -111,7 +111,7 @@ export default function BorrowingRecords() {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="flex-1 border-gray-50 text-gray-800 bg-white px-4 py-2 rounded w-full"
+          className="flex-1 border-gray-50  text-gray-800 bg-white px-4 py-2 rounded w-full dark:bg-gray-900 dark:text-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
         <select
           value={statusFilter}
@@ -119,9 +119,9 @@ export default function BorrowingRecords() {
             setStatusFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="border-2 border-gray-50 bg-white text-gray-700 text-sm px-4 py-2 rounded w-full sm:w-48"
+          className="border-0 border-gray-50 bg-white text-gray-700 text-sm px-4 pl-10 py-2 rounded w-full sm:w-35 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         >
-          <option value="all">All Status</option>
+          <option value="all" >All Status</option>
           <option value="borrowed">Borrowed</option>
           <option value="returned">Returned</option>
           <option value="overdue">Overdue</option>
@@ -129,9 +129,9 @@ export default function BorrowingRecords() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow ">
+      <div className="bg-white shadow dark:bg-gray-700 ">
         <table className="w-full text-sm  overflow-x-scroll">
-          <thead className="bg-white border-2 border-gray-50 text-black font-[roboto]">
+          <thead className="bg-white border-2 border-gray-50 text-black font-[roboto] dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:border-0">
             <tr>
               <th className="text-left px-4 py-3">Book</th>
               <th className="text-left px-4 py-3">User</th>
@@ -144,7 +144,7 @@ export default function BorrowingRecords() {
           <tbody>
             {loading && (
               <tr>
-                <td colSpan="7" className="text-center py-6 text-gray-500">
+                <td colSpan="7" className="text-center py-6 text-gray-500 dark:text-gray-300">
                   Loading records…
                 </td>
               </tr>
@@ -154,7 +154,7 @@ export default function BorrowingRecords() {
               paginatedRecords.map((record) => (
                 <tr
                   key={record.id || JSON.stringify(record.raw)}
-                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
+                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:border-gray-700 dark:border-0"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -165,13 +165,13 @@ export default function BorrowingRecords() {
                       />
                       <div>
                         <div
-                          className="font-medium flex items-center gap-1"
+                          className="font-medium flex items-center gap-1 dark:text-gray-300"
                           title={record.book?.title || ""}
                         >
-                          <FaBook className="text-yellow-600" />
+                          <FaBook className="text-yellow-600 dark:text-yellow-400" />
                           <span>{record.book?.title || "Untitled"}</span>
                         </div>
-                        <div className="text-gray-500 text-xs">
+                        <div className="text-gray-500 text-xs dark:text-gray-400 ">
                           by {record.book?.author || "-"}
                         </div>
                       </div>
@@ -184,35 +184,35 @@ export default function BorrowingRecords() {
                       </div>
                       <div>
                         <div
-                          className="font-medium flex items-center gap-1"
+                          className="font-medium flex items-center gap-1 dark:text-gray-300"
                           title={record.user?.name || record.user?.email || ""}
                         >
-                          <FaUser className="text-yellow-600" />
+                          <FaUser className="text-yellow-600 dark:text-yellow-400" />
                           <span>
                             {record.user?.name ||
                               record.user?.email ||
                               "Unknown"}
                           </span>
                         </div>
-                        <div className="text-gray-500 text-xs">
+                        <div className="text-gray-500 text-xs dark:text-gray-400" title={record.user?.email || ""}>
                           {record.user?.email || "-"}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-800">
+                  <td className="px-4 py-3 text-gray-800 dark:text-gray-300">
                     {record.borrowDate
                       ? new Date(record.borrowDate).toLocaleString()
                       : "-"}
                   </td>
-                  <td className="px-4 py-3 text-gray-900">
+                  <td className="px-4 py-3 text-gray-900 dark:text-gray-300">
                     {record.dueDate ? (
                       new Date(record.dueDate).toLocaleString()
                     ) : (
                       <span className="text-gray-300">-</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-800">
+                  <td className="px-4 py-3 text-gray-800 dark:text-gray-300">
                     {record.returnDate ? (
                       new Date(record.returnDate).toLocaleString()
                     ) : (
@@ -221,7 +221,7 @@ export default function BorrowingRecords() {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
+                      className={`px-2 py-1 dark:bg-gray-700 dark:text-gray-300 rounded text-xs font-medium  ${
                         statusColor[record.status || "unknown"]
                       }`}
                       title={record.status || "unknown"}
@@ -237,7 +237,7 @@ export default function BorrowingRecords() {
               <tr>
                 <td
                   colSpan="7"
-                  className="text-center py-6 text-gray-500 text-sm"
+                  className="text-center py-6 text-gray-500 text-sm dark:text-gray-300"
                 >
                   No borrowing records found.
                 </td>
@@ -257,7 +257,7 @@ export default function BorrowingRecords() {
           >
             ◀ Prev
           </button>
-          <span>
+          <span className="dark:text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
           <button

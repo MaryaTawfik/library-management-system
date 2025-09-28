@@ -1,4 +1,4 @@
-// import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getPendingPayments,
   updatePaymentStatus,
@@ -43,15 +43,15 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Payment Management</h1>
+    <div className="p-6 dark:bg-gray-900">
+      <h1 className="text-2xl font-bold mb-6 dark:text-white">Payment Management</h1>
 
       {payments.length === 0 && <p>No payments yet</p>}
 
       {payments.map((p) => (
         <div
           key={p._id}
-          className="flex justify-between items-center bg-white p-4 mb-3 rounded shadow"
+          className="flex justify-between items-center bg-white p-4 mb-3 rounded shadow dark:bg-gray-900"
         >
           <div>
             <p className="font-semibold">{p.userName}</p>

@@ -6,28 +6,28 @@ export default function BookCard({ book }) {
   return (
     <div
       className=" bg-white border border-slate-100 h-auto rounded-xl shadow-sm hover:shadow-md transition py-1 px-1
-   flex flex-col"
+   flex flex-col dark:bg-gray-900 dark:border-0 "
     >
-      <div className="h-80 bg-white rounded-lg  flex flex-col">
-        <div className="w-full  flex items-center border-4 border-slate-100 justify-center shadow-md bg-gray-100 mb-1 rounded">
+      <div className="h-80 bg-white rounded-lg  flex flex-col dark:bg-gray-900 dark:border-0">
+        <div className="w-full  flex items-center border-4 border-slate-100 justify-center shadow-md bg-gray-100 mb-1 rounded dark:bg-gray-900 dark:border-gray-700 dark:border-0">
           <img
             src={book.imageUrl}
             alt={book.title}
-            className="object-cover h-45 w-full"
+            className="object-cover h-45 w-full rounded-lg"
           />
         </div>
 
-        <h4 className="text-lg font-semibold text-gray-800 line-clamp-1 px-1">
+        <h4 className="text-lg font-semibold text-gray-800 line-clamp-1 px-1 dark:text-gray-400">
           {book.title}
         </h4>
-        <p className="text-sm text-gray-600 line-clamp-1 px-1">
+        <p className="text-sm text-gray-600 line-clamp-1 px-1 dark:text-gray-400">
           By {book.author}
         </p>
-        <p className="text-xs text-gray-500 mb-2 line-clamp-1 px-1">
+        <p className="text-xs text-gray-500 mb-2 line-clamp-1 px-1 dark:text-gray-400">
           {book.catagory}
         </p>
 
-        <div className="flex justify-between items-center text-sm mb-3 mt-auto px-1">
+        <div className="flex justify-between items-center text-sm mb-3 mt-auto px-1 dark:text-gray-400">
           <span className="font-medium">
             Copies: {book.availablecopies} of {book.totalcopies}
           </span>
@@ -44,7 +44,7 @@ export default function BookCard({ book }) {
 
         <Link
           to={`/books/${bookLinkId}`}
-          className="w-full text-center py-1 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded"
+          className="w-full text-center py-1 bg-gray-500 hover:bg-gray-500 text-white text-sm rounded dark:bg-gray-800 dark:hover:bg-gray-700 transition"
         >
           View Details
         </Link>

@@ -4,6 +4,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { getAllUsers, toggleUserBlock } from "../../services/usersService";
 import { getAllBorrows } from "../../services/borrowService";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -27,7 +29,7 @@ export default function ManageUsers() {
       const res = await getAllUsers();
       const list = Array.isArray(res) ? res : res?.data || res?.users || [];
       setUsers(list);
-    } catch (err) {
+    } catch {
       setError("Failed to load users");
       setUsers([]);
     } finally {
@@ -59,7 +61,6 @@ export default function ManageUsers() {
       });
 
       setBorrowCounts(map);
-      toast.success("Borrow records refreshed ✅");
     } catch (err) {
       console.warn("Failed to load borrow records", err.message || err);
       setBorrowCounts({});
@@ -188,18 +189,18 @@ export default function ManageUsers() {
   );
 
   return (
-    <div className=" bg-white min-h-screen rounded-2xl font-[sanif sarif] shadow-sm  border-white p-6 ">
+    <div className=" bg-white min-h-screen rounded-2xl font-[sanif sarif] shadow-sm  border-white p-6  dark:bg-gray-900 dark:border-gray-700">
       <div className="mb-6 font-[inter]">
         <h1 className="text-3xl text-yellow-700 font-bold">Manage Users</h1>
-        <p className="text-gray-800 mt-3">View and manage all library users</p>
+        <p className="text-gray-800 mt-3 dark:text-gray-300">View and manage all library users</p>
       </div>
 
-      {loading && <div className="text-gray-600 mb-4">Loading users...</div>}
+      {loading && <div className="text-gray-600 mb-4 dark:text-gray-300">Loading users...</div>}
       {error && <div className="text-red-600 mb-4">{error}</div>}
 
       {/* Search + Filter */}
-      <div className="flex flex-row items-center gap-4 border-2 border-gray-100 shadow-xl rounded mb-6 bg-white px-4 py-2 ">
-        <FaSearch className="text-gray-500" />
+      <div className="flex flex-row items-center gap-4 border-2  border-gray-100 shadow-xl rounded mb-6 bg-white px-4 py-2 dark:bg-gray-900 dark:border-gray-600">
+        <FaSearch className="text-gray-500 dark:text-gray-300" />
         <input
           type="text"
           placeholder="Search by name or email..."
@@ -208,7 +209,7 @@ export default function ManageUsers() {
             setSearchTerm(e.target.value);
             setCurrentPage(1); // reset to first page on search
           }}
-          className="flex-grow outline-none"
+          className="flex-grow outline-none dark:bg-gray-900 dark:text-gray-300"
         />
         <select
           value={filterStatus}
@@ -216,7 +217,7 @@ export default function ManageUsers() {
             setFilterStatus(e.target.value);
             setCurrentPage(1); // reset to first page on filter
           }}
-          className="border-2 border-gray-50 shadow-sm  px-3 py-2 rounded font[poppins]"
+          className="border-1 border-gray-50 shadow-sm  px-3 py-2 rounded font[poppins] dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600"
         >
           <option value="all">All Statuses</option>
           <option value="active">Active</option>
@@ -225,10 +226,10 @@ export default function ManageUsers() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded shadow">
-        <table className="w-full overflow-x-scroll text-sm bg-white ">
-          <thead className="bg-white text-black font-[roboto] font-semibold shadow-sm">
-            <tr>
+      <div className="bg-white rounded shadow dark:bg-gray-900">
+        <table className="w-full overflow-x-scroll text-sm bg-white dark:bg-gray-900">
+          <thead className="bg-white text-black font-[roboto] font-semibold shadow-sm dark:bg-gray-900 dark:text-gray-300">
+            <tr className="dark:text-gray-300">
               <th className="px-4 py-3 text-left">User</th>
               <th className="px-4 py-3 text-left">Membership</th>
               <th className="px-4 py-3 text-left">Join Date</th>
@@ -248,30 +249,30 @@ export default function ManageUsers() {
               return (
                 <tr
                   key={rowKey}
-                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
+                  className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:border-gray-700 dark:border-0"
                 >
                   <td className="px-4 py-3">
-                    <div className="font-medium">{u.name || "-"}</div>
-                    <div className="text-gray-500">{u.email || "-"}</div>
+                    <div className="font-medium dark:text-gray-300">{u.name || "-"}</div>
+                    <div className="text-gray-500 dark:text-gray-400">{u.email || "-"}</div>
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         (membershipStatus || "").toString().toLowerCase() ===
                         "active"
-                          ? "bg-green-100 text-teal-700"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-green-100 text-teal-700 dark:bg-green-200 dark:text-teal-800"
+                          : "bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300"
                       }`}
                     >
                       {membershipStatus}
                     </span>
                     {membershipExpires && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">
                         Expires: {membershipExpires}
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 dark:text-gray-300">
                     {joinDate ? new Date(joinDate).toLocaleDateString() : "-"}
                   </td>
 
@@ -279,8 +280,8 @@ export default function ManageUsers() {
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         (statusText || "").toString().toLowerCase() === "active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
+                          ? "bg-green-100 text-green-700 dark:bg-green-200 dark:text-green-800"
+                          : "bg-red-100 text-red-700 dark:bg-gray-700 dark:text-white"
                       }`}
                     >
                       {statusText}
@@ -296,22 +297,22 @@ export default function ManageUsers() {
                       }
                       className="p-1"
                     >
-                      <BsThreeDotsVertical className="text-gray-600 hover:text-black" />
+                      <BsThreeDotsVertical className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white" />
                     </button>
                     {openMenuId === rowKey && (
-                      <div className="absolute right-2 top-10 w-36 bg-white border rounded shadow-md z-20">
+                      <div className="absolute right-2 top-10 w-36 bg-white border rounded shadow-md z-20 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
                         <button
                           onClick={() => {
                             setSelectedUser(userRaw);
                             setOpenMenuId(null);
                           }}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                         >
                           View Profile
                         </button>
                         <button
                           onClick={() => handleToggle(u)}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                         >
                           {u.status === "blocked"
                             ? "Unblock User"
@@ -344,7 +345,7 @@ export default function ManageUsers() {
           >
             ◀ Prev
           </button>
-          <span>
+          <span className="dark:text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
           <button

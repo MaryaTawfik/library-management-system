@@ -135,9 +135,9 @@ export default function Login() {
           <button
              disabled={loading}
             type="submit"
-            className="w-full bg-yellow-700 text-white py-2 rounded-lg hover:bg-yellow-600 transition"
+            className={`w-full bg-yellow-700 text-white py-2 rounded-lg hover:bg-yellow-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

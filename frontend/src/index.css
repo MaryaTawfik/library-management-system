@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Amiri&display=swap");
+@custom-variant dark (&:where(.dark, .dark *));
 /* Success toast */
 .Toastify__toast--success {
   background: #dfaa37c0 !important;
