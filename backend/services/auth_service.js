@@ -38,12 +38,27 @@ const  registeruser = async (data) => {
   // data.isVerified = false;
   // data.verificationToken = verificationTokenHash;
   // data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
-const otp=generateOTP()
-const otpExpiry= new Date(Date.now()+24*60*60*1000)
+  const otp = generateOTP();
+  const otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const newUser = new User({ ...data, otp, otpExpiry });
   await newUser.save();
-  await sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`);
-    return newUser;
+
+  // Prepare sanitized user for response
+  const sanitizedUser = await User.findById(newUser._id).select("-password");
+
+  // Send email in background to avoid blocking the request in environments
+  // where SMTP may be slow or blocked (common on cloud hosts).
+  let emailConfigured = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+  if (emailConfigured) {
+    // fire-and-forget, but log any errors
+    sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`)
+      .then(() => console.log('OTP email sent to', data.email))
+      .catch((err) => console.error('Failed sending OTP email (background):', err && (err.stack || err.message || err)));
+  } else {
+    console.warn('EMAIL_USER or EMAIL_PASS not set; OTP email not sent.');
+  }
+
+  return { user: sanitizedUser, emailSent: emailConfigured };
 
   // const sanitizedUser = await User.findById(newUser._id).select("-password");
 

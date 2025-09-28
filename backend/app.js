@@ -61,3 +61,13 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`${process.env.APP_NAME || 'Application'} is running on port http://localhost:${port}`);
 });
+
+// Capture unhandled errors to ensure Render logs them
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason && (reason.stack || reason));
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err && (err.stack || err));
+    // Optionally exit process if desired: process.exit(1)
+});
