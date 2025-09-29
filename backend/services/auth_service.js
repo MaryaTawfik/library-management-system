@@ -3,7 +3,9 @@ const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 // const nodemailer = require("nodemailer");
-const { Resend } = require('resend');
+// const { Resend } = require('resend');
+
+const Sib = require("sib-api-v3-sdk");
 
 
 // const transporter=nodemailer.createTransport({
@@ -13,7 +15,14 @@ const { Resend } = require('resend');
 //       pass:process.env.EMAIL_PASS
 //     }
 //   })
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+// const resend = new Resend(process.env.RESEND_API_KEY);
+
+const client = Sib.ApiClient.instance;
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+const tranEmailApi = new Sib.TransactionalEmailsApi();
   const generateOTP = () => crypto.randomInt(0, 1000000).toString().padStart(6, '0');
 
   // const sendEmail = async (to, subject ,text)=>{
@@ -26,20 +35,46 @@ const resend = new Resend(process.env.RESEND_API_KEY);
   // })
   // }
 
-const sendEmail = async (to, subject, text) => {
+
+
+  const sendEmail = async (to, subject, text) => {
   try {
-    await resend.emails.send({
-      from: "Resend Sandbox <onboarding@resend.dev>", // free sandbox email
-      to,
-      subject,
-      text,
+    await tranEmailApi.sendTransacEmail({
+      sender: { 
+        email: process.env.EMAIL_USER || "yourname@yourdomain.com", 
+        name: "ASTUMSJ library" 
+      },
+      to: [{ email: to }],
+      subject: subject,
+      textContent: text,
     });
-    console.log("Email sent to", to);
+    console.log("✅ Email sent to", to);
   } catch (error) {
-    console.error("Resend email error:", error.message || error);
+    console.error("❌ Brevo email error:", error.message || error);
     throw new Error("Failed to send email");
   }
 };
+
+
+//resend
+// const sendEmail = async (to, subject, text) => {
+//   try {
+//     await resend.emails.send({
+//       from: "Resend Sandbox <onboarding@resend.dev>", // free sandbox email
+//       to,
+//       subject,
+//       text,
+//     });
+//     console.log("Email sent to", to);
+//   } catch (error) {
+//     console.error("Resend email error:", error.message || error);
+//     throw new Error("Failed to send email");
+//   }
+// };
+
+
+
+
 const  registeruser = async (data) => {
   // Generate verification token
   // const verificationToken = crypto.randomBytes(32).toString("hex");
