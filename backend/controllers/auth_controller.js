@@ -2,8 +2,6 @@ const authService = require("../services/auth_service");
 
 const register = async (req, res) => {
   try {
-    console.log('Register endpoint hit from', req.ip || req.headers['x-forwarded-for'] || 'unknown');
-    console.log('Register request body:', Object.keys(req.body).length ? { ...req.body, password: '***' } : req.body);
     const { userID, firstName, lastName, email, password, phoneNumber } =
       req.body;
 
@@ -43,8 +41,11 @@ const register = async (req, res) => {
     }
 
   const result = await authService.registeruser(data);
-  console.log('register result:', !!result, result && (result.emailSent ? 'emailSent' : 'emailNotSent'));
+  console.log("register result:", result);
+  // result may be { user } or { user, verificationUrl, emailSent }
   const responsePayload = { message: "User registered successfully. Please verify OTP sent to email.", user: result.user };
+  if (result.verificationUrl) responsePayload.verificationUrl = result.verificationUrl;
+  if (typeof result.emailSent !== 'undefined') responsePayload.emailSent = result.emailSent;
     // if (!result.emailSent) {
     //   // expose verification urls to ease local testing when mail can't be sent
     //   responsePayload.verificationUrl = result.verificationUrl;
@@ -54,9 +55,9 @@ const register = async (req, res) => {
     res.status(201).json(responsePayload);
   } catch (err) {
     console.error('Register error:', err && (err.stack || err.message || err));
-    // return error message but log full error for Render logs
-    res.status(500).json({ message: 'Registration failed', error: err.message });
-};}
+    res.status(500).json({ message: 'Server error during registration', error: err.message });
+  }
+};
 
 const login = async (req, res) => {
   try {

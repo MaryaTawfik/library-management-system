@@ -2,16 +2,44 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
+const { Resend } = require('resend');
 
 
+// const transporter=nodemailer.createTransport({
+//     service:'gmail',
+//     auth:{
+//       user:process.env.EMAIL_USER,
+//       pass:process.env.EMAIL_PASS
+//     }
+//   })
+const resend = new Resend(process.env.RESEND_API_KEY);
+  const generateOTP = () => crypto.randomInt(0, 1000000).toString().padStart(6, '0');
 
-// Nodemailer transporter (fallback)
-const { sendEmail, generateOTP } = require('../utils/mailer');
+  // const sendEmail = async (to, subject ,text)=>{
+  //   return transporter.sendMail({
+  //     from : process.env.EMAIL_USER,
+  //     to,
+  //     subject,
+  //     text,
 
-// (Email send implementation moved to utils/mailer.js)
+  // })
+  // }
 
-
+const sendEmail = async (to, subject, text) => {
+  try {
+    await resend.emails.send({
+      from: "Resend Sandbox <onboarding@resend.dev>", // free sandbox email
+      to,
+      subject,
+      text,
+    });
+    console.log("Email sent to", to);
+  } catch (error) {
+    console.error("Resend email error:", error.message || error);
+    throw new Error("Failed to send email");
+  }
+};
 const  registeruser = async (data) => {
   // Generate verification token
   // const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -24,26 +52,24 @@ const  registeruser = async (data) => {
   // data.isVerified = false;
   // data.verificationToken = verificationTokenHash;
   // data.verificationExpires = Date.now() + 24 * 60 * 60 * 1000; 
-  const otp = generateOTP();
-  const otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+const otp=generateOTP()
+const otpExpiry= new Date(Date.now()+24*60*60*1000)
   const newUser = new User({ ...data, otp, otpExpiry });
   await newUser.save();
+  console.log('New user created, id=', newUser._id);
+ 
+  // sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`)
+  //   .then(() => console.log('OTP email queued/sent to', data.email))
+  //   .catch((err) => console.error('Failed to send OTP email (non-blocking):', err && (err.stack || err.message || err)));
 
-  // Prepare sanitized user for response
-  const sanitizedUser = await User.findById(newUser._id).select("-password");
+    await sendEmail(
+    data.email,
+    "OTP Verification",
+    `Your OTP is: ${otp}`
+  );
 
-  // Send email in background to avoid blocking the request in environments
-  // where SMTP may be slow or blocked (common on cloud hosts).
-  const emailConfigured = !!(process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || process.env.EMAIL_USER);
-  if (emailConfigured) {
-    sendEmail(data.email, 'OTP Verification', `Your OTP is: ${otp}`, `<p>Your OTP is <strong>${otp}</strong></p>`)
-      .then(() => console.log('OTP email sent to', data.email))
-      .catch((err) => console.error('Failed sending OTP email (background):', err && (err.stack || err.message || err)));
-  } else {
-    console.warn('No email provider configured; OTP email not sent.');
-  }
-
-  return { user: sanitizedUser, emailSent: emailConfigured };
+  const sanitizedUser = await User.findById(newUser._id).select('-password');
+  return { user: sanitizedUser };
 
   // const sanitizedUser = await User.findById(newUser._id).select("-password");
 
