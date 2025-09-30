@@ -5,8 +5,6 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 // const { Resend } = require('resend');
 
-// const Sib = require("sib-api-v3-sdk");
-
 
 const transporter=nodemailer.createTransport({
     service:'gmail',
@@ -15,48 +13,25 @@ const transporter=nodemailer.createTransport({
       pass:process.env.EMAIL_PASS
     }
   })
-
-
 // const resend = new Resend(process.env.RESEND_API_KEY);
-
-// const client = Sib.ApiClient.instance;
-// const apiKey = client.authentications["api-key"];
-// apiKey.apiKey = process.env.BREVO_API_KEY;
-// const tranEmailApi = new Sib.TransactionalEmailsApi();
   const generateOTP = () => crypto.randomInt(0, 1000000).toString().padStart(6, '0');
 
-  const sendEmail = async (to, subject ,text)=>{
-    return transporter.sendMail({
-      from : process.env.EMAIL_USER,
+const sendEmail = async (to, subject, text) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
       to,
       subject,
       text,
-
-  })
+    });
+    console.log("Email sent to", to);
+  } catch (error) {
+    console.error("Email send error:", error.message || error);
+    // don’t throw here, so signup still works
   }
+};
 
 
-
-//   const sendEmail = async (to, subject, text) => {
-//   try {
-//     await tranEmailApi.sendTransacEmail({
-//       sender: { 
-//         email: process.env.EMAIL_USER || "yourname@yourdomain.com", 
-//         name: "ASTUMSJ library" 
-//       },
-//       to: [{ email: to }],
-//       subject: subject,
-//       textContent: text,
-//     });
-//     console.log("✅ Email sent to", to);
-//   } catch (error) {
-//     console.error("❌ Brevo email error:", error.message || error);
-//     throw new Error("Failed to send email");
-//   }
-// };
-
-
-//resend
 // const sendEmail = async (to, subject, text) => {
 //   try {
 //     await resend.emails.send({
@@ -71,10 +46,6 @@ const transporter=nodemailer.createTransport({
 //     throw new Error("Failed to send email");
 //   }
 // };
-
-
-
-
 const  registeruser = async (data) => {
   // Generate verification token
   // const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -97,7 +68,7 @@ const otpExpiry= new Date(Date.now()+24*60*60*1000)
   //   .then(() => console.log('OTP email queued/sent to', data.email))
   //   .catch((err) => console.error('Failed to send OTP email (non-blocking):', err && (err.stack || err.message || err)));
 
-    await sendEmail(
+    sendEmail(
     data.email,
     "OTP Verification",
     `Your OTP is: ${otp}`
