@@ -1,14 +1,23 @@
 const mongoose = require("mongoose");
 const Book = require("../models/book");
 
+// const getAllBooks = async () => {
+//   return await Book.find();
+// };
+
+// const getBookById = async (id) => {
+//   if (!mongoose.Types.ObjectId.isValid(id)) return null;
+//   return await Book.findById(id);
+// };
 const getAllBooks = async () => {
-  return await Book.find();
+  return await Book.find({ isDeleted: false });
 };
 
 const getBookById = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return await Book.findById(id);
+  return await Book.findOne({ _id: id, isDeleted: false });
 };
+
 
 const createBook = async (
   title,
@@ -38,10 +47,22 @@ const createBook = async (
   return newBook;
 };
 
+// const deleteBook = async (id) => {
+//   if (!mongoose.Types.ObjectId.isValid(id)) return null;
+//   return await Book.findByIdAndDelete(id);
+// };
+
 const deleteBook = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return await Book.findByIdAndDelete(id);
+
+  const book = await Book.findById(id);
+  if (!book) return null;
+
+  book.isDeleted = true;
+  await book.save();
+  return book;
 };
+
 
 const updateBook = async (id, updatedData) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
