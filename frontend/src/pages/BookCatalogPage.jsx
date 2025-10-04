@@ -49,11 +49,11 @@ export default function BookCatalogPage() {
   );
 
   return (
-    <div className="min-h-screen px-6 max-w-7xl mx-auto bg-white rounded-2xlm  font-[sanif sarif] border-2 border-white shadow-sm">
+    <div className="min-h-screen px-6 max-w-7xl mx-auto bg-white rounded-2xlm  font-[sanif sarif] border-2 border-white shadow-sm dark:bg-gray-900 dark:border-0 rounded-lg py-8">
       <h1 className="text-3xl font-bold text-yellow-700 mb-2 font-[inter]">
         Book Catalog
       </h1>
-      <p className="text-gray-800 text-sm mb-6  mt-3 font-[inter]">
+      <p className="text-gray-800 text-sm mb-6  mt-3 font-[inter] dark:text-gray-300">
         Browse and search our library collection
       </p>
 
@@ -68,15 +68,15 @@ export default function BookCatalogPage() {
         ]}
       />
 
-      <div className="flex justify-between items-center  mb-4 bg-white font-[roboto]">
-        <p className="text-sm text-gray-600 bg-white border-2 border-gray-50 rounded px-2">
+      <div className="flex justify-between items-center  mb-4 bg-white font-[roboto] dark:bg-gray-900">
+        <p className="text-sm text-gray-600 bg-white border-2 border-gray-50 rounded px-2 dark:bg-gray-900 dark:text-gray-300 dark:border-0">
           Showing {paginatedBooks.length} of {filteredBooks.length} filtered
           (Total: {books.length})
         </p>
       </div>
 
       {/* Book Grid (no scroll) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-6 dark:bg-gray-900">
         {paginatedBooks.map((book) => (
           <BookCard key={book._id || book.bookId} book={book} />
         ))}
@@ -92,7 +92,7 @@ export default function BookCatalogPage() {
           >
             ◀ Prev
           </button>
-          <span>
+          <span className="dark:text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
           <button

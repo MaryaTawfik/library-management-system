@@ -85,13 +85,13 @@ export default function ManageBooks() {
   );
 
   return (
-    <div className=" bg-white border-2 border-white shadow-sm rounded-xl min-h-screen font-[sanif sarif]">
+    <div className=" bg-white border-0 border-white shadow-sm rounded-xl min-h-screen font-[sanif sarif] dark:bg-gray-900 dark:border-gray-700 p-6">
       <div className="flex justify-between items-center mb-6 font-bold font-[inter]">
         <div className="flex-col">
           <h1 className="text-2xl text-yellow-700 font-bold font-[inter]">
             📚 Manage Books
           </h1>
-          <p className="text-gray-800 mt-3">
+          <p className="text-gray-800 mt-3 dark:text-gray-300 ">
             Add, edit, and manage book collection
           </p>
         </div>
@@ -106,7 +106,7 @@ export default function ManageBooks() {
       <input
         type="text"
         placeholder="Search by title, author, category, or isbn..."
-        className="w-full mb-6 p-2 bg-white border-4 hover:border-amber-50 shadow-lg border-stone-100 font-[poppins] rounded"
+        className="w-full mb-6 p-2 bg-white border-4 dark:border-0 hover:border-amber-50 shadow-lg border-stone-100 font-[poppins] rounded dark:bg-gray-900 dark:text-gray-200 dark:border-gray-600 focus:outline-none   dark:focus:ring-gray-500"
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
@@ -114,9 +114,9 @@ export default function ManageBooks() {
         }}
       />
 
-      <div className="bg-white rounded shadow">
-        <table className="min-w-full overflow-x-scroll  bg-white text-sm">
-          <thead className="bg-white text-left text-black font-semibold font-[roboto]">
+      <div className="bg-white rounded shadow dark:bg-gray-700">
+        <table className="min-w-full overflow-x-scroll  bg-white text-sm dark:bg-gray-900">
+          <thead className="bg-white text-left text-black font-semibold font-[roboto] dark:bg-gray-900 dark:text-gray-300">
             <tr>
               <th className="px-4 py-3">Book</th>
               <th className="px-4 py-3">Author</th>
@@ -130,7 +130,7 @@ export default function ManageBooks() {
             {currentBooks.map((book, index) => (
               <tr
                 key={book.bookId || index}
-                className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white"
+                className="border-6 border-white shadow-black odd:bg-gray-100 even:bg-gray-white dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:border-gray-700 dark:border-0"
               >
                 <td className="px-4 py-3 flex items-center gap-3">
                   <img
@@ -139,28 +139,28 @@ export default function ManageBooks() {
                     className="w-10 h-14 object-cover shadow-md rounded"
                   />
                   <div>
-                    <div className="font-medium font-[sans]">{book.title}</div>
-                    <div className="text-xs text-gray-500 gap-2">
+                    <div className="font-medium font-[sans] dark:text-gray-300">{book.title}</div>
+                    <div className="text-xs text-gray-500 gap-2 dark:text-gray-300">
                       ISBN: {book.isbn}
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3">{book.author}</td>
+                <td className="px-4 py-3 dark:text-gray-300">{book.author}</td>
                 <td className="px-8 py-3">
-                  <span className="bg-neutral-100 text-yellow-900 text-sm px-2 py-1 rounded">
+                  <span className="bg-neutral-100 text-yellow-900 text-sm px-2 py-1 rounded dark:bg-gray-600 dark:text-gray-300">
                     {book.catagory}
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 dark:text-gray-300">
                   {book.availablecopies} of {book.totalcopies}
                 </td>
                 <td className="px-4 py-3">
                   {book.availablecopies > 0 ? (
-                    <span className="bg-teal-50 text-yellow-700 px-2 py-1 rounded text-xs">
+                    <span className="bg-teal-50 text-yellow-700 px-2 py-1.5 rounded text-xs dark:bg-gray-600 dark:text-white">
                       Available
                     </span>
                   ) : (
-                    <span className="bg-gray-300 text-white px-2 py-1 rounded text-xs">
+                    <span className="bg-gray-300 text-white px-2 py-1 rounded text-xs dark:bg-gray-600 dark:text-white">
                       Unavailable
                     </span>
                   )}
@@ -172,7 +172,7 @@ export default function ManageBooks() {
                         openActionMenu === book._id ? null : book._id
                       )
                     }
-                    className="text-gray-600 hover:text-black text-xl"
+                    className="text-gray-600 hover:text-black text-xl dark:text-gray-300 dark:hover:text-white"
                     title="Actions"
                   >
                     ⋯
@@ -203,7 +203,7 @@ export default function ManageBooks() {
             ))}
             {currentBooks.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center text-gray-500 py-6">
+                <td colSpan="6" className="text-center text-gray-500 py-6 dark:text-gray-300">
                   No books found.
                 </td>
               </tr>
@@ -222,7 +222,7 @@ export default function ManageBooks() {
           >
             ◀ Prev
           </button>
-          <span>
+          <span className="text-gray-500">
             Page {currentPage} of {totalPages}
           </span>
           <button

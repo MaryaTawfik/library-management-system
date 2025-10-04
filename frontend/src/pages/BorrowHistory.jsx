@@ -2,108 +2,154 @@ import React, { useEffect, useState } from "react";
 import { getBorrowHistory } from "../services/borrowService";
 import bookPlaceholder from "../assets/book2.jpg";
 
-const BorrowHistory = () => {
+export default function BorrowHistory() {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const backendData = await getBorrowHistory();
-        console.log("Borrow history fetched successfully:", backendData);
-        setBorrowedBooks(backendData || []);
-      } catch (err) {
-        console.error("Error fetching borrow history:", err);
-        setError("Failed to load borrow history.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-    fetchHistory();
+  useEffect(() => {
+    loadHistory();
   }, []);
 
-  if (loading) return <p className="text-center mt-4">Loading...</p>;
-  if (error) return <p className="text-center text-red-500 mt-4">{error}</p>;
+  const loadHistory = async () => {
+    setLoading(true);
+    try {
+      const data = await getBorrowHistory();
+      setBorrowedBooks(data || []);
+    } catch (err) {
+      console.error("Error fetching borrow history:", err);
+      setError("Failed to load borrow history.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(borrowedBooks.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = borrowedBooks.slice(startIndex, startIndex + itemsPerPage);
+
+  if (loading)
+    return <p className="text-center mt-6 dark:text-gray-400">Loading...</p>;
+  if (error)
+    return <p className="text-center text-red-500 mt-6">{error}</p>;
   if (borrowedBooks.length === 0)
-    return <p className="text-center mt-4">No borrowed books found.</p>;
+    return (
+      <p className="text-center mt-6 dark:text-gray-400">
+        No borrowed books found.
+      </p>
+    );
 
   return (
-    <div className="mx-auto px-4 py-6 max-w-6xl">
-      <h2 className="text-2xl font-bold mb-4 text-center">Borrow History</h2>
+    <div className="bg-white border-0 shadow-sm rounded-xl min-h-screen font-[sans-serif] dark:bg-gray-900 dark:border-gray-700 p-6">
+      <div className="flex justify-between items-center mb-6 font-bold font-[inter]">
+        <h1 className="text-2xl text-yellow-700 font-bold font-[inter]">
+          📖 Borrow History
+        </h1>
+      </div>
 
-      {borrowedBooks.map((borrow) => (
-        <div
-          key={borrow.borrowId}
-          className="bg-gray-100 rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row md:items-center gap-4"
-        >
-          {/* Book Image */}
-          <img
-            src={borrow.image || bookPlaceholder}
-            alt={borrow.title}
-            className="w-24 h-36 object-cover rounded self-center md:self-start"
-          />
-
-          {/* Book Info */}
-          <div className="flex-1 space-y-2">
-            <div>
-              <h3 className="text-lg font-semibold">{borrow.title}</h3>
-              <p className="text-gray-700">by {borrow.author}</p>
-              {/* {borrow.category && (
-                <span className="inline-block mt-1 text-xs text-white bg-green-600 px-2 py-1 rounded">
-                  {borrow.category}
-                </span>
-              )} */}
-            </div>
-
-            {/* Dates and Status */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mt-3">
-              <div>
-                <p className="font-medium">Borrowed</p>
-                <p>{new Date(borrow.borrowDate).toLocaleDateString()}</p>
-              </div>
-
-              <div>
-                <p className="font-medium">Due Date</p>
-                <p>
+      <div className="bg-white rounded shadow dark:bg-gray-700">
+        <table className="min-w-full bg-white text-sm dark:bg-gray-900">
+          <thead className="bg-white text-left text-black font-semibold font-[roboto] dark:bg-gray-900 dark:text-gray-300">
+            <tr>
+              <th className="px-4 py-3">Book</th>
+              <th className="px-4 py-3">Author</th>
+              <th className="px-4 py-3">Borrowed</th>
+              <th className="px-4 py-3">Due Date</th>
+              <th className="px-4 py-3">Returned</th>
+              <th className="px-4 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentItems.map((borrow, index) => (
+              <tr
+                key={borrow.borrowId || index}
+                className="border-6 border-white odd:bg-gray-100 even:bg-white dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:border-gray-700 dark:border-0"
+              >
+                <td className="px-4 py-3 flex items-center gap-3">
+                  <img
+                    src={borrow.image || bookPlaceholder}
+                    alt={borrow.title}
+                    className="w-10 h-14 object-cover shadow-md rounded"
+                  />
+                  <div>
+                    <div className="font-medium dark:text-gray-300">
+                      {borrow.title}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-3 dark:text-gray-300">{borrow.author}</td>
+                <td className="px-4 py-3 dark:text-gray-300">
+                  {new Date(borrow.borrowDate).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-3 dark:text-gray-300">
                   {borrow.dueDate
                     ? new Date(borrow.dueDate).toLocaleDateString()
                     : "N/A"}
-                </p>
-              </div>
-
-              <div>
-                <p className="font-medium">Returned</p>
-                <p>
+                </td>
+                <td className="px-4 py-3 dark:text-gray-300">
                   {borrow.status === "returned"
                     ? borrow.returnDate
                       ? new Date(borrow.returnDate).toLocaleDateString()
                       : "Returned"
                     : "Not yet"}
-                </p>
-              </div>
+                </td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`${
+                      borrow.status === "returned"
+                        ? "bg-green-100 text-green-700"
+                        : borrow.status === "pending_return"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-blue-100 text-blue-700"
+                    } px-2 py-1 rounded text-xs font-semibold`}
+                  >
+                    {borrow.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
 
-              <div className="text-center m-auto m-6">
-                <p className="font-medium">Status</p>
-                <p
-                  className={`${
-                    borrow.status === "returned"
-                      ? "text-green-700 bg-green-200"
-                      : borrow.status === "pending_return"
-                      ? "text-yellow-700 bg-yellow-200"
-                      : "text-blue-700 bg-blue-200"
-                  } font-semibold px-2 py-1 rounded`}
+            {currentItems.length === 0 && (
+              <tr>
+                <td
+                  colSpan="6"
+                  className="text-center text-gray-500 py-6 dark:text-gray-300"
                 >
-                  {borrow.status}
-                </p>
-              </div>
-            </div>
-          </div>
+                  No borrow history found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-end items-center mt-6 gap-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50 dark:bg-gray-600 dark:text-gray-300"
+          >
+            ◀ Prev
+          </button>
+          <span className="text-gray-500 dark:text-gray-300">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50 dark:bg-gray-600 dark:text-gray-300"
+          >
+            Next ▶
+          </button>
         </div>
-      ))}
+      )}
     </div>
   );
-};
-
-export default BorrowHistory;
+}

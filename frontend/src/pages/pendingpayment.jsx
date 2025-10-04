@@ -44,12 +44,12 @@ const PendingPayment = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+    <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-800 mt-10 ">
       <h1 className="text-2xl font-bold mb-4">Pending Payment</h1>
 
-      <div className="border p-4 rounded-lg mb-6">
+      <div className="border p-4 rounded-lg mb-6 dark:border-gray-700">
         <h2 className="text-lg font-semibold">{selectedPlan.name}</h2>
-        <p className="text-gray-600">{selectedPlan.price}</p>
+        <p className="text-gray-600 dark:text-gray-300">{selectedPlan.price}</p>
       </div>
 
       <div>
@@ -58,21 +58,21 @@ const PendingPayment = () => {
           type="file"
           accept="image/*"
           onChange={(e) => setFile(e.target.files[0])}
-          className="block w-full border rounded-lg p-2 mb-4"
+          className="block w-full border rounded-lg p-2 mb-4 dark:bg-gray-800 dark:border-gray-700"
         />
         <input
           type="text"
           placeholder="Bank Transaction ID "
           value={bankTransactionID}
           onChange={(e) => setReference(e.target.value)}
-          className="block w-full border rounded-lg p-2 mb-4"
+          className="block w-full border rounded-lg p-2 mb-4 dark:bg-gray-800 dark:border-gray-700"
         />
 
         <button
           onClick={handleSubmitPayment}
           disabled={loading} // ✅ disable while loading
-          className={`w-full py-2 rounded-lg text-white ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#FA7C54] hover:bg-[#e66c45]"
+          className={`w-full py-2 rounded-lg text-white dark:bg-yellow-800 dark:hover:bg-yellow-700 ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-600 hover:bg-yellow-500"
           }`}
         >
           {loading ? "Submitting..." : "Submit Payment"} {/* ✅ show text change */}

@@ -30,11 +30,15 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BorrowedBooks from "./pages/BorrowedBooks";
 import AdminBorrowApproval from "./pages/AdminBorrowApproval";
+import { useAtom } from "jotai";
+import { themeAtom } from "./atoms/themeAtom";
+import OTPReceive from "./pages/OTPReceive";
 
 const App = () => {
   const [SidebarToggle, setSidebarToggle] = useState(false);
   const [user, setUser] = useState(null); // 👈 state for user
   const [userRole, setUserRole] = useState(null);
+  const [theme] = useAtom(themeAtom);
 
   // Load user from localStorage on mount
   useEffect(() => {
@@ -45,6 +49,14 @@ const App = () => {
       setUserRole(parsedUser.role);
     }
   }, []);
+  
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   return (
     <div className="flex min-h-screen">
@@ -65,7 +77,7 @@ const App = () => {
       {/* Main content */}
       <div
         className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
-          SidebarToggle ? "ml-40 lg:ml-40" : "ml-0"
+          SidebarToggle ? "ml-0" : "ml-0"
         }`}
       >
         <Navbar
@@ -73,7 +85,7 @@ const App = () => {
           setSidebarToggle={setSidebarToggle}
         />
 
-        <main className="flex-grow p-6 mt-16">
+        <main className="flex-grow p-6 mt-16 dark:bg-gray-800 bg-gray-100">
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/books" />} />
@@ -202,6 +214,10 @@ const App = () => {
               path="/login"
               element={<Login setUser={setUser} setUserRole={setUserRole} />}
             />
+            <Route
+              path="/otp"
+              element={<OTPReceive identifier={user?.email} />}
+            />
             <Route path="/register" element={<Register />} />
             <Route path="/guest" element={<Guest />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -223,12 +239,19 @@ const App = () => {
               }
             /> */}
           </Routes>
+          <footer className=" fixed inset-x-0 bottom-0 p-4 border-t border-gray-200 dark:border-gray-700 text-center bg-gray-100 dark:bg-gray-900">
+        <p className="text-sm  text-yellow-700 dark:text-yellow-400">
+          &copy; <span id="year">{new Date().getFullYear()}</span> Jemea. All rights reserved.
+        </p>  
+      </footer>
         </main>
 
       </div>
 
       {/* Toast notifications */}
       <ToastContainer />
+    
+      
     </div>
   );
 };

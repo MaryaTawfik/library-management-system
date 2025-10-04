@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { themeAtom } from "@/atoms/themeAtom"; // make sure you have this
+
+
 import { Card, CardContent } from "@/components/ui/card";
 import {
   BookOpen,
@@ -33,6 +37,8 @@ export default function AdminDashboard() {
   const [borrowings, setBorrowings] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [theme] = useAtom(themeAtom);
+
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -90,14 +96,14 @@ export default function AdminDashboard() {
   }));
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-gray-50">
+    <div className="p-6 space-y-6 min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl text-yellow-700 font-bold">
             Admin Dashboard
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-1 dark:text-gray-300">
             Overview of your library management system
           </p>
         </div>
@@ -113,59 +119,59 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <BookOpen className="text-blue-500 mb-2" />
-          <h2 className="text-xl font-bold">{totalBooks}</h2>
-          <p>Total Books</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <BookOpen className="text-blue-500 mb-2 dark:text-blue-300" />
+          <h2 className="text-xl font-bold dark:text-blue-300">{totalBooks}</h2>
+          <p className="text-black dark:text-gray-300">Total Books</p>
         </Card>
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <Users className="text-green-500 mb-2" />
-          <h2 className="text-xl font-bold">{totalUsers}</h2>
-          <p>Total Users</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <Users className="text-green-500 mb-2 dark:text-green-300" />
+          <h2 className="text-xl font-bold dark:text-green-300">{totalUsers}</h2>
+          <p className="text-black dark:text-gray-300">Total Users</p>
         </Card>
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <UserCheck className="text-purple-500 mb-2" />
-          <h2 className="text-xl font-bold">{activeMembers}</h2>
-          <p>Active Members</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <UserCheck className="text-purple-500 mb-2 dark:text-purple-300" />
+          <h2 className="text-xl font-bold dark:text-purple-300">{activeMembers}</h2>
+          <p className="text-black dark:text-gray-300">Active Members</p>
         </Card>
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <CreditCard className="text-yellow-500 mb-2" />
-          <h2 className="text-xl font-bold">{pendingPayments.length}</h2>
-          <p>Pending Payments</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <CreditCard className="text-yellow-500 mb-2 dark:text-yellow-300" />
+          <h2 className="text-xl font-bold dark:text-yellow-300">{pendingPayments.length}</h2>
+          <p className="text-black dark:text-gray-300">Pending Payments</p>
         </Card>
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <List className="text-indigo-500 mb-2" />
-          <h2 className="text-xl font-bold">{totalBorrowings}</h2>
-          <p>Total Borrowings</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <List className="text-indigo-500 mb-2 dark:text-indigo-300" />
+          <h2 className="text-xl font-bold dark:text-indigo-300">{totalBorrowings}</h2>
+          <p className="text-black dark:text-gray-300">Total Borrowings</p>
         </Card>
-        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white">
-          <AlertTriangle className="text-red-500 mb-2" />
-          <h2 className="text-xl font-bold">{overdueBooks}</h2>
-          <p>Overdue Books</p>
+        <Card className="flex flex-col items-center p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <AlertTriangle className="text-red-500 mb-2 dark:text-red-300" />
+          <h2 className="text-xl font-bold dark:text-red-300">{overdueBooks}</h2>
+          <p className="text-black dark:text-gray-300">Overdue Books</p>
         </Card>
       </div>
 
       {/* Pending Payments & Recent Borrowings */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pending Payments */}
-        <Card className="p-4 rounded-3xl shadow-lg border-2 border-white">
-          <h2 className="text-lg font-semibold mb-4">Pending Payments</h2>
+        <Card className="p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700">
+          <h2 className="text-lg font-semibold mb-4 dark:text-gray-300">Pending Payments</h2>
           <CardContent className="space-y-3 max-h-64 overflow-y-auto">
-            {pendingPayments.length === 0 && <p>No pending payments.</p>}
+            {pendingPayments.length === 0 && <p className=" dark:text-gray-400">No pending payments.</p>}
             {pendingPayments.map((p) => (
               <div
                 key={p._id}
-                className="bg-gray-50 rounded-lg p-2 shadow-sm flex justify-between gap-1 animate-fadeIn"
+                className="bg-gray-50 rounded-lg p-2 shadow-sm flex justify-between gap-1 animate-fadeIn dark:bg-gray-800"
               >
                 <div>
-                  <div className="font-medium text-gray-800">
+                  <div className="font-medium text-gray-800 dark:text-gray-200 ">
                     👤 {p.userId?.firstName} {p.userId?.lastName}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     {p.duration} - birr {p.amount}
                   </div>
                 </div>
-                <span className="text-sm bg-white text-yellow-600 px-1 py-1 rounded">
+                <span className="text-sm bg-white text-yellow-600 px-1 py-1 rounded dark:bg-gray-800 dark:text-yellow-600 ">
                   Pending
                 </span>
               </div>
@@ -174,8 +180,8 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Recent Borrowings */}
-        <Card className="p-4 rounded-3xl shadow-lg border-2 border-white">
-          <h2 className="text-lg font-semibold mb-3">📖 Recent Borrowings</h2>
+        <Card className="p-4 rounded-3xl shadow-lg border-2 border-white dark:border-gray-700 ">
+          <h2 className="text-lg font-semibold mb-3 dark:text-gray-300">📖 Recent Borrowings</h2>
           <CardContent>
             <div className="max-h-64 overflow-y-auto space-y-2">
               {borrowings
@@ -183,27 +189,27 @@ export default function AdminDashboard() {
                 .map((b) => (
                   <div
                     key={b.borrowId}
-                    className="bg-gray-50 rounded-lg p-2 shadow-sm flex justify-between gap-1 animate-fadeIn"
+                    className="bg-gray-50 rounded-lg p-2 shadow-sm flex justify-between gap-1 animate-fadeIn dark:bg-gray-800"
                   >
                     <div>
-                      <div className="font-medium text-gray-800">
+                      <div className="font-medium text-gray-800 dark:text-gray-400">
                         {b.book?.title}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         👤 {b.user?.name}
                       </div>
                     </div>
-                    <div className="mt-1">
+                    <div className="mt-1 dark:bg-gray-800">
                       {b.status === "returned" ? (
-                        <span className="text-xs bg-white text-blue-600 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-white text-blue-600 px-2 py-0.5 rounded dark:bg-gray-800 dark:text-blue-700">
                           Returned
                         </span>
                       ) : new Date(b.dueDate) < new Date() ? (
-                        <span className="text-xs bg-white text-red-600 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-white text-red-600 px-2 py-0.5 rounded dark:bg-gray-800 dark:text-red-700">
                           Overdue
                         </span>
                       ) : (
-                        <span className="text-xs bg-white text-green-600 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-white text-green-600 px-2 py-0.5 rounded dark:bg-gray-800 dark:text-green-700">
                           Borrowed
                         </span>
                       )}
@@ -215,22 +221,33 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Bar Chart */}
-        <div className="md:col-span-2 flex justify-center w-full">
-          <Card className="p-4 rounded-3xl shadow-lg border-2 border-white w-full">
-            <h2 className="text-lg font-semibold mb-3 text-center">
+        <div className="md:col-span-2 flex justify-center w-full dark:text-gray-300">
+          <Card className="p-4 rounded-3xl shadow-lg border-2 border-white w-full dark:border-gray-700">
+            <h2 className="text-lg font-semibold mb-3 text-center dark:text-gray-300">
               Books by Category
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`${value} books`]} />
-                <Legend />
-                <Bar dataKey="count" fill="yellow-500" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
+<ResponsiveContainer width="100%" height={300}>
+  <BarChart data={barData}>
+    <CartesianGrid stroke={theme === "dark" ? "#374151" : "#e5e7eb"} strokeDasharray="3 3" />
+    <XAxis dataKey="category" stroke={theme === "dark" ? "#d1d5db" : "#111827"} />
+    <YAxis stroke={theme === "dark" ? "#d1d5db" : "#111827"} />
+    <Tooltip
+      contentStyle={{
+        backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff", // gray-800 vs white
+        color: theme === "dark" ? "#f3f4f6" : "#111827", // gray-100 vs gray-900
+        borderRadius: "0.5rem",
+      }}
+      formatter={(value) => [`${value} books`]}
+    />
+    <Legend
+      wrapperStyle={{
+        color: theme === "dark" ? "#f3f4f6" : "#111827",
+      }}
+    />
+    <Bar dataKey="count" fill={theme === "dark" ? "#b8860b" : "#b8860b"} />
+  </BarChart>
+</ResponsiveContainer>
+</Card>
         </div>
       </div>
     </div>

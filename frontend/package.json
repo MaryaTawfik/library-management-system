@@ -8,14 +8,15 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
- "postinstall": "echo Skipping postinstall"
+    "postinstall": "echo Skipping postinstall"
   },
-  
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1", 
+    "clsx": "^2.1.1",
+    "ethiopian-date": "^0.0.6",
+    "hijri-date": "^0.2.2",
     "jotai": "^2.13.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.540.0",
@@ -44,8 +45,7 @@
     "vite": "^7.1.2"
   },
   "engines": {
-  "node": "20.x",
-  "pnpm": "9.x"
-}
-
+    "node": "20.x",
+    "pnpm": "9.x"
+  }
 }

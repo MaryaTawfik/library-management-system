@@ -4,11 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoTitle from "../components/LogoTitle";
 import bgImage from "../assets/loginbg.jpg";
 import { toast } from "react-toastify"; 
+import { otpEmailAtom } from "../atoms/otpAtom";
+import { useAtom } from "jotai";
+
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false); 
+    const [, setOtpEmail] = useAtom(otpEmailAtom);
+
 
 
   const [form, setForm] = useState({
@@ -35,7 +40,8 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // start loading
+    setLoading(true);
+    // start loading
 
     
     if (form.password !== form.confirmPassword) {
@@ -60,7 +66,10 @@ export default function Register() {
 }
 
       toast.success("✅ Registered successfully! Please login.");
-      navigate("/login");
+        setLoading(false); // stop loading
+        setOtpEmail(form.email);
+  navigate("/otp");
+ // ✅ store email
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -176,20 +185,22 @@ export default function Register() {
             name="gender"
             value={form.gender}
             onChange={handleChange}
-            className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-gray-200"
+            className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-gray-200 "
           >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="" className="bg-gray-500">Select Gender</option>
+            <option value="male" className="bg-gray-500">Male</option>
+            <option value="female" className="bg-gray-500">Female</option>
           </select>
 
           <button
-            disabled={loading}
-            type="submit"
-            className="w-full bg-yellow-700 text-white py-2 rounded hover:bg-yellow-600 transition"
-          >
-            Register
-          </button>
+  disabled={loading}
+  type="submit"
+  className={`w-full py-2 rounded transition 
+    ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-700 hover:bg-yellow-600 text-white"}`}
+>
+  {loading ? "Registering..." : "Register"}
+</button>
+
         </form>
 
         <div className="flex justify-between items-center mt-4 text-sm text-gray-200">

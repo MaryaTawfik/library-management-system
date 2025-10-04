@@ -50,22 +50,22 @@ const Profile = () => {
   };
 
   if (!user) {
-    return <p className="text-gray-600">Please log in to view your profile.</p>;
+    return <p className="text-gray-600 dark:text-gray-400">Please log in to view your profile.</p>;
   }
 
   return (
-    <div className="flex flex-col items-center py-10 px-4 font-[Roboto] bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-1 text-yellow-900">My Profile</h1>
-      <p className="text-gray-500 mb-8">Manage your personal information</p>
+    <div className="flex flex-col items-center py-10 px-4 font-[Roboto] bg-gray-50 min-h-screen dark:bg-gray-900">
+      <h1 className="text-3xl font-bold mb-1 text-yellow-900 dark:text-yellow-300">My Profile</h1>
+      <p className="text-gray-500 mb-8 dark:text-gray-400">Manage your personal information</p>
 
-      <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-xl shadow-sm p-8 mb-8 hover:shadow-md transition">
+      <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-xl shadow-sm p-8 mb-8 hover:shadow-md transition dark:bg-gray-800 dark:border-gray-700">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-black">
+          <h2 className="flex items-center gap-2 text-xl font-semibold text-black dark:text-white">
             Personal Information
           </h2>
           {!isEditing && (
             <button
-              className="bg-yellow-700 text-white text-sm font-medium rounded-md px-4 py-2 hover:bg-yellow-800 transition"
+              className="bg-yellow-700 text-white text-sm font-medium rounded-md px-4 py-2 hover:bg-yellow-800 transition dark:bg-yellow-600 dark:hover:bg-yellow-700"
               onClick={() => {
                 setFormData(user);
                 setIsEditing(true);
@@ -77,7 +77,7 @@ const Profile = () => {
         </div>
 
         {!isEditing ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700 dark:text-gray-300">
             <p>
               <span className="font-medium">Full Name:</span> {user.firstName}{" "}
               {user.lastName}
@@ -108,7 +108,7 @@ const Profile = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700 dark:text-gray-300">
             <input
               name="firstName"
               value={formData.firstName || ""}
@@ -160,13 +160,13 @@ const Profile = () => {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={handleSave}
-                className="bg-green-600 text-white px-4 py-2 rounded-md"
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition dark:bg-green-600 dark:hover:bg-green-700"
               >
                 Save
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="bg-gray-400 text-white px-4 py-2 rounded-md"
+                className="bg-gray-400 text-white px-4 py-2 rounded-md dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-gray-500 transition"
               >
                 Cancel
               </button>
