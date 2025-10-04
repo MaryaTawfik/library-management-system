@@ -3,18 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useAtom } from "jotai";
-import { userAtom, tokenAtom } from "../atoms/authAtom"; 
+import { userAtom, tokenAtom } from "../atoms/authAtom";
 import LogoTitle from "../components/LogoTitle";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [trialDropdown, setTrialDropdown] = useState(false);
+
   const navigate = useNavigate();
   const [, setUser] = useAtom(userAtom);
   const [, setToken] = useAtom(tokenAtom);
-  const [loading, setLoading] = useState(false);
-  const [trialDropdown, setTrialDropdown] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -116,7 +117,7 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Bottom links */}
+        {/* Bottom links & Trial Dropdown */}
         <div className="flex flex-col sm:flex-row justify-between items-center mt-6 text-sm">
           <p className="text-gray-200 mb-2 sm:mb-0">
             New User?{" "}
@@ -124,15 +125,38 @@ export default function Login() {
               Register Here
             </Link>
           </p>
-          <div >
-            <button className="text-white mb-2 sm:mb-0 text-center border-0 border-gray-200 px-4 py-2 rounded hover:bg-yellow-600  bg-yellow-700 transition "
-            onClick={() => setTrialDropdown(!trialDropdown)}
-            >Log as Admin (trial) </button>
+
+          <div className="relative w-full sm:w-auto">
+            {/* Main Trial Button */}
+            <button
+              className="w-full sm:w-auto text-white mb-2 sm:mb-0 text-center px-4 py-2 rounded hover:bg-yellow-600 bg-yellow-700 transition"
+              onClick={() => setTrialDropdown(!trialDropdown)}
+            >
+              Log in as Trial
+            </button>
+
+            {/* Dropdown with User/Admin Buttons */}
             {trialDropdown && (
-              <div className="mt-2 bg-white/10 border border-white/20 rounded p-2 text-left text-sm text-gray-200 ">
-                <p className="text-gray-200 text-sm mb-1">Email: admin@example.com</p>
-                <p className="text-gray-200 text-sm">Password: Admin@123</p>
-                </div>
+              <div className="absolute  bg-white/5  bottom-full mb-2  left-0 mt-2  border-none border-white/20 rounded shadow-lg w-full sm:w-38 text-white z-50">
+                <button
+                  className="w-full px-4 py-2 hover:bg-yellow-600 text-left rounded-t"
+                  onClick={() => {
+                    setFormData({ email: "test@gmail.com", password: "qwerty@13" });
+                    setTrialDropdown(false);
+                  }}
+                >
+                  User
+                </button>
+                <button
+                  className="w-full px-4 py-2 hover:bg-yellow-600 text-left rounded-b"
+                  onClick={() => {
+                    setFormData({ email: "admin@example.com", password: "admin123" });
+                    setTrialDropdown(false);
+                  }}
+                >
+                  Admin
+                </button>
+              </div>
             )}
           </div>
         </div>

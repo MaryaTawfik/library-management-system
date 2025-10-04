@@ -6,13 +6,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function OTPReceive({ resendCooldown = 30 }) {
-  const [identifier] = useAtom(otpEmailAtom);
+  const [identifier, setIdentifier] = useAtom(otpEmailAtom); // email state
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const [loadingVerify, setLoadingVerify] = useState(false);
+  const [loadingResend, setLoadingResend] = useState(false);
   const [resendCooldownTimer, setResendCooldownTimer] = useState(0);
+
   const navigate = useNavigate();
 
-  // countdown for resend button
+  // Countdown for resend button
   useEffect(() => {
     let timer;
     if (resendCooldownTimer > 0) {
@@ -21,43 +24,58 @@ export default function OTPReceive({ resendCooldown = 30 }) {
     return () => clearInterval(timer);
   }, [resendCooldownTimer]);
 
+  // Email validation
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Verify OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!otp) return toast.error("Please enter OTP");
 
-    setLoading(true);
+    const trimmedEmail = identifier?.trim();
+    const trimmedOtp = otp?.trim();
+
+    if (!trimmedEmail) return toast.error("Please enter your email");
+    if (!isValidEmail(trimmedEmail)) return toast.error("Invalid email format");
+    if (!trimmedOtp) return toast.error("Please enter OTP");
+
+    setLoadingVerify(true);
     try {
-       await axios.post(
-        "https://library-management-system-pcc3.onrender.com/auth/verify-otp",
-        { email: identifier, otp }
+      await axios.post(
+        "https://library-management-system-1-mrua.onrender.com/auth/verify-otp",
+        { email: trimmedEmail, otp: trimmedOtp }
       );
-
       toast.success("✅ OTP Verified!");
       setTimeout(() => navigate("/login"), 1500); // redirect after 1.5s
     } catch (err) {
       console.error("OTP Verify Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "OTP verification failed");
     } finally {
-      setLoading(false);
+      setLoadingVerify(false);
     }
   };
 
+  // Resend OTP
   const handleResend = async () => {
     if (resendCooldownTimer > 0) return;
 
+    const trimmedEmail = identifier?.trim();
+    if (!trimmedEmail) return toast.error("Please enter your email first");
+    if (!isValidEmail(trimmedEmail)) return toast.error("Invalid email format");
+
+    setLoadingResend(true);
     try {
-      setLoading(true);
+      console.log("Resending OTP to:", trimmedEmail); // debug
       await axios.post(
-        "https://library-management-system-pcc3.onrender.com/auth/resend-otp",
-        { email: identifier }
+        "https://library-management-system-1-mrua.onrender.com/auth/resend-otp",
+        { email: trimmedEmail }
       );
       toast.success("✅ OTP sent again!");
       setResendCooldownTimer(resendCooldown);
     } catch (err) {
-      console.error(err);
+      console.error("Resend OTP Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to resend OTP");
     } finally {
-      setLoading(false);
+      setLoadingResend(false);
     }
   };
 
@@ -67,43 +85,66 @@ export default function OTPReceive({ resendCooldown = 30 }) {
         <h2 className="text-2xl font-semibold text-center mb-2">
           Verify Your Account
         </h2>
-        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mb-6">
-          Enter the OTP sent to <span className="font-medium">{identifier}</span>
-        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email input */}
+          <input
+            type="email"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your email"
+            autoFocus={!identifier}
+            className="w-full px-4 py-3 rounded-lg border bg-gray-100 dark:bg-white/10 
+              border-gray-300 dark:border-white/20 text-gray-900 dark:text-white 
+              placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none 
+              focus:ring-2 focus:ring-yellow-500"
+          />
+
+          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+            Enter the OTP sent to{" "}
+            <span className="font-medium">{identifier || "your email"}</span>
+          </p>
+
+          {/* OTP input */}
           <input
             type="text"
             value={otp}
-            onChange={(e) => setOtp(e.target.value.trim())}
+            onChange={(e) => setOtp(e.target.value)}
             placeholder="Enter OTP"
-            className="w-full px-4 py-3 rounded-lg border bg-gray-100 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            className="w-full px-4 py-3 rounded-lg border bg-gray-100 dark:bg-white/10 
+              border-gray-300 dark:border-white/20 text-gray-900 dark:text-white 
+              placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none 
+              focus:ring-2 focus:ring-yellow-500"
           />
 
+          {/* Verify OTP button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loadingVerify}
             className={`w-full py-3 rounded-lg font-semibold transition ${
-              loading
-                ? "dark:bg-yellow-800  cursor-not-allowed"
+              loadingVerify
+                ? "dark:bg-yellow-800 cursor-not-allowed"
                 : "dark:bg-yellow-900 bg-yellow-600 hover:bg-yellow-500 text-white"
             }`}
           >
-            {loading ? "Verifying..." : "Verify OTP"}
+            {loadingVerify ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
 
+        {/* Resend OTP */}
         <div className="mt-4 flex justify-between items-center text-sm">
           <button
             type="button"
             onClick={handleResend}
-            disabled={resendCooldownTimer > 0 || loading}
+            disabled={loadingResend || resendCooldownTimer > 0}
             className="text-yellow-600 hover:underline disabled:opacity-40"
           >
-            Resend OTP
+            {loadingResend ? "Sending..." : "Resend OTP"}
           </button>
           {resendCooldownTimer > 0 && (
-            <span className="text-gray-500 dark:text-gray-400">({resendCooldownTimer}s)</span>
+            <span className="text-gray-500 dark:text-gray-400">
+              ({resendCooldownTimer}s)
+            </span>
           )}
         </div>
       </div>

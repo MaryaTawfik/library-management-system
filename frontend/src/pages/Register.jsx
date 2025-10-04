@@ -12,7 +12,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false); 
-    const setOtpEmail = useAtom(otpEmailAtom);
+    const [, setOtpEmail] = useAtom(otpEmailAtom);
 
 
 
@@ -68,10 +68,8 @@ export default function Register() {
       toast.success("✅ Registered successfully! Please login.");
         setLoading(false); // stop loading
         setOtpEmail(form.email);
-        setTimeout(() => {
   navigate("/otp");
  // ✅ store email
-}, 2000); // 2 second delay before navigation
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -187,11 +185,11 @@ export default function Register() {
             name="gender"
             value={form.gender}
             onChange={handleChange}
-            className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-gray-200"
+            className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-gray-200 "
           >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="" className="bg-gray-500">Select Gender</option>
+            <option value="male" className="bg-gray-500">Male</option>
+            <option value="female" className="bg-gray-500">Female</option>
           </select>
 
           <button
