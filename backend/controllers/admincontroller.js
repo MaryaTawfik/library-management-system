@@ -14,6 +14,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+
 const blockUser = async (req, res) => {
   try {
     const blockedUser = await adminService.blockUser(req.params.id);
@@ -56,6 +57,7 @@ const getBlockedUsers = async (req, res) => {
 
 module.exports = {
   getAllUsers,
+
   deleteUser,
   blockUser,
   unblockUser,

@@ -1,48 +1,54 @@
 import { Link } from "react-router-dom";
 
 export default function BookCard({ book }) {
-  // Use _id if exists (backend), otherwise fallback to bookId (mock)
   const bookLinkId = book._id || book.bookId;
 
   return (
-    <div className="mb-33 bg-gray-200 border border-gray-300 h-auto rounded-xl shadow-sm hover:shadow-md transition py-5 flex flex-col">
-      <div className="w-full min-h-full bg-gray-100 flex items-center justify-center rounded-md overflow-hidden mb-9">
-         (
+    <div
+      className=" bg-white border border-slate-100 h-auto rounded-xl shadow-sm hover:shadow-md transition py-1 px-1
+   flex flex-col"
+    >
+      <div className="h-80 bg-white rounded-lg  flex flex-col">
+        <div className="w-full  flex items-center border-4 border-slate-100 justify-center shadow-md bg-gray-100 mb-1 rounded">
           <img
             src={book.imageUrl}
             alt={book.title}
-            className="object-contain min-h-full"
+            className="object-cover h-45 w-full"
           />
-        )
-      </div>
+        </div>
 
-      <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
-        {book.title}
-      </h3>
-      <p className="text-sm text-gray-600">By {book.author}</p>
-      <p className="text-xs text-gray-500 mb-2">{book.catagory}</p>
+        <h4 className="text-lg font-semibold text-gray-800 line-clamp-1 px-1">
+          {book.title}
+        </h4>
+        <p className="text-sm text-gray-600 line-clamp-1 px-1">
+          By {book.author}
+        </p>
+        <p className="text-xs text-gray-500 mb-2 line-clamp-1 px-1">
+          {book.catagory}
+        </p>
 
-      <div className="flex justify-between items-center mt-auto text-sm mb-3">
-        <span className="font-medium">
-          Copies: {book.avaliablecopies} of {book.totalcopies}
-        </span>
-        <span
-          className={
-            book.avaliablecopies > 0
-              ? "text-green-600"
-              : "text-white bg-amber-600 px-2 py-1 rounded"
-          }
+        <div className="flex justify-between items-center text-sm mb-3 mt-auto px-1">
+          <span className="font-medium">
+            Copies: {book.availablecopies} of {book.totalcopies}
+          </span>
+          <span
+            className={
+              book.availablecopies > 0
+                ? "text-yellow-700 font-medium "
+                : "text-white bg-yellow-800 rounded px-2"
+            }
+          >
+            {book.availablecopies > 0 ? "Available" : "Unavailable"}
+          </span>
+        </div>
+
+        <Link
+          to={`/books/${bookLinkId}`}
+          className="w-full text-center py-1 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded"
         >
-          {book.avaliablecopies > 0 ? "Available" : "Unavailable"}
-        </span>
+          View Details
+        </Link>
       </div>
-
-      <Link
-        to={`/books/${bookLinkId}`}
-        className="text-center py-2 rounded-md bg-yellow-800 hover:bg-gray-700 text-white text-sm"
-      >
-        View Details
-      </Link>
     </div>
   );
 }

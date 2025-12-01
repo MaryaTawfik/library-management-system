@@ -1,68 +1,52 @@
 import React, { useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { MdArrowDropDown } from "react-icons/md";
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
-import { FaUserCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaUserCircle, FaRegUser } from "react-icons/fa";
 import { CgEnter } from "react-icons/cg";
-import { FaRegUser } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../atoms/authAtom"; // ✅ import jotai atom
 
-
-
 const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
-  const [user,setUser] = useAtom(userAtom);
-  // const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useAtom(userAtom);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); 
-    setDropdownOpen(false); 
+    localStorage.removeItem("user");
+    setDropdownOpen(false);
     setUser(null);
-    navigate("/login"); 
+    navigate("/login");
   };
 
   const firstLetter = (user?.firstName || user?.lastName || "").charAt(0).toUpperCase();
   const profileImage = user?.profileImage || null;
 
-
   return (
     <header className="fixed w-full bg-white shadow-sm z-20">
+      <nav className=" flex-shirink-0 max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+       
+        <div className="flex items-center gap-3 ">
       <nav className="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        
-        {/* Left: Brand & Sidebar Toggle */}
+
+       
         <div className="flex items-center gap-3 flex-shrink-0">
           <HiMiniBars3CenterLeft
             onClick={() => setSidebarToggle(!SidebarToggle)}
             className="cursor-pointer text-xl"
           />
           <p className="text-base lg:text-lg font-bold font-[Roboto]">
-            E-library
+            ASTUMSJ Library
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="flex-1 min-w-0 mx-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-          <div className="flex items-center gap-2 w-full">
-            <p className="flex items-center bg-[#F7F7FA] px-2 py-1 rounded-md text-sm shrink-0">
-              All <MdArrowDropDown className="ml-1" />
-            </p>
-            <div className="flex items-center border rounded-md overflow-hidden flex-1">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full px-3 py-2 outline-none text-sm sm:text-sm md:text-base"
-              />
-              <button className="px-3 text-gray-600 hover:text-black">
-                <CiSearch className="text-xl" />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Right: Nav Items */}
+        <div className="relative flex-shirink-0 items-center gap-4 flex-shrink-0">
+        {/* Centered Arabic Quote */}
+        <div className="flex-1 flex justify-center">
+          <p className="arabic-calligraphy hidden md:block text-center">
+المكتبة الإلكترونية  </p>      </div>
+
+        {/* Right: User avatar / login */}
         <div className="relative flex items-center gap-4 flex-shrink-0">
           {user ? (
             <div className="relative">
@@ -100,21 +84,43 @@ const Navbar = ({ SidebarToggle, setSidebarToggle }) => {
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-1 text-center w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100"
+                    className="flex items-center gap-1 text-left w-full px-4 py-2 text-sm text-black hover:bg-gray-100"
                   >
-                   <CgEnter />
- Log out
+                    <CgEnter /> Log out
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <Link to="/welcome" className="flex items-center gap-1">
+            <Link to="/login" className="flex items-center gap-1">
               <FaUserCircle className="text-2xl" /> Login
             </Link>
           )}
         </div>
       </nav>
+
+      {/* CSS for Arabic calligraphy */}
+      <style>
+        {`
+          <style>
+@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+</style>
+
+          .arabic-calligraphy {
+            font-family: 'Fustat', serif;
+            font-size: 10px;
+            color: #b8860b;
+            white-space: nowrap;
+            line-height: 1.1;
+            animation: fadeIn 1s ease;
+          }
+
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}
+      </style>
     </header>
   );
 };

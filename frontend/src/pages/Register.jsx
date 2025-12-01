@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import LogoTitle from "../components/LogoTitle";
-import bgImage from "../assets/librarypic.jpg";
+import bgImage from "../assets/loginbg.jpg";
+import { toast } from "react-toastify"; 
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false); 
+
 
   const [form, setForm] = useState({
     firstName: "",
@@ -32,8 +35,11 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true); // start loading
+
     
     if (form.password !== form.confirmPassword) {
+      setLoading(false); // stop loading
       return setError("Passwords do not match");
     }
 
@@ -53,7 +59,7 @@ export default function Register() {
   throw new Error(data.message || "Registration failed");
 }
 
-      alert("✅ Registered successfully! Please login.");
+      toast.success("✅ Registered successfully! Please login.");
       navigate("/login");
     } catch (err) {
       console.error(err);
@@ -72,7 +78,7 @@ export default function Register() {
 
         <p className="text-center text-gray-200 mb-1">Registration</p>
         <p className="text-center text-xs text-gray-300 mb-6">
-          For Both Staff & Students
+          For Students
         </p>
 
         {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
@@ -118,7 +124,6 @@ export default function Register() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
           <div className="relative">
             <input
               name="confirmPassword"
@@ -179,8 +184,9 @@ export default function Register() {
           </select>
 
           <button
+            disabled={loading}
             type="submit"
-            className="w-full bg-[#FA7C54] text-white py-2 rounded hover:bg-[#e66c45] transition"
+            className="w-full bg-yellow-700 text-white py-2 rounded hover:bg-yellow-600 transition"
           >
             Register
           </button>
@@ -191,14 +197,11 @@ export default function Register() {
             Already a User?{" "}
             <Link
               to="/login"
-              className="text-[#FA7C54] underline font-semibold"
+              className="text-white underline font-semibold"
             >
               Login Now
             </Link>
           </p>
-          <Link to="/guest" className="text-white font-semibold">
-            Use as Guest
-          </Link>
         </div>
       </div>
     </div>

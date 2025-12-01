@@ -26,6 +26,7 @@ const register = async (req, res) => {
       phoneNumber,
       role: "student",
 
+
       profileImage,
     };
 
@@ -59,6 +60,7 @@ const login = async (req, res) => {
     const { token, user } = await authService.loginuser(email, password);
     res.json({ token, user });
   } catch (err) {
+
     console.log("Login error:", err.message);
     res.status(401).json({
       message: "Login failed. " + err.message,

@@ -1,3 +1,4 @@
+
 // const parser = require("../utils/multer");
 const bookController = require("../controllers/bookController");
 const authMiddleware = require("../middlewares/authenticate");
@@ -13,6 +14,7 @@ router.post(
   "/",
   authMiddleware.isAuthenticated,
   Role.isAdmin,
+
   uploadBookImage,
   bookController.create
 );
@@ -21,6 +23,7 @@ router.patch(
   "/:id",
   authMiddleware.isAuthenticated,
   Role.isAdmin,
+
   uploadBookImage,
   bookController.update
 );
@@ -31,6 +34,7 @@ router.delete(
   Role.isAdmin,
   bookController.remove
 );
+
 
 
 module.exports = router;
